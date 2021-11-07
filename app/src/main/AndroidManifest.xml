@@ -8,12 +8,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ArtworkAfternoonTea">
+        android:theme="@style/Theme.ArtworkEspresso">
         <activity
             android:name="com.rikucherry.artworkespresso.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.ArtworkAfternoonTea.NoActionBar">
+            android:theme="@style/Theme.ArtworkEspresso.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

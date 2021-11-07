@@ -9,7 +9,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.rikucherry.artworkafternoontea"
+        applicationId "com.rikucherry.artworkespresso"
         minSdk 21
         targetSdk 31
         versionCode 1
