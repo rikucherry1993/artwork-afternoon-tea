@@ -7,6 +7,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -22,6 +24,7 @@ fun MenuButtonPrimary(
     fontSize: TextUnit = 20.sp,
     backgroundColor: Color = MaterialTheme.colors.primary,
     textColor: Color = ButtonTextPrimary,
+    fontWeight: FontWeight = Bold,
     onclick: () -> Unit
 ) {
     Button(
@@ -38,7 +41,9 @@ fun MenuButtonPrimary(
             textAlign = TextAlign.Center,
             text = buttonDescription,
             fontSize = fontSize,
-            color = textColor
+            color = textColor,
+            fontWeight = fontWeight,
+            maxLines = 1
         )
     }
 }
@@ -52,6 +57,7 @@ fun MenuButtonSecondary(
     fontSize: TextUnit = 20.sp,
     color: Color = MaterialTheme.colors.primary,
     strokeWidth: Dp = 2.dp,
+    fontWeight: FontWeight = Bold,
     onclick: () -> Unit
 ) {
     OutlinedButton(
@@ -66,7 +72,9 @@ fun MenuButtonSecondary(
             textAlign = TextAlign.Center,
             text = buttonDescription,
             fontSize = fontSize,
-            color = color
+            color = color,
+            fontWeight = fontWeight,
+            maxLines = 1
         )
     }
 }
