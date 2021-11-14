@@ -1,9 +1,23 @@
+buildscript {
+    repositories {
+        google()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.klaxit.hiddensecrets:HiddenSecretsPlugin:0.1.2"
+    }
+}
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
 }
+
+apply plugin: 'com.klaxit.hiddensecrets'
 
 android {
     compileSdk 31
@@ -45,6 +59,13 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+
+    // Enable NDK build
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
         }
     }
 }

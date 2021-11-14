@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rikucherry.artworkespresso.common.component.MenuButtonPrimary
 import com.rikucherry.artworkespresso.common.component.MenuButtonSecondary
-import com.rikucherry.artworkespresso.ui.theme.ArtworkEspressoTheme
+import com.rikucherry.artworkespresso.common.theme.ArtworkEspressoTheme
 
 class LogInActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
