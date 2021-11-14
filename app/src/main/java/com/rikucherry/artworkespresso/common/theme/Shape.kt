@@ -1,4 +1,4 @@
-package com.rikucherry.artworkespresso.ui.theme
+package com.rikucherry.artworkespresso.common.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes
