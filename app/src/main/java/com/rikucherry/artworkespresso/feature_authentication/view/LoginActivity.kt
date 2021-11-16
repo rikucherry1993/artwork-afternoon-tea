@@ -18,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
-    val viewModel : LoginViewModel by lazy {
+    private val viewModel : LoginViewModel by lazy {
         ViewModelProvider(this).get(LoginViewModel::class.java)
     }
 
