@@ -10,17 +10,13 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
+import com.rikucherry.artworkespresso.ArtworkEspressoApplication
 import com.rikucherry.artworkespresso.common.component.MenuButtonPrimary
 import com.rikucherry.artworkespresso.common.component.MenuButtonSecondary
 import com.rikucherry.artworkespresso.common.theme.ArtworkEspressoTheme
-import dagger.hilt.android.AndroidEntryPoint
+import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.UserLoginUseCase
 
-@AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
-    private val viewModel : LoginViewModel by lazy {
-        ViewModelProvider(this).get(LoginViewModel::class.java)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +34,8 @@ class LoginActivity : ComponentActivity() {
                             buttonDescription = "Login in with Deviant Art",
                         ) {
                             val intent = Intent(Intent.ACTION_VIEW)
-                            intent.data = viewModel.formAuthorizeUri()
+                            val state = (application as ArtworkEspressoApplication).state
+                            intent.data = UserLoginUseCase.formAuthorizeUri(state)
                             startActivity(intent)
                         }
                         Spacer(modifier = Modifier.height(32.dp))

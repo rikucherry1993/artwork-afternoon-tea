@@ -2,6 +2,7 @@ package com.rikucherry.artworkespresso.feature_authentication.data.remote.data_s
 
 
 import com.google.gson.annotations.SerializedName
+import com.rikucherry.artworkespresso.feature_authentication.domain.model.UserTokenResponse
 
 data class UserTokenResponseDto(
     @SerializedName("access_token")
@@ -17,3 +18,10 @@ data class UserTokenResponseDto(
     @SerializedName("token_type")
     val tokenType: String
 )
+
+fun UserTokenResponseDto.toUserTokenResponse(): UserTokenResponse {
+    return UserTokenResponse(
+        accessToken = accessToken,
+        refreshToken = refreshToken
+    )
+}

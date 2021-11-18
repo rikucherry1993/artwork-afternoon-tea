@@ -21,7 +21,7 @@ interface AuthenticationApiService {
         @Field("grant_type") grantType: String,
         @Field("code") code: String,
         @Field("redirect_uri") redirectUri: String,
-    ): List<UserTokenResponseDto>
+    ): UserTokenResponseDto
 
 
 }

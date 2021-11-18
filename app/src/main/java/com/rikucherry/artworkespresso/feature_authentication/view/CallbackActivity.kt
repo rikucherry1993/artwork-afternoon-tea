@@ -11,11 +11,18 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModelProvider
+import com.rikucherry.artworkespresso.ArtworkEspressoApplication
 import com.rikucherry.artworkespresso.common.theme.ArtworkEspressoTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class CallbackActivity : ComponentActivity() {
+
+    private val viewModel : CallbackActivityViewModel by lazy {
+        ViewModelProvider(this).get(CallbackActivityViewModel::class.java)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -29,6 +36,7 @@ class CallbackActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(text = "Callback Success")
+                        viewModel.getAccessToken(intent, (application as ArtworkEspressoApplication).state)
                     }
                 }
             }
