@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class UserLoginUseCase @Inject constructor(private val authRepository: AuthenticationRepository){
+class UserLoginUseCase @Inject constructor(private val authRepository: AuthenticationRepository) {
 
     companion object {
         fun formAuthorizeUri(state: String): Uri {
@@ -27,36 +27,42 @@ class UserLoginUseCase @Inject constructor(private val authRepository: Authentic
                 view = Constants.AUTH_VIEW
             )
         }
+
+        fun retrieveAuthorizeCode(intent: Intent? = null, state: String): String? {
+            val uri = intent?.data
+            return if (intent?.action != Intent.ACTION_VIEW ||
+                uri?.getQueryParameter("state") != state
+            ) {
+                null
+            } else {
+                uri.getQueryParameter("code")
+            }
+        }
     }
 
-    operator fun invoke(intent: Intent? = null, state: String): Flow<ResponseHandler<UserTokenResponse>> = flow {
-        emit(ResponseHandler.Loading())
-        val uri = intent?.data
-        if (intent?.action != Intent.ACTION_VIEW || uri == null) {
-            emit(ResponseHandler.Error("Authorization Failed."))
-        } else {
-            when {
-                uri.getQueryParameter("state") != state -> {
-                    emit(ResponseHandler.Error("Non-authorized state."))
-                }
-                uri.getQueryParameter("code") == null -> {
-                    emit(ResponseHandler.Error("Authorization Failed."))
-                }
-                else -> {
-                    try{
-                        val userTokenResponse = authRepository.getUserAccessToken(
-                            clientId = Secrets().getClientId(BuildConfig.APPLICATION_ID).toInt(),
-                            clientSecret = Secrets().getClientSecret(BuildConfig.APPLICATION_ID),
-                            grantType = Constants.GRANT_TYPE_AUTH_CODE,
-                            code = uri.getQueryParameter("code")!!,
-                            redirectUri = Constants.REDIRECT_URI
-                            ).toUserTokenResponse()
-                        emit(ResponseHandler.Success<UserTokenResponse>(userTokenResponse, "Authorized."))
-                    } catch (e: Exception) {
-                        emit(ResponseHandler.Error("Failed to get access token: ${e.localizedMessage ?: "Undefined cause."}" ))
-                    }
-                }
-            }
+    operator fun invoke(authCode: String):
+            Flow<ResponseHandler<UserTokenResponse>> = flow {
+        try {
+            emit(ResponseHandler.Loading("Requesting access token..."))
+            val userTokenResponse = authRepository.getUserAccessToken(
+                clientId = Secrets().getClientId(BuildConfig.APPLICATION_ID).toInt(),
+                clientSecret = Secrets().getClientSecret(BuildConfig.APPLICATION_ID),
+                grantType = Constants.GRANT_TYPE_AUTH_CODE,
+                code = authCode,
+                redirectUri = Constants.REDIRECT_URI
+            ).toUserTokenResponse()
+            emit(
+                ResponseHandler.Success<UserTokenResponse>(
+                    userTokenResponse,
+                    "Authentication succeeded."
+                )
+            )
+        } catch (e: Exception) {
+            emit(
+                ResponseHandler.Error(
+                    "Failed to get access token: ${e.localizedMessage ?: "Undefined cause."}"
+                )
+            )
         }
     }
 }

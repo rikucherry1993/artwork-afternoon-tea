@@ -15,30 +15,33 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CallbackActivityViewModel @Inject constructor(
-    private val userLoginUseCase: UserLoginUseCase) : ViewModel() {
+    private val userLoginUseCase: UserLoginUseCase
+) : ViewModel() {
 
     private val _state = mutableStateOf("")
     val state: State<String> = _state
 
     fun getAccessToken(intent: Intent? = null, state: String) {
-            userLoginUseCase(intent, state).onEach { result ->
-                when (result) {
-                    is ResponseHandler.Success -> {
-                        _state.value = result.data.toString()
-                        Log.d("Auth state:", _state.value)
-                    }
+        val authCode = UserLoginUseCase.retrieveAuthorizeCode(intent, state) ?: return
 
-                    is ResponseHandler.Loading -> {
-                        _state.value = "Data is loading"
-                        Log.d("Auth state:", _state.value)
-                    }
-
-                    is ResponseHandler.Error -> {
-                        _state.value = result.message!!
-                        Log.d("Auth state:", _state.value)
-                    }
+        userLoginUseCase(authCode).onEach { result ->
+            when (result) {
+                is ResponseHandler.Success -> {
+                    _state.value = result.data.toString()
+                    Log.d("Auth state: ${result.message} \n data: ", _state.value)
                 }
-            }.launchIn(viewModelScope)
-        }
+
+                is ResponseHandler.Loading -> {
+                    _state.value = result.message ?: ""
+                    Log.d("Auth state:", _state.value)
+                }
+
+                is ResponseHandler.Error -> {
+                    _state.value = result.message!!
+                    Log.d("Auth state:", _state.value)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
 
 }
