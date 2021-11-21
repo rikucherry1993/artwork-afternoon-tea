@@ -1,6 +1,5 @@
 package com.rikucherry.artworkespresso.feature_authentication.domain.use_case
 
-import android.content.Intent
 import android.net.Uri
 import com.rikucherry.artworkespresso.BuildConfig
 import com.rikucherry.artworkespresso.Secrets
@@ -26,17 +25,6 @@ class UserLoginUseCase @Inject constructor(private val authRepository: Authentic
                 state = state,
                 view = Constants.AUTH_VIEW
             )
-        }
-
-        fun retrieveAuthorizeCode(intent: Intent? = null, state: String): String? {
-            val uri = intent?.data
-            return if (intent?.action != Intent.ACTION_VIEW ||
-                uri?.getQueryParameter("state") != state
-            ) {
-                null
-            } else {
-                uri.getQueryParameter("code")
-            }
         }
     }
 

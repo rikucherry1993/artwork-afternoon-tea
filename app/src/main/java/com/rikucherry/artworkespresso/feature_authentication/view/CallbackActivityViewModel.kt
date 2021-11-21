@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rikucherry.artworkespresso.common.ResponseHandler
 import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.UserLoginUseCase
+import com.rikucherry.artworkespresso.feature_authentication.domain.util.AuthenticationUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -22,7 +23,7 @@ class CallbackActivityViewModel @Inject constructor(
     val state: State<String> = _state
 
     fun getAccessToken(intent: Intent? = null, state: String) {
-        val authCode = UserLoginUseCase.retrieveAuthorizeCode(intent, state) ?: return
+        val authCode = AuthenticationUtil.retrieveAuthorizeCode(intent, state) ?: return
 
         userLoginUseCase(authCode).onEach { result ->
             when (result) {

@@ -1,5 +1,6 @@
 package com.rikucherry.artworkespresso.feature_authentication.domain.util
 
+import android.content.Intent
 import android.net.Uri
 import com.rikucherry.artworkespresso.common.Constants
 
@@ -26,6 +27,20 @@ class AuthenticationUtil {
                 .appendQueryParameter("state", state ?: "")
                 .appendQueryParameter("view", view ?: "")
                 .build()
+        }
+
+        /**
+         * Retrieve Authorization code from received Intent.
+         */
+        fun retrieveAuthorizeCode(intent: Intent? = null, state: String): String? {
+            val uri = intent?.data
+            return if (intent?.action != Intent.ACTION_VIEW ||
+                uri?.getQueryParameter("state") != state
+            ) {
+                null
+            } else {
+                uri.getQueryParameter("code")
+            }
         }
     }
 

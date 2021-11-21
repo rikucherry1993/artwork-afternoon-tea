@@ -1,6 +1,7 @@
 package com.rikucherry.artworkespresso.feature_authentication.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +38,7 @@ class CallbackActivity : ComponentActivity() {
                     ) {
                         Text(text = "Callback Success")
                         viewModel.getAccessToken(intent, (application as ArtworkEspressoApplication).state)
+                        Log.d("viewModel is called", "called")
                     }
                 }
             }
