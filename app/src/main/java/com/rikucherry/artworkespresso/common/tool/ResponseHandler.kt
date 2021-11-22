@@ -1,4 +1,4 @@
-package com.rikucherry.artworkespresso.common
+package com.rikucherry.artworkespresso.common.tool
 
 sealed class ResponseHandler<T>(val data: T? = null, val message: String? = null) {
     class Success<T>(data: T, message: String?) : ResponseHandler<T>(data, message)

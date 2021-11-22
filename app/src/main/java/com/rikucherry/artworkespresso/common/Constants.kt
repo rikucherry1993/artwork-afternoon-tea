@@ -15,4 +15,9 @@ object Constants {
     const val AUTH_VIEW = "login"
     const val GRANT_TYPE_CLIENT = "client_credentials"
     const val GRANT_TYPE_AUTH_CODE = "authorization_code"
+    //SharedPreference Key
+    const val USER_ACCESS_TOKEN = "user_access_token"
+    //Assisted inject arguments
+    const val AUTH_INTENT = "auth_intent"
+    const val AUTH_STATE = "auth_state"
 }

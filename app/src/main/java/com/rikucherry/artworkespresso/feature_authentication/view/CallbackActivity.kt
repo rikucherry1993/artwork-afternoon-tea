@@ -3,7 +3,6 @@ package com.rikucherry.artworkespresso.feature_authentication.view
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,20 +12,28 @@ import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rikucherry.artworkespresso.ArtworkEspressoApplication
+import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.common.theme.ArtworkEspressoTheme
-import com.rikucherry.artworkespresso.feature_authentication.domain.util.AuthenticationUtil
+import com.rikucherry.artworkespresso.common.tool.AssistedViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CallbackActivity : ComponentActivity() {
 
-    private val viewModel : CallbackActivityViewModel by viewModels()
+    @Inject
+    lateinit var callbackViewModelFactory: AssistedViewModel.AuthAssistedFactory
+    lateinit var viewModel : CallbackActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        val authCode = AuthenticationUtil.retrieveAuthorizeCode(intent,(application as ArtworkEspressoApplication).state)
-        viewModel.getAccessToken(authCode)
+
+        val args = Bundle().apply {
+            this.putParcelable(Constants.AUTH_INTENT, intent)
+            this.putString(Constants.AUTH_STATE, (application as ArtworkEspressoApplication).state)
+        }
+
+        viewModel = AssistedViewModel.provideFactory(callbackViewModelFactory, args).create(CallbackActivityViewModel::class.java)
 
         setContent {
             ArtworkEspressoTheme {
@@ -38,7 +45,7 @@ class CallbackActivity : ComponentActivity() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text(text = "Callback Success")
+                        Text(text = viewModel.state.value)
                     }
                 }
             }

@@ -4,7 +4,7 @@ import android.net.Uri
 import com.rikucherry.artworkespresso.BuildConfig
 import com.rikucherry.artworkespresso.Secrets
 import com.rikucherry.artworkespresso.common.Constants
-import com.rikucherry.artworkespresso.common.ResponseHandler
+import com.rikucherry.artworkespresso.common.tool.ResponseHandler
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.data_source.toUserTokenResponse
 import com.rikucherry.artworkespresso.feature_authentication.data.repository.AuthenticationRepository
 import com.rikucherry.artworkespresso.feature_authentication.domain.model.UserTokenResponse

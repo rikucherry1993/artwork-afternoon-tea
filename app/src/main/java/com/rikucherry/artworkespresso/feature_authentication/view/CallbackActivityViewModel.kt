@@ -1,31 +1,46 @@
 package com.rikucherry.artworkespresso.feature_authentication.view
 
+import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rikucherry.artworkespresso.common.ResponseHandler
+import com.rikucherry.artworkespresso.common.Constants
+import com.rikucherry.artworkespresso.common.tool.ResponseHandler
+import com.rikucherry.artworkespresso.common.tool.SharedPreferenceHelper
 import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.UserLoginUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.rikucherry.artworkespresso.feature_authentication.domain.util.AuthenticationUtil
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
-@HiltViewModel
-class CallbackActivityViewModel @Inject constructor(
-    private val userLoginUseCase: UserLoginUseCase
+class CallbackActivityViewModel @AssistedInject constructor(
+    private val userLoginUseCase: UserLoginUseCase,
+    private val prefs: SharedPreferenceHelper,
+    @Assisted private val args: Bundle?
 ) : ViewModel() {
 
     private val _state = mutableStateOf("")
     val state: State<String> = _state
 
-    fun getAccessToken(authCode: String?) {
+    init {
+        val intent = args?.getParcelable<Intent>(Constants.AUTH_INTENT)
+        val state = args?.getString(Constants.AUTH_STATE)
+        getAccessToken(intent, state ?: "")
+    }
+
+    private fun getAccessToken(intent: Intent?, state: String) {
+        val authCode = AuthenticationUtil.retrieveAuthorizeCode(intent, state)
+
         userLoginUseCase(authCode ?: "").onEach { result ->
             when (result) {
                 is ResponseHandler.Success -> {
                     _state.value = result.data.toString()
-                    Log.d("Auth state:", _state.value)
+                    prefs.saveUserAccessToken(result.data!!.accessToken)
+                    Log.d("Auth state:", prefs.getUserAccessToken() ?: "")
                 }
 
                 is ResponseHandler.Loading -> {
