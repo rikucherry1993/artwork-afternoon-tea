@@ -1,4 +1,4 @@
-package com.rikucherry.artworkespresso.ui.theme
+package com.rikucherry.artworkespresso.common.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
