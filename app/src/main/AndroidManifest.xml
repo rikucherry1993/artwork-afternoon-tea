@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ArtworkEspresso">
         <activity
-            android:name=".feature_authentication.view.LoginActivity"
+            android:name=".feature_authentication.view.EntranceActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.ArtworkEspresso.NoActionBar">
@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".feature_authentication.view.CallbackActivity"
+            android:name=".feature_authentication.view.TopicSelectionActivity"
             android:exported="true"
             android:launchMode="singleTask"
             >

@@ -16,7 +16,7 @@ import com.rikucherry.artworkespresso.common.component.MenuButtonSecondary
 import com.rikucherry.artworkespresso.common.theme.ArtworkEspressoTheme
 import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.UserLoginUseCase
 
-class LoginActivity : ComponentActivity() {
+class EntranceActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

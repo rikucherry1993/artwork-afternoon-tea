@@ -17,6 +17,7 @@ object Constants {
     const val GRANT_TYPE_AUTH_CODE = "authorization_code"
     //SharedPreference Key
     const val USER_ACCESS_TOKEN = "user_access_token"
+    const val USER_REFRESH_TOKEN = "user_refresh_token"
     //Assisted inject arguments
     const val AUTH_INTENT = "auth_intent"
     const val AUTH_STATE = "auth_state"

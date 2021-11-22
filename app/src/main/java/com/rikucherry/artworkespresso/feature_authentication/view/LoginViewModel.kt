@@ -2,7 +2,6 @@ package com.rikucherry.artworkespresso.feature_authentication.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -17,7 +16,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class CallbackActivityViewModel @AssistedInject constructor(
+class LoginViewModel @AssistedInject constructor(
     private val userLoginUseCase: UserLoginUseCase,
     private val prefs: SharedPreferenceHelper,
     @Assisted private val args: Bundle?
@@ -40,17 +39,15 @@ class CallbackActivityViewModel @AssistedInject constructor(
                 is ResponseHandler.Success -> {
                     _state.value = result.data.toString()
                     prefs.saveUserAccessToken(result.data!!.accessToken)
-                    Log.d("Auth state:", prefs.getUserAccessToken() ?: "")
+                    prefs.saveUserRefreshToken(result.data!!.refreshToken)
                 }
 
                 is ResponseHandler.Loading -> {
                     _state.value = result.message ?: ""
-                    Log.d("Auth state:", _state.value)
                 }
 
                 is ResponseHandler.Error -> {
                     _state.value = result.message!!
-                    Log.d("Auth state:", _state.value)
                 }
             }
         }.launchIn(viewModelScope)

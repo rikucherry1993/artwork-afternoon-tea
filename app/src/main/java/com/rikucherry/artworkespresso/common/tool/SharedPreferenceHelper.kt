@@ -25,5 +25,18 @@ class SharedPreferenceHelper @Inject constructor(
         }
     }
 
+    fun saveUserRefreshToken(token: String) {
+        prefs?.edit(commit = true) {
+            putString(Constants.USER_REFRESH_TOKEN, token)
+        }
+    }
+
     fun getUserAccessToken() = prefs?.getString(Constants.USER_ACCESS_TOKEN, "")
+    fun getUserRefreshToken() = prefs?.getString(Constants.USER_REFRESH_TOKEN, "")
+
+    fun clearPrefs() {
+        prefs?.edit(commit = true) {
+            clear()
+        }
+    }
 }

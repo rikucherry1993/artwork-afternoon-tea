@@ -19,11 +19,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CallbackActivity : ComponentActivity() {
+class TopicSelectionActivity : ComponentActivity() {
 
     @Inject
     lateinit var callbackViewModelFactory: AssistedViewModel.AuthAssistedFactory
-    lateinit var viewModel : CallbackActivityViewModel
+    lateinit var viewModel : LoginViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +33,7 @@ class CallbackActivity : ComponentActivity() {
             this.putString(Constants.AUTH_STATE, (application as ArtworkEspressoApplication).state)
         }
 
-        viewModel = AssistedViewModel.provideFactory(callbackViewModelFactory, args).create(CallbackActivityViewModel::class.java)
+        viewModel = AssistedViewModel.provideFactory(callbackViewModelFactory, args).create(LoginViewModel::class.java)
 
         setContent {
             ArtworkEspressoTheme {
