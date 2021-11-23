@@ -3,12 +3,12 @@ package com.rikucherry.artworkespresso.common.tool
 import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.rikucherry.artworkespresso.feature_authentication.view.CallbackActivityViewModel
+import com.rikucherry.artworkespresso.feature_authentication.view.LoginViewModel
 
 class AssistedViewModel {
     @dagger.assisted.AssistedFactory
     interface AuthAssistedFactory {
-        fun create(args: Bundle?): CallbackActivityViewModel
+        fun create(args: Bundle?): LoginViewModel
     }
 
     companion object {

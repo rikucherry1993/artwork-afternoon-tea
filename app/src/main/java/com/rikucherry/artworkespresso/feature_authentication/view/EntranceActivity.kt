@@ -11,15 +11,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rikucherry.artworkespresso.ArtworkEspressoApplication
+import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.common.component.MenuButtonPrimary
 import com.rikucherry.artworkespresso.common.component.MenuButtonSecondary
 import com.rikucherry.artworkespresso.common.theme.ArtworkEspressoTheme
 import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.UserLoginUseCase
 
-class LoginActivity : ComponentActivity() {
+class EntranceActivity : ComponentActivity() {
+
+    //todo: get login state and registered topics from persistent
+    private val isTopicEmpty = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             ArtworkEspressoTheme {
                 Surface(
@@ -33,9 +38,11 @@ class LoginActivity : ComponentActivity() {
                         MenuButtonPrimary(
                             buttonDescription = "Login in with Deviant Art",
                         ) {
-                            val intent = Intent(Intent.ACTION_VIEW)
                             val state = (application as ArtworkEspressoApplication).state
-                            intent.data = UserLoginUseCase.formAuthorizeUri(state)
+                            val intent = Intent(Intent.ACTION_VIEW).apply {
+
+                                this.data = UserLoginUseCase.formAuthorizeUri(state, isTopicEmpty)
+                            }
                             startActivity(intent)
                         }
                         Spacer(modifier = Modifier.height(32.dp))
@@ -43,6 +50,13 @@ class LoginActivity : ComponentActivity() {
                             buttonDescription = "Start Trail Now"
                         ) {
                             //todo: Implement logic
+                            intent = if (isTopicEmpty) {
+                                Intent(this@EntranceActivity, TopicSelectionActivity::class.java)
+                            } else {
+                                Intent(this@EntranceActivity, DailyBriefActivity::class.java)
+                            }
+                            intent.putExtra(Constants.IS_FREE_TRAIL, true)
+                            startActivity(intent)
                         }
                     }
                 }
