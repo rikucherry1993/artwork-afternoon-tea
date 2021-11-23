@@ -28,13 +28,14 @@ class LoginViewModel @AssistedInject constructor(
     init {
         val intent = args?.getParcelable<Intent>(Constants.AUTH_INTENT)
         val state = args?.getString(Constants.AUTH_STATE)
-        getAccessToken(intent, state ?: "")
+        val isTopicEmpty = args?.getBoolean(Constants.IS_TOPIC_EMPTY)
+        getAccessToken(intent, state ?: "", isTopicEmpty ?: false)
     }
 
-    private fun getAccessToken(intent: Intent?, state: String) {
+    private fun getAccessToken(intent: Intent?, state: String, isTopicEmpty: Boolean) {
         val authCode = AuthenticationUtil.retrieveAuthorizeCode(intent, state)
 
-        userLoginUseCase(authCode ?: "").onEach { result ->
+        userLoginUseCase(authCode ?: "", isTopicEmpty).onEach { result ->
             when (result) {
                 is ResponseHandler.Success -> {
                     _state.value = result.data.toString()

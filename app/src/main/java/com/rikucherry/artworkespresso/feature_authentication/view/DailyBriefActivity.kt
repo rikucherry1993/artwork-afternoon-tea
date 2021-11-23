@@ -19,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class TopicSelectionActivity : ComponentActivity() {
+class DailyBriefActivity : ComponentActivity() {
 
     @Inject
     lateinit var callbackViewModelFactory: AssistedViewModel.AuthAssistedFactory
@@ -31,7 +31,7 @@ class TopicSelectionActivity : ComponentActivity() {
         val args = Bundle().apply {
             this.putParcelable(Constants.AUTH_INTENT, intent)
             this.putString(Constants.AUTH_STATE, (application as ArtworkEspressoApplication).state)
-            this.putBoolean(Constants.IS_TOPIC_EMPTY, true)
+            this.putBoolean(Constants.IS_TOPIC_EMPTY, false)
         }
 
         viewModel = AssistedViewModel.provideFactory(callbackViewModelFactory, args).create(LoginViewModel::class.java)
@@ -46,8 +46,8 @@ class TopicSelectionActivity : ComponentActivity() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text("This is topic selection")
-                        Text(text = viewModel.state.value)
+                        Text("This is DailyBrief")
+                        Text(viewModel.state.value)
                     }
                 }
             }

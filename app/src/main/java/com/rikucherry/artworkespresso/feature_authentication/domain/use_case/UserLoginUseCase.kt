@@ -16,11 +16,16 @@ import javax.inject.Inject
 class UserLoginUseCase @Inject constructor(private val authRepository: AuthenticationRepository) {
 
     companion object {
-        fun formAuthorizeUri(state: String): Uri {
+        fun formAuthorizeUri(state: String, isTopicEmpty: Boolean): Uri {
             return AuthenticationUtil.formAuthorizeUri(
                 responseType = Constants.AUTH_RESPONSE_TYPE,
                 clientId = Secrets().getClientId(BuildConfig.APPLICATION_ID),
-                redirectUri = Constants.REDIRECT_URI,
+                redirectUri = Constants.REDIRECT_URI_SCHEME
+                        + if (isTopicEmpty) {
+                    Constants.REDIRECT_HOST_TOPIC
+                } else {
+                    Constants.REDIRECT_HOST_DAILY
+                },
                 scope = Constants.FULL_SCOPE,
                 state = state,
                 view = Constants.AUTH_VIEW
@@ -28,7 +33,7 @@ class UserLoginUseCase @Inject constructor(private val authRepository: Authentic
         }
     }
 
-    operator fun invoke(authCode: String):
+    operator fun invoke(authCode: String, isTopicEmpty: Boolean):
             Flow<ResponseHandler<UserTokenResponse>> = flow {
         try {
             emit(ResponseHandler.Loading("Requesting access token..."))
@@ -37,7 +42,12 @@ class UserLoginUseCase @Inject constructor(private val authRepository: Authentic
                 clientSecret = Secrets().getClientSecret(BuildConfig.APPLICATION_ID),
                 grantType = Constants.GRANT_TYPE_AUTH_CODE,
                 code = authCode,
-                redirectUri = Constants.REDIRECT_URI
+                redirectUri = Constants.REDIRECT_URI_SCHEME
+                        + if (isTopicEmpty) {
+                    Constants.REDIRECT_HOST_TOPIC
+                } else {
+                    Constants.REDIRECT_HOST_DAILY
+                }
             ).toUserTokenResponse()
             emit(
                 ResponseHandler.Success<UserTokenResponse>(

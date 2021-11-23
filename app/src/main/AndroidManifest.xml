@@ -33,7 +33,21 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:host="callback"
+                    android:host="topic"
+                    android:scheme="com.rikucherry.artworkespresso.oauth" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".feature_authentication.view.DailyBriefActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="daily"
                     android:scheme="com.rikucherry.artworkespresso.oauth" />
             </intent-filter>
         </activity>

@@ -33,9 +33,11 @@ class EntranceActivity : ComponentActivity() {
                         MenuButtonPrimary(
                             buttonDescription = "Login in with Deviant Art",
                         ) {
-                            val intent = Intent(Intent.ACTION_VIEW)
                             val state = (application as ArtworkEspressoApplication).state
-                            intent.data = UserLoginUseCase.formAuthorizeUri(state)
+                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                //todo: get topic from persistent
+                                this.data = UserLoginUseCase.formAuthorizeUri(state, true)
+                            }
                             startActivity(intent)
                         }
                         Spacer(modifier = Modifier.height(32.dp))
