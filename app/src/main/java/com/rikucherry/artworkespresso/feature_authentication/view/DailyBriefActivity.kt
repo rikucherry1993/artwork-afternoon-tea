@@ -29,6 +29,7 @@ class DailyBriefActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val args = Bundle().apply {
+            this.putBoolean(Constants.IS_FREE_TRAIL,intent.getBooleanExtra(Constants.IS_FREE_TRAIL, false))
             this.putParcelable(Constants.AUTH_INTENT, intent)
             this.putString(Constants.AUTH_STATE, (application as ArtworkEspressoApplication).state)
             this.putBoolean(Constants.IS_TOPIC_EMPTY, false)

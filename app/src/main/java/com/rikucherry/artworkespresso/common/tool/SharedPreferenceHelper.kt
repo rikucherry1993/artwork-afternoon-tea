@@ -31,8 +31,15 @@ class SharedPreferenceHelper @Inject constructor(
         }
     }
 
+    fun saveClientAccessToken(token: String) {
+        prefs?.edit(commit = true) {
+            putString(Constants.CLIENT_ACCESS_TOKEN, token)
+        }
+    }
+
     fun getUserAccessToken() = prefs?.getString(Constants.USER_ACCESS_TOKEN, "")
     fun getUserRefreshToken() = prefs?.getString(Constants.USER_REFRESH_TOKEN, "")
+    fun getClientAccessToken() = prefs?.getString(Constants.CLIENT_ACCESS_TOKEN, "")
 
     fun clearPrefs() {
         prefs?.edit(commit = true) {

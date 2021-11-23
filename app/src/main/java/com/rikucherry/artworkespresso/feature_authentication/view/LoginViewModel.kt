@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.common.tool.ResponseHandler
 import com.rikucherry.artworkespresso.common.tool.SharedPreferenceHelper
+import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.ClientLoginUseCase
 import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.UserLoginUseCase
 import com.rikucherry.artworkespresso.feature_authentication.domain.util.AuthenticationUtil
 import dagger.assisted.Assisted
@@ -18,21 +19,28 @@ import kotlinx.coroutines.flow.onEach
 
 class LoginViewModel @AssistedInject constructor(
     private val userLoginUseCase: UserLoginUseCase,
+    private val clientLoginUseCase: ClientLoginUseCase,
     private val prefs: SharedPreferenceHelper,
     @Assisted private val args: Bundle?
 ) : ViewModel() {
 
+    //todo: Wrap state to a class
     private val _state = mutableStateOf("")
     val state: State<String> = _state
 
     init {
-        val intent = args?.getParcelable<Intent>(Constants.AUTH_INTENT)
-        val state = args?.getString(Constants.AUTH_STATE)
-        val isTopicEmpty = args?.getBoolean(Constants.IS_TOPIC_EMPTY)
-        getAccessToken(intent, state ?: "", isTopicEmpty ?: false)
+        val isFreeTrail = args?.getBoolean(Constants.IS_FREE_TRAIL) ?: false
+        if (isFreeTrail) {
+            getClientAccessToken()
+        } else {
+            val intent = args?.getParcelable<Intent>(Constants.AUTH_INTENT)
+            val state = args?.getString(Constants.AUTH_STATE)
+            val isTopicEmpty = args?.getBoolean(Constants.IS_TOPIC_EMPTY)
+            getUserAccessToken(intent, state ?: "", isTopicEmpty ?: false)
+        }
     }
 
-    private fun getAccessToken(intent: Intent?, state: String, isTopicEmpty: Boolean) {
+    private fun getUserAccessToken(intent: Intent?, state: String, isTopicEmpty: Boolean) {
         val authCode = AuthenticationUtil.retrieveAuthorizeCode(intent, state)
 
         userLoginUseCase(authCode ?: "", isTopicEmpty).onEach { result ->
@@ -41,6 +49,25 @@ class LoginViewModel @AssistedInject constructor(
                     _state.value = result.data.toString()
                     prefs.saveUserAccessToken(result.data!!.accessToken)
                     prefs.saveUserRefreshToken(result.data!!.refreshToken)
+                }
+
+                is ResponseHandler.Loading -> {
+                    _state.value = result.message ?: ""
+                }
+
+                is ResponseHandler.Error -> {
+                    _state.value = result.message!!
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getClientAccessToken() {
+        clientLoginUseCase().onEach { result ->
+            when (result) {
+                is ResponseHandler.Success -> {
+                    _state.value = "client token is: " + result.data.toString()
+                    prefs.saveClientAccessToken(result.data!!.accessToken)
                 }
 
                 is ResponseHandler.Loading -> {
