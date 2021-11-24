@@ -47,6 +47,7 @@ class LoginViewModel @AssistedInject constructor(
             when (result) {
                 is ResponseHandler.Success -> {
                     _state.value = result.data.toString()
+                    prefs.clearPrefs()
                     prefs.saveUserAccessToken(result.data!!.accessToken)
                     prefs.saveUserRefreshToken(result.data!!.refreshToken)
                 }
@@ -67,6 +68,7 @@ class LoginViewModel @AssistedInject constructor(
             when (result) {
                 is ResponseHandler.Success -> {
                     _state.value = "client token is: " + result.data.toString()
+                    prefs.clearPrefs()
                     prefs.saveClientAccessToken(result.data!!.accessToken)
                 }
 
