@@ -1,4 +1,4 @@
-package com.rikucherry.artworkespresso.feature_authentication.view
+package com.rikucherry.artworkespresso.feature_authentication.presentation
 
 import android.content.Intent
 import android.os.Bundle
