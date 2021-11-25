@@ -48,7 +48,7 @@ class DailyBriefActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text("This is DailyBrief")
-                        Text(viewModel.state.value)
+                        Text(viewModel.state.value.data ?: "")
                     }
                 }
             }

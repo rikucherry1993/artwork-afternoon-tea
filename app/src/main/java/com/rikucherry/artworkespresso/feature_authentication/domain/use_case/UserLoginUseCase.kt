@@ -4,7 +4,7 @@ import android.net.Uri
 import com.rikucherry.artworkespresso.BuildConfig
 import com.rikucherry.artworkespresso.Secrets
 import com.rikucherry.artworkespresso.common.Constants
-import com.rikucherry.artworkespresso.common.tool.ResponseHandler
+import com.rikucherry.artworkespresso.common.tool.Resource
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.data_source.toUserTokenResponse
 import com.rikucherry.artworkespresso.feature_authentication.data.repository.AuthenticationRepository
 import com.rikucherry.artworkespresso.feature_authentication.domain.model.UserTokenResponse
@@ -37,8 +37,8 @@ class UserLoginUseCase @Inject constructor(private val authRepository: Authentic
     }
 
     operator fun invoke(authCode: String, isTopicEmpty: Boolean):
-            Flow<ResponseHandler<UserTokenResponse>> = flow {
-            emit(ResponseHandler.Loading<UserTokenResponse>("Requesting access token..."))
+            Flow<Resource<UserTokenResponse>> = flow {
+            emit(Resource.Loading<UserTokenResponse>("Requesting access token..."))
             val userTokenResponse = authRepository.getUserAccessToken(
                 clientId = Secrets().getClientId(BuildConfig.APPLICATION_ID).toInt(),
                 clientSecret = Secrets().getClientSecret(BuildConfig.APPLICATION_ID),
@@ -52,11 +52,11 @@ class UserLoginUseCase @Inject constructor(private val authRepository: Authentic
                 }
             )
             userTokenResponse.suspendOnSuccess {
-                emit(ResponseHandler.Success(data.toUserTokenResponse(), statusCode, toString()))
+                emit(Resource.Success(data.toUserTokenResponse(), statusCode, toString()))
             }.suspendOnError {
-                emit(ResponseHandler.Error<UserTokenResponse>(statusCode, toString()))
+                emit(Resource.Error<UserTokenResponse>(statusCode, toString()))
             }.suspendOnException {
-                emit(ResponseHandler.Exception<UserTokenResponse>(message ?: "Undefined exception."))
+                emit(Resource.Exception<UserTokenResponse>(message ?: "Undefined exception."))
             }
     }
 }

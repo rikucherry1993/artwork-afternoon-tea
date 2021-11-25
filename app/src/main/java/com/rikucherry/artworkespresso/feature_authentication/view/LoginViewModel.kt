@@ -7,8 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rikucherry.artworkespresso.common.Constants
-import com.rikucherry.artworkespresso.common.tool.ResponseHandler
+import com.rikucherry.artworkespresso.common.tool.Resource
 import com.rikucherry.artworkespresso.common.tool.SharedPreferenceHelper
+import com.rikucherry.artworkespresso.common.tool.ViewModelState
 import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.ClientLoginUseCase
 import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.UserLoginUseCase
 import com.rikucherry.artworkespresso.feature_authentication.domain.util.AuthenticationUtil
@@ -24,9 +25,8 @@ class LoginViewModel @AssistedInject constructor(
     @Assisted private val args: Bundle?
 ) : ViewModel() {
 
-    //todo: Wrap state to a class
-    private val _state = mutableStateOf("")
-    val state: State<String> = _state
+    private val _state = mutableStateOf(ViewModelState<String>())
+    val state: State<ViewModelState<String>> = _state
 
     init {
         val isFreeTrail = args?.getBoolean(Constants.IS_FREE_TRAIL) ?: false
@@ -45,22 +45,38 @@ class LoginViewModel @AssistedInject constructor(
 
         userLoginUseCase(authCode ?: "", isTopicEmpty).onEach { result ->
             when (result) {
-                is ResponseHandler.Success -> {
-                    _state.value = result.data.toString()
+                is Resource.Success -> {
+                    _state.value = ViewModelState(
+                        isLoading = false,
+                        data = result.data.accessToken,
+                        statusCode = result.statusCode.code,
+                        status = result.statusCode
+                    )
                     prefs.clearPrefs()
                     prefs.saveUserAccessToken(result.data!!.accessToken)
                     prefs.saveUserRefreshToken(result.data!!.refreshToken)
                 }
 
-                is ResponseHandler.Loading -> {
-                    _state.value = result.message ?: ""
+                is Resource.Loading -> {
+                    _state.value = ViewModelState(
+                        isLoading = true,
+                        message = result.message
+                    )
                 }
 
-                is ResponseHandler.Error -> {
-                    _state.value = result.message!!
+                is Resource.Error -> {
+                    _state.value = ViewModelState(
+                        isLoading = false,
+                        statusCode = result.statusCode.code,
+                        status = result.statusCode,
+                        message = result.message
+                    )
                 }
-                is ResponseHandler.Exception -> {
-                    _state.value = result.message
+                is Resource.Exception -> {
+                    _state.value = ViewModelState(
+                        isLoading = false,
+                        message = result.message
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -69,22 +85,38 @@ class LoginViewModel @AssistedInject constructor(
     private fun getClientAccessToken() {
         clientLoginUseCase().onEach { result ->
             when (result) {
-                is ResponseHandler.Success -> {
-                    _state.value = result.data.toString()
+                is Resource.Success -> {
+                    _state.value = ViewModelState(
+                        isLoading = false,
+                        data = result.data.accessToken,
+                        statusCode = result.statusCode.code,
+                        status = result.statusCode
+                    )
                     prefs.clearPrefs()
                     prefs.saveClientAccessToken(result.data.accessToken)
                 }
 
-                is ResponseHandler.Loading -> {
-                    _state.value = result.message ?: ""
+                is Resource.Loading -> {
+                    _state.value = ViewModelState(
+                        isLoading = true,
+                        message = result.message
+                    )
                 }
 
-                is ResponseHandler.Error -> {
-                    _state.value = result.statusCode.code.toString()
+                is Resource.Error -> {
+                    _state.value = ViewModelState(
+                        isLoading = false,
+                        statusCode = result.statusCode.code,
+                        status = result.statusCode,
+                        message = result.message
+                    )
                 }
 
-                is ResponseHandler.Exception -> {
-                    _state.value = result.message
+                is Resource.Exception -> {
+                    _state.value = ViewModelState(
+                        isLoading = false,
+                        message = result.message
+                    )
                 }
             }
         }.launchIn(viewModelScope)

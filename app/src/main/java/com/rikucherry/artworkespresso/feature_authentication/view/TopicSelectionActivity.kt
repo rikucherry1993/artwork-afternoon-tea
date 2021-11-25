@@ -48,7 +48,7 @@ class TopicSelectionActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text("This is topic selection")
-                        Text(text = viewModel.state.value)
+                        Text(text = viewModel.state.value.data ?: "")
                     }
                 }
             }
