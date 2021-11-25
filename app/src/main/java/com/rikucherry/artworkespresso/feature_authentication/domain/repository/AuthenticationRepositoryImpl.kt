@@ -4,6 +4,7 @@ import com.rikucherry.artworkespresso.feature_authentication.data.remote.Authent
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.data_source.ClientTokenResponseDto
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.data_source.UserTokenResponseDto
 import com.rikucherry.artworkespresso.feature_authentication.data.repository.AuthenticationRepository
+import com.skydoves.sandwich.ApiResponse
 import javax.inject.Inject
 
 class AuthenticationRepositoryImpl @Inject constructor(
@@ -17,7 +18,7 @@ class AuthenticationRepositoryImpl @Inject constructor(
         grantType: String,
         code: String,
         redirectUri: String
-    ): UserTokenResponseDto {
+    ): ApiResponse<UserTokenResponseDto> {
         return authApi.getUserAccessToken(clientId, clientSecret, grantType, code, redirectUri)
     }
 
@@ -25,7 +26,7 @@ class AuthenticationRepositoryImpl @Inject constructor(
         clientId: Int,
         clientSecret: String,
         grantType: String
-    ): ClientTokenResponseDto {
+    ): ApiResponse<ClientTokenResponseDto> {
         return authApi.getClientAccessToken(clientId, clientSecret, grantType)
     }
 }

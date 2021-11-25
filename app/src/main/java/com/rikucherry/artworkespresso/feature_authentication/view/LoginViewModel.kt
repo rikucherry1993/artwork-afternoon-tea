@@ -59,6 +59,9 @@ class LoginViewModel @AssistedInject constructor(
                 is ResponseHandler.Error -> {
                     _state.value = result.message!!
                 }
+                is ResponseHandler.Exception -> {
+                    _state.value = result.message
+                }
             }
         }.launchIn(viewModelScope)
     }
@@ -67,9 +70,9 @@ class LoginViewModel @AssistedInject constructor(
         clientLoginUseCase().onEach { result ->
             when (result) {
                 is ResponseHandler.Success -> {
-                    _state.value = "client token is: " + result.data.toString()
+                    _state.value = result.data.toString()
                     prefs.clearPrefs()
-                    prefs.saveClientAccessToken(result.data!!.accessToken)
+                    prefs.saveClientAccessToken(result.data.accessToken)
                 }
 
                 is ResponseHandler.Loading -> {
@@ -77,7 +80,11 @@ class LoginViewModel @AssistedInject constructor(
                 }
 
                 is ResponseHandler.Error -> {
-                    _state.value = result.message!!
+                    _state.value = result.statusCode.code.toString()
+                }
+
+                is ResponseHandler.Exception -> {
+                    _state.value = result.message
                 }
             }
         }.launchIn(viewModelScope)

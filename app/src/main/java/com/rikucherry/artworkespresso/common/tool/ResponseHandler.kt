@@ -1,7 +1,10 @@
 package com.rikucherry.artworkespresso.common.tool
 
-sealed class ResponseHandler<T>(val data: T? = null, val message: String? = null) {
-    class Success<T>(data: T, message: String?) : ResponseHandler<T>(data, message)
-    class Error<T>(message: String, data: T? = null) : ResponseHandler<T>(data, message)
-    class Loading<T>(message: String?, data: T? = null) : ResponseHandler<T>(data, message)
+import com.skydoves.sandwich.StatusCode
+
+sealed class ResponseHandler<out T>() {
+    class Success<T>(val data: T, val statusCode: StatusCode, val message: String? = null) : ResponseHandler<T>()
+    class Error<T>(val statusCode: StatusCode, val message: String) : ResponseHandler<T>()
+    class Exception<T>(val message: String) : ResponseHandler<T>()
+    class Loading<T>(val message:String? = null) : ResponseHandler<T>()
 }

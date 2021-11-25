@@ -9,6 +9,9 @@ import com.rikucherry.artworkespresso.feature_authentication.data.remote.data_so
 import com.rikucherry.artworkespresso.feature_authentication.data.repository.AuthenticationRepository
 import com.rikucherry.artworkespresso.feature_authentication.domain.model.UserTokenResponse
 import com.rikucherry.artworkespresso.feature_authentication.domain.util.AuthenticationUtil
+import com.skydoves.sandwich.suspendOnError
+import com.skydoves.sandwich.suspendOnException
+import com.skydoves.sandwich.suspendOnSuccess
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -35,8 +38,7 @@ class UserLoginUseCase @Inject constructor(private val authRepository: Authentic
 
     operator fun invoke(authCode: String, isTopicEmpty: Boolean):
             Flow<ResponseHandler<UserTokenResponse>> = flow {
-        try {
-            emit(ResponseHandler.Loading("Requesting access token..."))
+            emit(ResponseHandler.Loading<UserTokenResponse>("Requesting access token..."))
             val userTokenResponse = authRepository.getUserAccessToken(
                 clientId = Secrets().getClientId(BuildConfig.APPLICATION_ID).toInt(),
                 clientSecret = Secrets().getClientSecret(BuildConfig.APPLICATION_ID),
@@ -48,19 +50,13 @@ class UserLoginUseCase @Inject constructor(private val authRepository: Authentic
                 } else {
                     Constants.REDIRECT_HOST_DAILY
                 }
-            ).toUserTokenResponse()
-            emit(
-                ResponseHandler.Success<UserTokenResponse>(
-                    userTokenResponse,
-                    "Authentication succeeded."
-                )
             )
-        } catch (e: Exception) {
-            emit(
-                ResponseHandler.Error(
-                    "Failed to get access token: ${e.localizedMessage ?: "Undefined cause."}"
-                )
-            )
-        }
+            userTokenResponse.suspendOnSuccess {
+                emit(ResponseHandler.Success(data.toUserTokenResponse(), statusCode, toString()))
+            }.suspendOnError {
+                emit(ResponseHandler.Error<UserTokenResponse>(statusCode, toString()))
+            }.suspendOnException {
+                emit(ResponseHandler.Exception<UserTokenResponse>(message ?: "Undefined exception."))
+            }
     }
 }

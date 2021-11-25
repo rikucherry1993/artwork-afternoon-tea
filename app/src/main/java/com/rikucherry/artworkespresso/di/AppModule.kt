@@ -7,6 +7,7 @@ import com.rikucherry.artworkespresso.common.tool.SharedPreferenceHelper
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.AuthenticationApiService
 import com.rikucherry.artworkespresso.feature_authentication.data.repository.AuthenticationRepository
 import com.rikucherry.artworkespresso.feature_authentication.domain.repository.AuthenticationRepositoryImpl
+import com.skydoves.sandwich.coroutines.CoroutinesResponseCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,6 +38,7 @@ object AppModule {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(CoroutinesResponseCallAdapterFactory.create())
             .build()
             .create(AuthenticationApiService::class.java)
     }

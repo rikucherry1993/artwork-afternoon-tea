@@ -94,6 +94,9 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
     implementation 'com.squareup.okhttp3:okhttp:4.9.2'
 
+    //sandwich - for standardized http response handling
+    implementation "com.github.skydoves:sandwich:1.2.1"
+
     //Google gson
     implementation 'com.google.code.gson:gson:2.8.9'
 
