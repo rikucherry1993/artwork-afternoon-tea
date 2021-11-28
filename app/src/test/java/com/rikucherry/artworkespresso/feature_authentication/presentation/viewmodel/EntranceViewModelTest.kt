@@ -19,17 +19,19 @@ class EntranceViewModelTest {
     private val repository = FakeAuthenticationRepositoryImpl()
 
     private lateinit var userLoginUseCase: UserLoginUseCase
+    private lateinit var viewModel: EntranceViewModel
 
     @Before
     fun setup() {
         userLoginUseCase = UserLoginUseCase(repository, secrets)
+        viewModel = EntranceViewModel(userLoginUseCase)
     }
 
     @Test
     fun `FormAuthorizeUri_verifyResponseType`() {
         //Given
         //When
-        val uri = userLoginUseCase.formAuthorizeUri("", true)
+        val uri = viewModel.formAuthorizeUri("", true)
         val expectedResponseType = Constants.AUTH_RESPONSE_TYPE
         val actualResponseType = uri.getQueryParameter("response_type")
         //Then
@@ -40,7 +42,7 @@ class EntranceViewModelTest {
     fun `FormAuthorizeUri_verifyClientId`() {
         //Given
         //When
-        val uri = userLoginUseCase.formAuthorizeUri("", true)
+        val uri = viewModel.formAuthorizeUri("", true)
         val expectedClientId = "1"
         val actualClientId = uri.getQueryParameter("client_id")
         //Then
@@ -52,7 +54,7 @@ class EntranceViewModelTest {
     fun `FormAuthorizeUri_verifyScope`() {
         //Given
         //When
-        val uri = userLoginUseCase.formAuthorizeUri("", true)
+        val uri = viewModel.formAuthorizeUri("", true)
         val expectedScope = Constants.FULL_SCOPE
         val actualScope = uri.getQueryParameter("scope")
         //Then
@@ -65,7 +67,7 @@ class EntranceViewModelTest {
         //Given
         val state = "123"
         //When
-        val uri = userLoginUseCase.formAuthorizeUri(state, true)
+        val uri = viewModel.formAuthorizeUri(state, true)
         val actualState = uri.getQueryParameter("state")
         //Then
         assertEquals(state, actualState)
@@ -77,7 +79,7 @@ class EntranceViewModelTest {
         //Given
         val view = Constants.AUTH_VIEW
         //When
-        val uri = userLoginUseCase.formAuthorizeUri("", true)
+        val uri = viewModel.formAuthorizeUri("", true)
         val actualView = uri.getQueryParameter("view")
         //Then
         assertEquals(view, actualView)
@@ -87,7 +89,7 @@ class EntranceViewModelTest {
     fun `FormAuthorizeUri_topicIsEmpty_redirectToTopicSelect`() {
         //Given
         //When
-        val uri = userLoginUseCase.formAuthorizeUri("", true)
+        val uri = viewModel.formAuthorizeUri("", true)
         val actualRedirectUri = uri.getQueryParameter("redirect_uri")
         val expectedRedirectUri = Constants.REDIRECT_URI_SCHEME + Constants.REDIRECT_HOST_TOPIC
 
@@ -99,7 +101,7 @@ class EntranceViewModelTest {
     fun `FormAuthorizeUri_topicExists_redirectToTopicSelect`() {
         //Given
         //When
-        val uri = userLoginUseCase.formAuthorizeUri("", false)
+        val uri = viewModel.formAuthorizeUri("", false)
         val actualRedirectUri = uri.getQueryParameter("redirect_uri")
         val expectedRedirectUri = Constants.REDIRECT_URI_SCHEME + Constants.REDIRECT_HOST_DAILY
 
