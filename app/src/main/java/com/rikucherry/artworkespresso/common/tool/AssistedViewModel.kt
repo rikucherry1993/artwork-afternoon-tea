@@ -3,7 +3,7 @@ package com.rikucherry.artworkespresso.common.tool
 import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.rikucherry.artworkespresso.feature_authentication.presentation.LoginViewModel
+import com.rikucherry.artworkespresso.feature_authentication.presentation.viewmodel.LoginViewModel
 
 class AssistedViewModel {
     @dagger.assisted.AssistedFactory

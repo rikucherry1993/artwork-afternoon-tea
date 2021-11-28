@@ -15,6 +15,7 @@ import com.rikucherry.artworkespresso.ArtworkEspressoApplication
 import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.common.theme.ArtworkEspressoTheme
 import com.rikucherry.artworkespresso.common.tool.AssistedViewModel
+import com.rikucherry.artworkespresso.feature_authentication.presentation.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -35,7 +36,8 @@ class TopicSelectionActivity : ComponentActivity() {
             this.putBoolean(Constants.IS_TOPIC_EMPTY, true)
         }
 
-        viewModel = AssistedViewModel.provideFactory(callbackViewModelFactory, args).create(LoginViewModel::class.java)
+        viewModel = AssistedViewModel.provideFactory(callbackViewModelFactory, args).create(
+            LoginViewModel::class.java)
 
         setContent {
             ArtworkEspressoTheme {

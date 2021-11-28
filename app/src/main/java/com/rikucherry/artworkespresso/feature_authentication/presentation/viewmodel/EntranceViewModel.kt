@@ -1,4 +1,4 @@
-package com.rikucherry.artworkespresso.feature_authentication.presentation
+package com.rikucherry.artworkespresso.feature_authentication.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.UserLoginUseCase
