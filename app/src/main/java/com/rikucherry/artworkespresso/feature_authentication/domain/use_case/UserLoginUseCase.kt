@@ -2,7 +2,7 @@ package com.rikucherry.artworkespresso.feature_authentication.domain.use_case
 
 import android.net.Uri
 import com.rikucherry.artworkespresso.BuildConfig
-import com.rikucherry.artworkespresso.Secrets
+import com.rikucherry.artworkespresso.ISecrets
 import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.common.tool.Resource
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.data_source.toUserTokenResponse
@@ -16,32 +16,34 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class UserLoginUseCase @Inject constructor(private val authRepository: AuthenticationRepository) {
+class UserLoginUseCase @Inject constructor(
+    private val authRepository: AuthenticationRepository,
+    private val secrets: ISecrets
+    ) {
 
-    companion object {
-        fun formAuthorizeUri(state: String, isTopicEmpty: Boolean): Uri {
-            return AuthenticationUtil.formAuthorizeUri(
-                responseType = Constants.AUTH_RESPONSE_TYPE,
-                clientId = Secrets().getClientId(BuildConfig.APPLICATION_ID),
-                redirectUri = Constants.REDIRECT_URI_SCHEME
-                        + if (isTopicEmpty) {
-                    Constants.REDIRECT_HOST_TOPIC
-                } else {
-                    Constants.REDIRECT_HOST_DAILY
-                },
-                scope = Constants.FULL_SCOPE,
-                state = state,
-                view = Constants.AUTH_VIEW
-            )
-        }
+    fun formAuthorizeUri(state: String, isTopicEmpty: Boolean): Uri {
+        return AuthenticationUtil.formAuthorizeUri(
+            responseType = Constants.AUTH_RESPONSE_TYPE,
+            clientId = secrets.getClientId(BuildConfig.APPLICATION_ID),
+            redirectUri = Constants.REDIRECT_URI_SCHEME
+                    + if (isTopicEmpty) {
+                Constants.REDIRECT_HOST_TOPIC
+            } else {
+                Constants.REDIRECT_HOST_DAILY
+            },
+            scope = Constants.FULL_SCOPE,
+            state = state,
+            view = Constants.AUTH_VIEW
+        )
     }
+
 
     operator fun invoke(authCode: String, isTopicEmpty: Boolean):
             Flow<Resource<UserTokenResponse>> = flow {
             emit(Resource.Loading<UserTokenResponse>("Requesting access token..."))
             val userTokenResponse = authRepository.getUserAccessToken(
-                clientId = Secrets().getClientId(BuildConfig.APPLICATION_ID).toInt(),
-                clientSecret = Secrets().getClientSecret(BuildConfig.APPLICATION_ID),
+                clientId = secrets.getClientId(BuildConfig.APPLICATION_ID).toInt(),
+                clientSecret = secrets.getClientSecret(BuildConfig.APPLICATION_ID),
                 grantType = Constants.GRANT_TYPE_AUTH_CODE,
                 code = authCode,
                 redirectUri = Constants.REDIRECT_URI_SCHEME

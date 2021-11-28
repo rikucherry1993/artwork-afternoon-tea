@@ -2,6 +2,8 @@ package com.rikucherry.artworkespresso.di
 
 import android.app.Application
 import android.content.Context
+import com.rikucherry.artworkespresso.ISecrets
+import com.rikucherry.artworkespresso.Secrets
 import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.common.tool.SharedPreferenceHelper
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.AuthenticationApiService
@@ -48,5 +50,11 @@ object AppModule {
     fun providesAuthenticationRepository(authApi: AuthenticationApiService)
             : AuthenticationRepository {
         return AuthenticationRepositoryImpl(authApi)
+    }
+
+    @Provides
+    @Singleton
+    fun providesSecrets() : ISecrets {
+        return Secrets()
     }
 }

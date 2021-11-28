@@ -50,7 +50,8 @@ class LoginViewModel @AssistedInject constructor(
                         isLoading = false,
                         data = result.data.accessToken,
                         statusCode = result.statusCode.code,
-                        status = result.statusCode
+                        status = result.statusCode,
+                        message = result.data.accessToken
                     )
                     prefs.clearPrefs()
                     prefs.saveUserAccessToken(result.data!!.accessToken)
@@ -90,7 +91,8 @@ class LoginViewModel @AssistedInject constructor(
                         isLoading = false,
                         data = result.data.accessToken,
                         statusCode = result.statusCode.code,
-                        status = result.statusCode
+                        status = result.statusCode,
+                        message = result.data.accessToken
                     )
                     prefs.clearPrefs()
                     prefs.saveClientAccessToken(result.data.accessToken)
