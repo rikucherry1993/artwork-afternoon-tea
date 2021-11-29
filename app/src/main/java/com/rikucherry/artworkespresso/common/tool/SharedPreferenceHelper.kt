@@ -37,13 +37,13 @@ class SharedPreferenceHelper @Inject constructor(
         }
     }
 
-    fun saveUserFavoriteTopics(topics: Set<String>) {
+    fun saveUserFavoriteTopics(topics: MutableSet<String>) {
         prefs?.edit(commit = true) {
             putStringSet(Constants.USER_TOPICS, topics)
         }
     }
 
-    fun saveClientFavoriteTopics(topics: Set<String>) {
+    fun saveClientFavoriteTopics(topics: MutableSet<String>) {
         prefs?.edit(commit = true) {
             putStringSet(Constants.CLIENT_TOPICS, topics)
         }
@@ -52,8 +52,8 @@ class SharedPreferenceHelper @Inject constructor(
     fun getUserAccessToken() = prefs?.getString(Constants.USER_ACCESS_TOKEN, "")
     fun getUserRefreshToken() = prefs?.getString(Constants.USER_REFRESH_TOKEN, "")
     fun getClientAccessToken() = prefs?.getString(Constants.CLIENT_ACCESS_TOKEN, "")
-    fun getUserFavoriteTopics() = prefs?.getStringSet(Constants.USER_TOPICS, null)
-    fun getClientFavoriteTopics() = prefs?.getStringSet(Constants.CLIENT_TOPICS, null)
+    fun getUserFavoriteTopics(): MutableSet<String>? = prefs?.getStringSet(Constants.USER_TOPICS, null)
+    fun getClientFavoriteTopics(): MutableSet<String>? = prefs?.getStringSet(Constants.CLIENT_TOPICS, null)
 
     /**
      * Clear all preferences

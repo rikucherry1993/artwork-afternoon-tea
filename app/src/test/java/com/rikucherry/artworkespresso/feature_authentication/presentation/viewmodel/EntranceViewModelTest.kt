@@ -2,9 +2,12 @@ package com.rikucherry.artworkespresso.feature_authentication.presentation.viewm
 
 import com.rikucherry.artworkespresso.FakeSecrets
 import com.rikucherry.artworkespresso.common.Constants
+import com.rikucherry.artworkespresso.common.tool.SharedPreferenceHelper
 import com.rikucherry.artworkespresso.feature_authentication.domain.repository.FakeAuthenticationRepositoryImpl
 import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.UserLoginUseCase
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,11 +23,12 @@ class EntranceViewModelTest {
 
     private lateinit var userLoginUseCase: UserLoginUseCase
     private lateinit var viewModel: EntranceViewModel
+    private val prefHelper = mockk<SharedPreferenceHelper>(relaxed = true)
 
     @Before
     fun setup() {
         userLoginUseCase = UserLoginUseCase(repository, secrets)
-        viewModel = EntranceViewModel(userLoginUseCase)
+        viewModel = EntranceViewModel(userLoginUseCase, prefHelper)
     }
 
     @Test
@@ -107,6 +111,25 @@ class EntranceViewModelTest {
 
         //Then
         assertEquals(expectedRedirectUri, actualRedirectUri)
+    }
+
+    @Test
+    fun `GetUserTopics_resultIsMutableSet`() {
+        //Given
+        //When
+        val result = viewModel.getUserTopics()
+        //Then
+        assertTrue(result is MutableSet<String>)
+    }
+
+
+    @Test
+    fun `GetClientTopics_resultIsMutableSet`() {
+        //Given
+        //When
+        val result = viewModel.getClientTopics()
+        //Then
+        assertTrue(result is MutableSet<String>)
     }
 
 }

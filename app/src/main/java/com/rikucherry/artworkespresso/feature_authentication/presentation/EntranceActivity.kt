@@ -24,9 +24,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class EntranceActivity : ComponentActivity() {
 
-    //todo: get login state and registered topics from persistent
-    private val isTopicEmpty = true
-
     private val viewModel: EntranceViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,8 +43,8 @@ class EntranceActivity : ComponentActivity() {
                             buttonDescription = "Login in with Deviant Art",
                         ) {
                             val state = (application as ArtworkEspressoApplication).state
+                            val isTopicEmpty = viewModel.getUserTopics()?.isEmpty() ?: true
                             val intent = Intent(Intent.ACTION_VIEW).apply {
-
                                 this.data = viewModel.formAuthorizeUri(state, isTopicEmpty)
                             }
                             startActivity(intent)
@@ -56,7 +53,7 @@ class EntranceActivity : ComponentActivity() {
                         MenuButtonSecondary(
                             buttonDescription = "Start Trail Now"
                         ) {
-                            //todo: Implement logic
+                            val isTopicEmpty = viewModel.getClientTopics()?.isEmpty() ?:true
                             intent = if (isTopicEmpty) {
                                 Intent(this@EntranceActivity, TopicSelectionActivity::class.java)
                             } else {
