@@ -17,6 +17,8 @@ import com.rikucherry.artworkespresso.common.component.MenuButtonPrimary
 import com.rikucherry.artworkespresso.common.component.MenuButtonSecondary
 import com.rikucherry.artworkespresso.common.theme.ArtworkEspressoTheme
 import com.rikucherry.artworkespresso.feature_authentication.presentation.viewmodel.EntranceViewModel
+import com.rikucherry.artworkespresso.feature_daily_brief.presentation.DailyBriefActivity
+import com.rikucherry.artworkespresso.feature_topic_selection.presentation.TopicSelectionActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

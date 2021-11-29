@@ -1,4 +1,4 @@
-package com.rikucherry.artworkespresso.feature_authentication.presentation
+package com.rikucherry.artworkespresso.feature_daily_brief.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
