@@ -1,9 +1,10 @@
-package com.rikucherry.artworkespresso.feature_authentication.view
+package com.rikucherry.artworkespresso.feature_authentication.presentation
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -15,12 +16,16 @@ import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.common.component.MenuButtonPrimary
 import com.rikucherry.artworkespresso.common.component.MenuButtonSecondary
 import com.rikucherry.artworkespresso.common.theme.ArtworkEspressoTheme
-import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.UserLoginUseCase
+import com.rikucherry.artworkespresso.feature_authentication.presentation.viewmodel.EntranceViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class EntranceActivity : ComponentActivity() {
 
     //todo: get login state and registered topics from persistent
     private val isTopicEmpty = true
+
+    private val viewModel: EntranceViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +46,7 @@ class EntranceActivity : ComponentActivity() {
                             val state = (application as ArtworkEspressoApplication).state
                             val intent = Intent(Intent.ACTION_VIEW).apply {
 
-                                this.data = UserLoginUseCase.formAuthorizeUri(state, isTopicEmpty)
+                                this.data = viewModel.formAuthorizeUri(state, isTopicEmpty)
                             }
                             startActivity(intent)
                         }

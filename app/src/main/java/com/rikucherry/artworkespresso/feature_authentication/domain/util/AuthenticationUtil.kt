@@ -10,6 +10,7 @@ class AuthenticationUtil {
          * Form the authorization URL provided by server side
          * @see <a href="https://www.deviantart.com/developers/authentication">documentation</a>
          */
+        @JvmStatic
         fun formAuthorizeUri(
             responseType: String,
             clientId: String,
@@ -32,6 +33,7 @@ class AuthenticationUtil {
         /**
          * Retrieve Authorization code from received Intent.
          */
+        @JvmStatic
         fun retrieveAuthorizeCode(intent: Intent? = null, state: String): String? {
             val uri = intent?.data
             return if (intent?.action != Intent.ACTION_VIEW ||

@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +37,7 @@ fun MenuButtonPrimary(
         modifier = Modifier
             .fillMaxWidth(widthFraction)
             .height(height)
+            .testTag("menuButtonPrimary")
     ) {
         Text(
             textAlign = TextAlign.Center,
@@ -67,6 +69,7 @@ fun MenuButtonSecondary(
         modifier = Modifier
             .fillMaxWidth(widthFraction)
             .height(height)
+            .testTag("menuButtonSecondary")
     ) {
         Text(
             textAlign = TextAlign.Center,
