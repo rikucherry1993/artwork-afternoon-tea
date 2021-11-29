@@ -37,13 +37,51 @@ class SharedPreferenceHelper @Inject constructor(
         }
     }
 
+    fun saveUserFavoriteTopics(topics: Set<String>) {
+        prefs?.edit(commit = true) {
+            putStringSet(Constants.USER_TOPICS, topics)
+        }
+    }
+
+    fun saveClientFavoriteTopics(topics: Set<String>) {
+        prefs?.edit(commit = true) {
+            putStringSet(Constants.CLIENT_TOPICS, topics)
+        }
+    }
+
     fun getUserAccessToken() = prefs?.getString(Constants.USER_ACCESS_TOKEN, "")
     fun getUserRefreshToken() = prefs?.getString(Constants.USER_REFRESH_TOKEN, "")
     fun getClientAccessToken() = prefs?.getString(Constants.CLIENT_ACCESS_TOKEN, "")
+    fun getUserFavoriteTopics() = prefs?.getStringSet(Constants.USER_TOPICS, null)
+    fun getClientFavoriteTopics() = prefs?.getStringSet(Constants.CLIENT_TOPICS, null)
 
+    /**
+     * Clear all preferences
+     */
     fun clearPrefs() {
         prefs?.edit(commit = true) {
             clear()
+        }
+    }
+
+    /**
+     * Clear all access/refresh tokens
+     */
+    fun clearTokens() {
+        prefs?.edit(commit = true) {
+            remove(Constants.USER_ACCESS_TOKEN)
+            remove(Constants.USER_REFRESH_TOKEN)
+            remove(Constants.CLIENT_ACCESS_TOKEN)
+        }
+    }
+
+
+    /**
+     * remove a designated preference
+     */
+    fun removePreference(key: String) {
+        prefs?.edit(commit = true) {
+            remove(key)
         }
     }
 }
