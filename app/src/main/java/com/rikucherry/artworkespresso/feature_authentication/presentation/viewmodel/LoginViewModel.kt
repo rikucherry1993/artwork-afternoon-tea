@@ -54,8 +54,8 @@ class LoginViewModel @AssistedInject constructor(
                         message = result.data.accessToken
                     )
                     prefs.clearTokens()
-                    prefs.saveUserAccessToken(result.data!!.accessToken)
-                    prefs.saveUserRefreshToken(result.data!!.refreshToken)
+                    prefs.saveUserAccessToken(result.data.accessToken)
+                    prefs.saveUserRefreshToken(result.data.refreshToken)
                 }
 
                 is Resource.Loading -> {

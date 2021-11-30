@@ -2,9 +2,11 @@ package com.rikucherry.artworkespresso.di
 
 import android.app.Application
 import android.content.Context
+import androidx.room.Room
 import com.rikucherry.artworkespresso.ISecrets
 import com.rikucherry.artworkespresso.Secrets
 import com.rikucherry.artworkespresso.common.Constants
+import com.rikucherry.artworkespresso.common.database.ArtworkEspressoDatabase
 import com.rikucherry.artworkespresso.common.tool.SharedPreferenceHelper
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.AuthenticationApiService
 import com.rikucherry.artworkespresso.feature_authentication.data.repository.AuthenticationRepository
@@ -56,5 +58,15 @@ object AppModule {
     @Singleton
     fun providesSecrets() : ISecrets {
         return Secrets()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDatabase(application: Application): ArtworkEspressoDatabase {
+        return Room.databaseBuilder(
+            application,
+            ArtworkEspressoDatabase::class.java,
+            ArtworkEspressoDatabase.DATABASE_NAME
+        ).build()
     }
 }
