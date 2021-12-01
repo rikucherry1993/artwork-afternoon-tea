@@ -3,7 +3,9 @@ package com.rikucherry.artworkespresso.feature_authentication.presentation.viewm
 import com.rikucherry.artworkespresso.FakeSecrets
 import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.common.tool.SharedPreferenceHelper
+import com.rikucherry.artworkespresso.feature_authentication.data.local.data_source.LoginStatus
 import com.rikucherry.artworkespresso.feature_authentication.domain.repository.FakeAuthenticationRepositoryImpl
+import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.GetLoginInfoUseCase
 import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.UserLoginUseCase
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
@@ -22,13 +24,15 @@ class EntranceViewModelTest {
     private val repository = FakeAuthenticationRepositoryImpl()
 
     private lateinit var userLoginUseCase: UserLoginUseCase
+    private lateinit var getLoginInfoUseCase: GetLoginInfoUseCase
     private lateinit var viewModel: EntranceViewModel
     private val prefHelper = mockk<SharedPreferenceHelper>(relaxed = true)
 
     @Before
     fun setup() {
         userLoginUseCase = UserLoginUseCase(repository, secrets)
-        viewModel = EntranceViewModel(userLoginUseCase, prefHelper)
+        getLoginInfoUseCase = GetLoginInfoUseCase(repository)
+        viewModel = EntranceViewModel(userLoginUseCase,getLoginInfoUseCase, prefHelper)
     }
 
     @Test
@@ -130,6 +134,16 @@ class EntranceViewModelTest {
         val result = viewModel.getClientTopics()
         //Then
         assertTrue(result is MutableSet<String>)
+    }
+
+    @Test
+    fun `GetLoginStatus_userLoggedIn_stateChangesToUserLoggedIn`() {
+        //Given
+        //When
+        viewModel.getLoginStatus()
+        val result = viewModel.state.value.data
+        //Then
+        assertEquals(LoginStatus.USER_LOGGED_IN, result)
     }
 
 }

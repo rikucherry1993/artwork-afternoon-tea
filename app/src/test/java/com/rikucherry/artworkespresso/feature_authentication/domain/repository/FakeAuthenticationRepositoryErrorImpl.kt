@@ -1,5 +1,6 @@
 package com.rikucherry.artworkespresso.feature_authentication.domain.repository
 
+import com.rikucherry.artworkespresso.feature_authentication.data.local.data_source.LoginInfoItem
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.data_source.ClientTokenResponseDto
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.data_source.UserTokenResponseDto
 import com.rikucherry.artworkespresso.feature_authentication.data.repository.AuthenticationRepository
@@ -12,6 +13,24 @@ import okhttp3.ResponseBody.Companion.toResponseBody
  * For error responses
  */
 class FakeAuthenticationRepositoryErrorImpl : AuthenticationRepository {
+
+    override suspend fun getLoginInfo(): LoginInfoItem? {
+        return LoginInfoItem(
+            id = 1,
+            userId = "test",
+            userName = "test",
+            userIconUrl = "test.png",
+            status = 5
+        )
+    }
+
+    override suspend fun insertLogInfo(loginInfoItem: LoginInfoItem) {
+        //Todo
+    }
+
+    override suspend fun truncateLoginInfo() {
+        //Todo
+    }
 
     /**
      * Mock up an error response from getUserAccessToken Api

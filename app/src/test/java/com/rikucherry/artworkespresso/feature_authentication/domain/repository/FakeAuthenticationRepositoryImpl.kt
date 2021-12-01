@@ -1,6 +1,7 @@
 package com.rikucherry.artworkespresso.feature_authentication.domain.repository
 
 import com.rikucherry.artworkespresso.common.Constants
+import com.rikucherry.artworkespresso.feature_authentication.data.local.data_source.LoginInfoItem
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.data_source.ClientTokenResponseDto
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.data_source.UserTokenResponseDto
 import com.rikucherry.artworkespresso.feature_authentication.data.repository.AuthenticationRepository
@@ -12,6 +13,33 @@ import com.skydoves.sandwich.ApiResponse
  * For successful responses
  */
 class FakeAuthenticationRepositoryImpl : AuthenticationRepository {
+
+    /**
+     * Mock up getting login info successfully
+     */
+    override suspend fun getLoginInfo(): LoginInfoItem? {
+        return LoginInfoItem(
+            id = 1,
+            userId = "test",
+            userName = "test",
+            userIconUrl = "test.png",
+            status = 2
+        )
+    }
+
+    /**
+     * Mock up inserting login info successfully
+     */
+    override suspend fun insertLogInfo(loginInfoItem: LoginInfoItem) {
+        //Todo
+    }
+
+    /**
+     * Mock up truncating login info successfully
+     */
+    override suspend fun truncateLoginInfo() {
+        //Todo
+    }
 
     /**
      * Mock up a successful response from getUserAccessToken Api

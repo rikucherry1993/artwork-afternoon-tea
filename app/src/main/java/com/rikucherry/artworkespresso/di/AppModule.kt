@@ -49,9 +49,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesAuthenticationRepository(authApi: AuthenticationApiService)
+    fun providesAuthenticationRepository(
+        database: ArtworkEspressoDatabase,
+        authApi: AuthenticationApiService)
             : AuthenticationRepository {
-        return AuthenticationRepositoryImpl(authApi)
+        return AuthenticationRepositoryImpl(database.loginInfoDao(), authApi)
     }
 
     @Provides

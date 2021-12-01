@@ -16,6 +16,7 @@ import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.common.component.MenuButtonPrimary
 import com.rikucherry.artworkespresso.common.component.MenuButtonSecondary
 import com.rikucherry.artworkespresso.common.theme.ArtworkEspressoTheme
+import com.rikucherry.artworkespresso.feature_authentication.data.local.data_source.LoginStatus
 import com.rikucherry.artworkespresso.feature_authentication.presentation.viewmodel.EntranceViewModel
 import com.rikucherry.artworkespresso.feature_daily_brief.presentation.DailyBriefActivity
 import com.rikucherry.artworkespresso.feature_topic_selection.presentation.TopicSelectionActivity
@@ -28,6 +29,7 @@ class EntranceActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.getLoginStatus()
 
         setContent {
             ArtworkEspressoTheme {
@@ -39,28 +41,48 @@ class EntranceActivity : ComponentActivity() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        MenuButtonPrimary(
-                            buttonDescription = "Login in with Deviant Art",
-                        ) {
-                            val state = (application as ArtworkEspressoApplication).state
-                            val isTopicEmpty = viewModel.getUserTopics()?.isEmpty() ?: true
-                            val intent = Intent(Intent.ACTION_VIEW).apply {
-                                this.data = viewModel.formAuthorizeUri(state, isTopicEmpty)
-                            }
-                            startActivity(intent)
-                        }
-                        Spacer(modifier = Modifier.height(32.dp))
-                        MenuButtonSecondary(
-                            buttonDescription = "Start Trail Now"
-                        ) {
-                            val isTopicEmpty = viewModel.getClientTopics()?.isEmpty() ?:true
-                            intent = if (isTopicEmpty) {
-                                Intent(this@EntranceActivity, TopicSelectionActivity::class.java)
-                            } else {
+                        val state = viewModel.state.value
+                        if (state.isLoading) {
+                            //Todo: replace with animation
+
+                        } else if (state.data == LoginStatus.USER_LOGGED_IN || state.data == LoginStatus.CLIENT_LOGGED_IN) {
+                            val intent =
                                 Intent(this@EntranceActivity, DailyBriefActivity::class.java)
-                            }
-                            intent.putExtra(Constants.IS_FREE_TRAIL, true)
+                            val isTrail = state.data == LoginStatus.CLIENT_LOGGED_IN
+                            intent.putExtra(Constants.IS_FREE_TRAIL, isTrail)
                             startActivity(intent)
+
+                        } else {
+                            MenuButtonPrimary(
+                                buttonDescription = "Login in with Deviant Art",
+                            ) {
+                                val state = (application as ArtworkEspressoApplication).state
+                                val isTopicEmpty = viewModel.getUserTopics()?.isEmpty() ?: true
+                                val intent = Intent(Intent.ACTION_VIEW).apply {
+                                    this.data = viewModel.formAuthorizeUri(state, isTopicEmpty)
+                                }
+                                startActivity(intent)
+                            }
+                            Spacer(modifier = Modifier.height(32.dp))
+                            MenuButtonSecondary(
+                                buttonDescription = "Start Trail Now"
+                            ) {
+                                val isTopicEmpty =
+                                    viewModel.getClientTopics()?.isEmpty() ?: true
+                                intent = if (isTopicEmpty) {
+                                    Intent(
+                                        this@EntranceActivity,
+                                        TopicSelectionActivity::class.java
+                                    )
+                                } else {
+                                    Intent(
+                                        this@EntranceActivity,
+                                        DailyBriefActivity::class.java
+                                    )
+                                }
+                                intent.putExtra(Constants.IS_FREE_TRAIL, true)
+                                startActivity(intent)
+                            }
                         }
                     }
                 }
