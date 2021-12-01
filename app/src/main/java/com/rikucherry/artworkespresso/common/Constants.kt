@@ -22,6 +22,9 @@ object Constants {
     const val USER_ACCESS_TOKEN = "user_access_token"
     const val USER_REFRESH_TOKEN = "user_refresh_token"
     const val CLIENT_ACCESS_TOKEN = "client_access_token"
+    const val USER_TOPICS = "user_topics"
+    const val CLIENT_TOPICS = "user_topics"
+
     //Assisted inject arguments
     const val AUTH_INTENT = "auth_intent"
     const val AUTH_STATE = "auth_state"

@@ -1,4 +1,4 @@
-package com.rikucherry.artworkespresso.feature_authentication.presentation
+package com.rikucherry.artworkespresso.feature_topic_selection.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

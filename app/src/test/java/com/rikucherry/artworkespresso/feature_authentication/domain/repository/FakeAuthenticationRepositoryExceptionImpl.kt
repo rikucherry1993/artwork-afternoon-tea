@@ -1,5 +1,7 @@
 package com.rikucherry.artworkespresso.feature_authentication.domain.repository
 
+import android.database.SQLException
+import com.rikucherry.artworkespresso.feature_authentication.data.local.data_source.LoginInfoItem
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.data_source.ClientTokenResponseDto
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.data_source.UserTokenResponseDto
 import com.rikucherry.artworkespresso.feature_authentication.data.repository.AuthenticationRepository
@@ -12,6 +14,18 @@ import java.io.IOException
  * For exceptions
  */
 class FakeAuthenticationRepositoryExceptionImpl : AuthenticationRepository {
+
+    override suspend fun getLoginInfo(): LoginInfoItem? {
+        throw SQLException("Throw new SQL exception")
+    }
+
+    override suspend fun insertLogInfo(loginInfoItem: LoginInfoItem) {
+        throw SQLException("Throw new SQL exception")
+    }
+
+    override suspend fun truncateLoginInfo() {
+        throw SQLException("Throw new SQL exception")
+    }
 
     /**
      * Mock up an exception response from getUserAccessToken Api

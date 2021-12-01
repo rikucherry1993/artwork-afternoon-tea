@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".feature_authentication.presentation.TopicSelectionActivity"
+            android:name=".feature_topic_selection.presentation.TopicSelectionActivity"
             android:exported="true"
             android:launchMode="singleTask"
             >
@@ -38,7 +38,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".feature_authentication.presentation.DailyBriefActivity"
+            android:name=".feature_daily_brief.presentation.DailyBriefActivity"
             android:exported="true"
             android:launchMode="singleTask"
             >
