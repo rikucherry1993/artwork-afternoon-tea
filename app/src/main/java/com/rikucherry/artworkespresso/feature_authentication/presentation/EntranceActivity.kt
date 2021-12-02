@@ -10,8 +10,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.rikucherry.artworkespresso.ArtworkEspressoApplication
+import com.rikucherry.artworkespresso.R
 import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.common.component.MenuButtonPrimary
 import com.rikucherry.artworkespresso.common.component.MenuButtonSecondary
@@ -57,7 +59,7 @@ class EntranceActivity : ComponentActivity() {
                             }
                             else -> {
                                 MenuButtonPrimary(
-                                    buttonDescription = "Login in with Deviant Art",
+                                    buttonDescription = stringResource(R.string.button_primary_text),
                                 ) {
                                     val state = (application as ArtworkEspressoApplication).state
                                     val isTopicEmpty = viewModel.getUserTopics()?.isEmpty() ?: true
@@ -68,7 +70,7 @@ class EntranceActivity : ComponentActivity() {
                                 }
                                 Spacer(modifier = Modifier.height(32.dp))
                                 MenuButtonSecondary(
-                                    buttonDescription = "Start Trail Now"
+                                    buttonDescription = stringResource(R.string.button_secondary_text)
                                 ) {
                                     val isTopicEmpty =
                                         viewModel.getClientTopics()?.isEmpty() ?: true
