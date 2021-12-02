@@ -38,8 +38,7 @@ class EntranceViewModel @Inject constructor(
             when(result) {
               is LocalResource.Loading -> {
                   _state.value = ViewModelState(
-                      isLoading = true,
-                      message = result.message
+                      isLoading = true
                   )
               }
 
@@ -54,14 +53,14 @@ class EntranceViewModel @Inject constructor(
                   _state.value = ViewModelState(
                       isLoading = false,
                       data = result.data?.getStatus(),
-                      message = result.message
+                      error = result.message
                   )
               }
 
               is LocalResource.Exception -> {
                   _state.value = ViewModelState(
                       isLoading = false,
-                      message = result.message
+                      error = result.message
                   )
               }
             }

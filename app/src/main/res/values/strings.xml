@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Artwork Espresso</string>
     <string name="title_activity_callback">CallbackActivity</string>
+
+    <string name="button_primary_text">Login in with Deviant Art</string>
+    <string name="button_secondary_text">Start Trail Now</string>
 </resources>

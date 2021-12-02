@@ -9,7 +9,7 @@ interface AuthenticationRepository {
 
     suspend fun getLoginInfo(): LoginInfoItem?
 
-    suspend fun insertLogInfo(loginInfoItem: LoginInfoItem)
+    suspend fun insertLoginInfo(loginInfoItem: LoginInfoItem)
 
     suspend fun truncateLoginInfo()
 
