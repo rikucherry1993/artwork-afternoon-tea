@@ -51,7 +51,6 @@ class LoginViewModel @AssistedInject constructor(
                         data = result.data.accessToken,
                         statusCode = result.statusCode.code,
                         status = result.statusCode,
-                        message = result.data.accessToken
                     )
                     prefs.clearTokens()
                     prefs.saveUserAccessToken(result.data.accessToken)
@@ -61,22 +60,24 @@ class LoginViewModel @AssistedInject constructor(
                 is Resource.Loading -> {
                     _state.value = ViewModelState(
                         isLoading = true,
-                        message = result.message
                     )
                 }
 
+                // in general, response code >= 400
                 is Resource.Error -> {
                     _state.value = ViewModelState(
                         isLoading = false,
                         statusCode = result.statusCode.code,
                         status = result.statusCode,
-                        message = result.message
+                        error = result.message
                     )
                 }
+
+                // caught exceptions
                 is Resource.Exception -> {
                     _state.value = ViewModelState(
                         isLoading = false,
-                        message = result.message
+                        error = result.message
                     )
                 }
             }
@@ -92,7 +93,6 @@ class LoginViewModel @AssistedInject constructor(
                         data = result.data.accessToken,
                         statusCode = result.statusCode.code,
                         status = result.statusCode,
-                        message = result.data.accessToken
                     )
                     prefs.clearTokens()
                     prefs.saveClientAccessToken(result.data.accessToken)
@@ -101,7 +101,6 @@ class LoginViewModel @AssistedInject constructor(
                 is Resource.Loading -> {
                     _state.value = ViewModelState(
                         isLoading = true,
-                        message = result.message
                     )
                 }
 
@@ -110,14 +109,14 @@ class LoginViewModel @AssistedInject constructor(
                         isLoading = false,
                         statusCode = result.statusCode.code,
                         status = result.statusCode,
-                        message = result.message
+                        error = result.message
                     )
                 }
 
                 is Resource.Exception -> {
                     _state.value = ViewModelState(
                         isLoading = false,
-                        message = result.message
+                        error = result.message
                     )
                 }
             }

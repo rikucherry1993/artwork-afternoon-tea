@@ -55,8 +55,7 @@ class LoginViewModelTest {
             isLoading = false,
             data = "fake access token",
             statusCode = 200,
-            status = StatusCode.OK,
-            message = "fake access token"
+            status = StatusCode.OK
         )
         val state = SUT.state.value
 
@@ -92,7 +91,7 @@ class LoginViewModelTest {
             expectedState.isLoading == state.isLoading
                     && expectedState.statusCode == state.statusCode
                     && expectedState.status == state.status
-                    && state.message != null //Might change the message
+                    && state.error != null
         )
     }
 
@@ -115,7 +114,7 @@ class LoginViewModelTest {
         //Then
         val expectedState = ViewModelState<String>(
             isLoading = false,
-            message = "Throw new IO exception"
+            error = "Throw new IO exception"
         )
         val state = SUT.state.value
 
@@ -145,7 +144,6 @@ class LoginViewModelTest {
             data = "fake access token",
             statusCode = 200,
             status = StatusCode.OK,
-            message = "fake access token"
         )
         val state = SUT.state.value
 
@@ -181,7 +179,7 @@ class LoginViewModelTest {
             expectedState.isLoading == state.isLoading
                     && expectedState.statusCode == state.statusCode
                     && expectedState.status == state.status
-                    && state.message != null //Might change the message
+                    && state.error != null //Might change the message
         )
     }
 
@@ -205,7 +203,7 @@ class LoginViewModelTest {
         //Then
         val expectedState = ViewModelState<String>(
             isLoading = false,
-            message = "Throw new IO exception"
+            error = "Throw new IO exception"
         )
         val state = SUT.state.value
 
