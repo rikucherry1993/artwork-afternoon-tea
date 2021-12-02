@@ -19,8 +19,8 @@ class AuthenticationRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun insertLogInfo(loginInfoItem: LoginInfoItem) {
-        return loginInfoDao.insertLogInfo(loginInfoItem)
+    override suspend fun insertLoginInfo(loginInfoItem: LoginInfoItem) {
+        return loginInfoDao.insertLoginInfo(loginInfoItem)
     }
 
 

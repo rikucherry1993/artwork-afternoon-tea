@@ -13,7 +13,7 @@ interface LoginInfoDao {
     suspend fun getLoginInfo(): LoginInfoItem?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertLogInfo(loginInfoItem: LoginInfoItem)
+    suspend fun insertLoginInfo(loginInfoItem: LoginInfoItem)
 
     @Query("DELETE FROM login_info")
     suspend fun truncateLoginInfo()

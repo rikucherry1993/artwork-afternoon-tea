@@ -19,7 +19,7 @@ class FakeAuthenticationRepositoryExceptionImpl : AuthenticationRepository {
         throw SQLException("Throw new SQL exception")
     }
 
-    override suspend fun insertLogInfo(loginInfoItem: LoginInfoItem) {
+    override suspend fun insertLoginInfo(loginInfoItem: LoginInfoItem) {
         throw SQLException("Throw new SQL exception")
     }
 

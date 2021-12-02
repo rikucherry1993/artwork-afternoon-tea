@@ -24,7 +24,7 @@ class FakeAuthenticationRepositoryErrorImpl : AuthenticationRepository {
         )
     }
 
-    override suspend fun insertLogInfo(loginInfoItem: LoginInfoItem) {
+    override suspend fun insertLoginInfo(loginInfoItem: LoginInfoItem) {
         //Todo
     }
 

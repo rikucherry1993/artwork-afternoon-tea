@@ -30,7 +30,7 @@ class FakeAuthenticationRepositoryImpl : AuthenticationRepository {
     /**
      * Mock up inserting login info successfully
      */
-    override suspend fun insertLogInfo(loginInfoItem: LoginInfoItem) {
+    override suspend fun insertLoginInfo(loginInfoItem: LoginInfoItem) {
         //Todo
     }
 
