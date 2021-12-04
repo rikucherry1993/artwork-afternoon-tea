@@ -15,9 +15,11 @@ import androidx.compose.ui.unit.dp
 import com.rikucherry.artworkespresso.ArtworkEspressoApplication
 import com.rikucherry.artworkespresso.R
 import com.rikucherry.artworkespresso.common.Constants
+import com.rikucherry.artworkespresso.common.component.LineLoader
 import com.rikucherry.artworkespresso.common.component.MenuButtonPrimary
 import com.rikucherry.artworkespresso.common.component.MenuButtonSecondary
 import com.rikucherry.artworkespresso.common.theme.ArtworkEspressoTheme
+import com.rikucherry.artworkespresso.common.theme.Purple100
 import com.rikucherry.artworkespresso.feature_authentication.data.local.data_source.LoginStatus
 import com.rikucherry.artworkespresso.feature_authentication.presentation.viewmodel.EntranceViewModel
 import com.rikucherry.artworkespresso.feature_daily_brief.presentation.DailyBriefActivity
@@ -46,8 +48,9 @@ class EntranceActivity : ComponentActivity() {
                         val state = viewModel.state.value
                         when {
                             state.isLoading -> {
-                                //Todo: replace with animation
-
+                                LineLoader(
+                                    backgroundColor = Purple100
+                                )
                             }
                             state.error.isNullOrEmpty() -> {
                                 val intent =
