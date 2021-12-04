@@ -14,6 +14,7 @@ import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.Use
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,6 +41,7 @@ class EntranceViewModel @Inject constructor(
                   _state.value = ViewModelState(
                       isLoading = true
                   )
+                  Timber.d(result.message)
               }
 
               is LocalResource.Success -> {
@@ -47,6 +49,7 @@ class EntranceViewModel @Inject constructor(
                       isLoading = false,
                       data = result.data.getStatus()
                   )
+                  Timber.d("Loading login info succeeded. \nData: ${result.data}")
               }
 
               is LocalResource.Fail -> {
@@ -55,6 +58,7 @@ class EntranceViewModel @Inject constructor(
                       data = result.data?.getStatus(),
                       error = result.message
                   )
+                  Timber.d("Loading login info failed. \nMessage: ${result.message}")
               }
 
               is LocalResource.Exception -> {
@@ -62,6 +66,7 @@ class EntranceViewModel @Inject constructor(
                       isLoading = false,
                       error = result.message
                   )
+                  Timber.d("Exception occurred. \nMessage: ${result.message}")
               }
             }
         }.launchIn(viewModelScope)

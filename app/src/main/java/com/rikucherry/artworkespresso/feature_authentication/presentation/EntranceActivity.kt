@@ -52,13 +52,19 @@ class EntranceActivity : ComponentActivity() {
                                     backgroundColor = Purple100
                                 )
                             }
-                            state.error.isNullOrEmpty() -> {
+                            state.data == LoginStatus.USER_LOGGED_IN -> {
                                 val intent =
                                     Intent(this@EntranceActivity, DailyBriefActivity::class.java)
-                                val isTrail = state.data == LoginStatus.CLIENT_LOGGED_IN
-                                intent.putExtra(Constants.IS_FREE_TRAIL, isTrail)
+                                intent.putExtra(Constants.IS_FREE_TRAIL, false)
                                 startActivity(intent)
-
+                                finish()
+                            }
+                            state.data == LoginStatus.CLIENT_LOGGED_IN -> {
+                                val intent =
+                                    Intent(this@EntranceActivity, DailyBriefActivity::class.java)
+                                intent.putExtra(Constants.IS_FREE_TRAIL, true)
+                                startActivity(intent)
+                                finish()
                             }
                             else -> {
                                 MenuButtonPrimary(
