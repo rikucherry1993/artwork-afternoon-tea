@@ -76,6 +76,7 @@ class EntranceActivity : ComponentActivity() {
                                         this.data = viewModel.formAuthorizeUri(state, isTopicEmpty)
                                     }
                                     startActivity(intent)
+                                    finish()
                                 }
                                 Spacer(modifier = Modifier.height(32.dp))
                                 MenuButtonSecondary(
@@ -96,6 +97,7 @@ class EntranceActivity : ComponentActivity() {
                                     }
                                     intent.putExtra(Constants.IS_FREE_TRAIL, true)
                                     startActivity(intent)
+                                    finish()
                                 }
                             }
                         }
