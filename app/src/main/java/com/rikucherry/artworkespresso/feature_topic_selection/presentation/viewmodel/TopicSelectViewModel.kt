@@ -8,7 +8,7 @@ import com.rikucherry.artworkespresso.common.tool.Resource
 import com.rikucherry.artworkespresso.common.tool.SharedPreferenceHelper
 import com.rikucherry.artworkespresso.common.tool.ViewModelState
 import com.rikucherry.artworkespresso.feature_topic_selection.data.remote.data_source.TopTopicsDto
-import com.rikucherry.artworkespresso.feature_topic_selection.domain.use_case.ClientSelectUseCase
+import com.rikucherry.artworkespresso.feature_topic_selection.domain.use_case.TopicSelectUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TopicSelectViewModel @Inject constructor(
-    private val clientSelectUseCase: ClientSelectUseCase,
+    private val topicSelectUseCase: TopicSelectUseCase,
     private val prefs: SharedPreferenceHelper
 ) : ViewModel() {
 
@@ -33,7 +33,7 @@ class TopicSelectViewModel @Inject constructor(
             userToken
         } ?: ""
 
-        clientSelectUseCase(token).onEach { result ->
+        topicSelectUseCase(token).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
                     _state.value = ViewModelState(

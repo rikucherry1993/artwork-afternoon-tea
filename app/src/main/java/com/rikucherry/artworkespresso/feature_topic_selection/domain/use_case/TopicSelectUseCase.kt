@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class ClientSelectUseCase @Inject constructor(
+class TopicSelectUseCase @Inject constructor(
     private val topicSelectRepository: TopicSelectRepository
 ) {
 
