@@ -5,7 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth
-import com.rikucherry.artworkespresso.common.database.ArtworkEspressoDatabase
+import com.rikucherry.artworkespresso.common.data.local.ArtworkEspressoDatabase
 import com.rikucherry.artworkespresso.feature_authentication.data.local.data_source.LoginInfoItem
 import kotlinx.coroutines.runBlocking
 import org.junit.After

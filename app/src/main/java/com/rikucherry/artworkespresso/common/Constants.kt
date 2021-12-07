@@ -15,6 +15,7 @@ object Constants {
     //Auth type
     const val AUTH_RESPONSE_TYPE = "code"
     const val AUTH_VIEW = "login"
+    const val TOKEN_TYPE = "Bearer"
     //Grant type
     const val GRANT_TYPE_CLIENT = "client_credentials"
     const val GRANT_TYPE_AUTH_CODE = "authorization_code"
