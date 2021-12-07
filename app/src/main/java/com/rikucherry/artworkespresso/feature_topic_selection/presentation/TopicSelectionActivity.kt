@@ -66,7 +66,7 @@ class TopicSelectionActivity : ComponentActivity() {
                                 )
                             }
 
-                            loginState.error?.isNotEmpty() == true -> {
+                            loginState.error.isNotBlank() -> {
                                 val errorMessage = loginState.error
                                 //TODO: Temporary workaround
                                 Toast.makeText(this@TopicSelectionActivity,
