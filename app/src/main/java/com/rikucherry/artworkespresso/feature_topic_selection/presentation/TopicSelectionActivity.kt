@@ -1,6 +1,8 @@
 package com.rikucherry.artworkespresso.feature_topic_selection.presentation
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -13,8 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rikucherry.artworkespresso.ArtworkEspressoApplication
 import com.rikucherry.artworkespresso.common.Constants
+import com.rikucherry.artworkespresso.common.component.LineLoader
 import com.rikucherry.artworkespresso.common.theme.ArtworkEspressoTheme
+import com.rikucherry.artworkespresso.common.theme.Purple100
 import com.rikucherry.artworkespresso.common.tool.AssistedViewModel
+import com.rikucherry.artworkespresso.feature_authentication.presentation.EntranceActivity
 import com.rikucherry.artworkespresso.feature_authentication.presentation.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -24,19 +29,21 @@ class TopicSelectionActivity : ComponentActivity() {
 
     @Inject
     lateinit var callbackViewModelFactory: AssistedViewModel.AuthAssistedFactory
-    lateinit var viewModel : LoginViewModel
+    lateinit var loginViewModel : LoginViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val isFreeTrail = intent.getBooleanExtra(Constants.IS_FREE_TRAIL, false)
+
         val args = Bundle().apply {
-            this.putBoolean(Constants.IS_FREE_TRAIL,intent.getBooleanExtra(Constants.IS_FREE_TRAIL, false))
+            this.putBoolean(Constants.IS_FREE_TRAIL,isFreeTrail)
             this.putParcelable(Constants.AUTH_INTENT, intent)
             this.putString(Constants.AUTH_STATE, (application as ArtworkEspressoApplication).state)
             this.putBoolean(Constants.IS_TOPIC_EMPTY, true)
         }
 
-        viewModel = AssistedViewModel.provideFactory(callbackViewModelFactory, args).create(
+        loginViewModel = AssistedViewModel.provideFactory(callbackViewModelFactory, args).create(
             LoginViewModel::class.java)
 
         setContent {
@@ -49,11 +56,35 @@ class TopicSelectionActivity : ComponentActivity() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
+                        val loginState = loginViewModel.state.value
+
                         Text("This is topic selection")
-                        Text(text = viewModel.state.value.data ?: "")
+                        when {
+                            loginState.isLoading -> {
+                                LineLoader(
+                                    backgroundColor = Purple100
+                                )
+                            }
+
+                            loginState.error.isNotBlank() -> {
+                                val errorMessage = loginState.error
+                                //TODO: Temporary workaround
+                                Toast.makeText(this@TopicSelectionActivity,
+                                    "Authentication Error: $errorMessage", Toast.LENGTH_SHORT).show()
+                                startActivity(Intent(this@TopicSelectionActivity, EntranceActivity::class.java))
+                                finish()
+                            }
+
+                            else -> {
+                                //TODO: Navigate to a list screen
+                                TopTopicsScreen()
+                            }
+                        }
+
                     }
                 }
             }
         }
     }
+
 }

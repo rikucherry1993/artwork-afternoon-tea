@@ -70,12 +70,13 @@ class EntranceActivity : ComponentActivity() {
                                 MenuButtonPrimary(
                                     buttonDescription = stringResource(R.string.button_primary_text),
                                 ) {
-                                    val state = (application as ArtworkEspressoApplication).state
+                                    val requestState = (application as ArtworkEspressoApplication).state
                                     val isTopicEmpty = viewModel.getUserTopics()?.isEmpty() ?: true
                                     val intent = Intent(Intent.ACTION_VIEW).apply {
-                                        this.data = viewModel.formAuthorizeUri(state, isTopicEmpty)
+                                        this.data = viewModel.formAuthorizeUri(requestState, isTopicEmpty)
                                     }
                                     startActivity(intent)
+                                    finish()
                                 }
                                 Spacer(modifier = Modifier.height(32.dp))
                                 MenuButtonSecondary(
@@ -96,6 +97,7 @@ class EntranceActivity : ComponentActivity() {
                                     }
                                     intent.putExtra(Constants.IS_FREE_TRAIL, true)
                                     startActivity(intent)
+                                    finish()
                                 }
                             }
                         }

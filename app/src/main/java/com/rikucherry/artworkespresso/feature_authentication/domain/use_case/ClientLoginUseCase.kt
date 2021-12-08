@@ -31,7 +31,7 @@ class ClientLoginUseCase @Inject constructor(
         }.suspendOnError {
             emit(Resource.Error<ClientTokenResponse>(statusCode, toString()))
         }.suspendOnException {
-            emit(Resource.Exception<ClientTokenResponse>(message ?: "Undefined exception. "))
+            emit(Resource.Exception<ClientTokenResponse>(message ?: "Undefined exception."))
         }
 
     }

@@ -1,4 +1,4 @@
-package com.rikucherry.artworkespresso.common.database
+package com.rikucherry.artworkespresso.common.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
