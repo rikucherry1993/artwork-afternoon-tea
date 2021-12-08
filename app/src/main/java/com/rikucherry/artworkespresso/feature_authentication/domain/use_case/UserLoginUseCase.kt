@@ -19,7 +19,7 @@ import javax.inject.Inject
 class UserLoginUseCase @Inject constructor(
     private val authRepository: AuthenticationRepository,
     private val secrets: ISecrets
-    ) {
+) {
 
     fun formAuthorizeUri(state: String, isTopicEmpty: Boolean): Uri {
         return AuthenticationUtil.formAuthorizeUri(
@@ -40,25 +40,25 @@ class UserLoginUseCase @Inject constructor(
 
     operator fun invoke(authCode: String, isTopicEmpty: Boolean):
             Flow<Resource<UserTokenResponse>> = flow {
-            emit(Resource.Loading<UserTokenResponse>("Requesting access token..."))
-            val userTokenResponse = authRepository.getUserAccessToken(
-                clientId = secrets.getClientId(BuildConfig.APPLICATION_ID).toInt(),
-                clientSecret = secrets.getClientSecret(BuildConfig.APPLICATION_ID),
-                grantType = Constants.GRANT_TYPE_AUTH_CODE,
-                code = authCode,
-                redirectUri = Constants.REDIRECT_URI_SCHEME
-                        + if (isTopicEmpty) {
-                    Constants.REDIRECT_HOST_TOPIC
-                } else {
-                    Constants.REDIRECT_HOST_DAILY
-                }
-            )
-            userTokenResponse.suspendOnSuccess {
-                emit(Resource.Success(data.toUserTokenResponse(), statusCode, toString()))
-            }.suspendOnError {
-                emit(Resource.Error<UserTokenResponse>(statusCode, toString()))
-            }.suspendOnException {
-                emit(Resource.Exception<UserTokenResponse>(message ?: "Undefined exception."))
+        emit(Resource.Loading<UserTokenResponse>("Requesting access token..."))
+        val userTokenResponse = authRepository.getUserAccessToken(
+            clientId = secrets.getClientId(BuildConfig.APPLICATION_ID).toInt(),
+            clientSecret = secrets.getClientSecret(BuildConfig.APPLICATION_ID),
+            grantType = Constants.GRANT_TYPE_AUTH_CODE,
+            code = authCode,
+            redirectUri = Constants.REDIRECT_URI_SCHEME
+                    + if (isTopicEmpty) {
+                Constants.REDIRECT_HOST_TOPIC
+            } else {
+                Constants.REDIRECT_HOST_DAILY
             }
+        )
+        userTokenResponse.suspendOnSuccess {
+            emit(Resource.Success(data.toUserTokenResponse(), statusCode, toString()))
+        }.suspendOnError {
+            emit(Resource.Error<UserTokenResponse>(statusCode, toString()))
+        }.suspendOnException {
+            emit(Resource.Exception<UserTokenResponse>(message ?: "Undefined exception."))
+        }
     }
 }

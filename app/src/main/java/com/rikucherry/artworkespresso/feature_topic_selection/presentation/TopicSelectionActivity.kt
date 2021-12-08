@@ -77,6 +77,7 @@ class TopicSelectionActivity : ComponentActivity() {
 
                             else -> {
                                 //TODO: Navigate to a list screen
+                                TopTopicsScreen()
                             }
                         }
 

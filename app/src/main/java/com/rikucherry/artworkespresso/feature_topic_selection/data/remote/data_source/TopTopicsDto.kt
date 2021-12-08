@@ -12,3 +12,8 @@ data class TopTopicsDto(
     @SerializedName("name")
     val name: String
 )
+
+data class TopTopicListDto(
+    @SerializedName("results")
+    val results: List<TopTopicsDto>
+)

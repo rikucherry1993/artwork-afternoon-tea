@@ -5,7 +5,7 @@ object Constants {
     //API url
     const val BASE_URL = "https://www.deviantart.com"
     const val BASE_AUTH_PATH = "/oauth2/authorize"
-    const val BASE_API_PATH = "/api/v1/oauth2"
+    const val BASE_API_PATH = "/api/v1/oauth2/"
     const val REDIRECT_URI_SCHEME = "com.rikucherry.artworkespresso.oauth://"
     const val REDIRECT_HOST_TOPIC = "topic"
     const val REDIRECT_HOST_DAILY = "daily"

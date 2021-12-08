@@ -23,7 +23,11 @@ class TopicSelectViewModel @Inject constructor(
     private val _state = mutableStateOf(ViewModelState<List<TopTopicsDto>>())
     val state: State<ViewModelState<List<TopTopicsDto>>> = _state
 
-    fun getTopTopics() {
+    init {
+        getTopTopics()
+    }
+
+    private fun getTopTopics() {
         val userToken = prefs.getUserAccessToken()
         val clientToken = prefs.getClientAccessToken()
 

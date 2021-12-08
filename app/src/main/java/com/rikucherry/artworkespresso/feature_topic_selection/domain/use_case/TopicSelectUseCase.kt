@@ -19,7 +19,7 @@ class TopicSelectUseCase @Inject constructor(
         val topTopicsResponse = topicSelectRepository.getTopTopics(token)
 
         topTopicsResponse.suspendOnSuccess {
-            emit(Resource.Success<List<TopTopicsDto>>(data, statusCode))
+            emit(Resource.Success<List<TopTopicsDto>>(data.results, statusCode))
         }.suspendOnError {
             emit(Resource.Error<List<TopTopicsDto>>(statusCode, toString()))
         }.suspendOnException {
