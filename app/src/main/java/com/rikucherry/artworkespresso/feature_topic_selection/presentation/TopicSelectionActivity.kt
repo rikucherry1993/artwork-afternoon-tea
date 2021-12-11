@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.rikucherry.artworkespresso.ArtworkEspressoApplication
@@ -57,8 +56,6 @@ class TopicSelectionActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.Center
                     ) {
                         val loginState = loginViewModel.state.value
-
-                        Text("This is topic selection")
                         when {
                             loginState.isLoading -> {
                                 LineLoader(
@@ -76,7 +73,6 @@ class TopicSelectionActivity : ComponentActivity() {
                             }
 
                             else -> {
-                                //TODO: Navigate to a list screen
                                 TopTopicsScreen()
                             }
                         }
