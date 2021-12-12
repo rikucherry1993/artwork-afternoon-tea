@@ -13,3 +13,7 @@ val BackgroundPrimary = Color(0xFF121212)
 //Purple
 val Purple50 = Color(0xFFF3E5F5)
 val Purple100 = Color(0xFFE1BEE7)
+val PurplePrimary = Color(0xFFD0AAFF)
+
+//Gray
+val GrayParagraph = Color(0xFFE6E6E6)
