@@ -2,8 +2,6 @@ package com.rikucherry.artworkespresso.feature_topic_selection.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,7 +40,7 @@ fun TopTopicsScreen(
             headingLevel = HeadingLevel.PRIMARY,
             paddingTop = 32.dp,
             paddingBottom = 8.dp
-            )
+        )
         HeadingText(
             text = "Follow up to 3 topics",
             headingLevel = HeadingLevel.SECONDARY,
@@ -52,11 +50,12 @@ fun TopTopicsScreen(
 
 
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            
+            TopicsColumn(data = leftColData)
+            TopicsColumn(data = rightColData)
         }
-
 
         if (state.error.isNotBlank()) {
             //TODO: Temporary workaround
@@ -73,27 +72,26 @@ fun TopTopicsScreen(
 }
 
 @Composable
-fun LazyTopicColumn(data: List<TopTopicsDto>) {
-    LazyColumn {
-        items(data) { result ->
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Image(
-                    painter = rememberImagePainter(
-                        data = result.exampleDeviations?.get(0)?.content?.src ?: "",
-                        builder = {
-                            transformations(CircleCropTransformation())
-                            placeholder(drawableResId = R.drawable.placeholder_topics)
-                        }
-                    ),
-                    contentDescription = null,
-                    modifier = Modifier.size(128.dp)
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                Text(result.name)
-            }
+fun TopicsColumn(data: List<TopTopicsDto>) {
+    Column(
+        modifier = Modifier.fillMaxHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        data.forEach { result ->
+            Image(
+                painter = rememberImagePainter(
+                    data = result.exampleDeviations?.get(0)?.content?.src ?: "",
+                    builder = {
+                        transformations(CircleCropTransformation())
+                        placeholder(drawableResId = R.drawable.placeholder_topics)
+                    }
+                ),
+                contentDescription = null,
+                modifier = Modifier.size(128.dp)
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(result.name)
         }
+
     }
 }
