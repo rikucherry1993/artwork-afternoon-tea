@@ -26,10 +26,11 @@ fun MenuButtonPrimary(
     backgroundColor: Color = MaterialTheme.colors.primary,
     textColor: Color = ButtonTextPrimary,
     fontWeight: FontWeight = Bold,
+    enabled: Boolean = true,
     onclick: () -> Unit
 ) {
     Button(
-        enabled = true,
+        enabled = enabled,
         onClick = onclick,
         colors = ButtonDefaults.textButtonColors(
             backgroundColor = backgroundColor
@@ -60,10 +61,11 @@ fun MenuButtonSecondary(
     color: Color = MaterialTheme.colors.primary,
     strokeWidth: Dp = 2.dp,
     fontWeight: FontWeight = Bold,
+    enabled: Boolean = true,
     onclick: () -> Unit
 ) {
     OutlinedButton(
-        enabled = true,
+        enabled = enabled,
         onClick = onclick,
         border = BorderStroke(strokeWidth, color),
         modifier = Modifier

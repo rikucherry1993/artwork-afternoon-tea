@@ -24,19 +24,21 @@ val robotSlabFamily = FontFamily(
 )
 
 enum class HeadingLevel {
-    PRIMARY, SECONDARY, THIRD
+    PRIMARY, SECONDARY, THIRD, PARAGRAPH
 }
 
 val headTextSizeMap = mutableMapOf(
     HeadingLevel.PRIMARY to 32.sp,
     HeadingLevel.SECONDARY to 24.sp,
-    HeadingLevel.THIRD to 18.sp
+    HeadingLevel.THIRD to 18.sp,
+    HeadingLevel.PARAGRAPH to 14.sp
 )
 
 val headTextWeightMap = mutableMapOf(
     HeadingLevel.PRIMARY to FontWeight.Bold,
     HeadingLevel.SECONDARY to FontWeight.Medium,
-    HeadingLevel.THIRD to FontWeight.Normal
+    HeadingLevel.THIRD to FontWeight.Normal,
+    HeadingLevel.PARAGRAPH to FontWeight.Normal
 )
 
 @Composable

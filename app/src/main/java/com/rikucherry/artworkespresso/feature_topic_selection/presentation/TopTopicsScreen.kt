@@ -2,6 +2,8 @@ package com.rikucherry.artworkespresso.feature_topic_selection.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,6 +16,7 @@ import com.rikucherry.artworkespresso.R
 import com.rikucherry.artworkespresso.common.component.HeadingLevel
 import com.rikucherry.artworkespresso.common.component.HeadingText
 import com.rikucherry.artworkespresso.common.component.LineLoader
+import com.rikucherry.artworkespresso.common.component.MenuButtonPrimary
 import com.rikucherry.artworkespresso.common.theme.GrayParagraph
 import com.rikucherry.artworkespresso.common.theme.Purple100
 import com.rikucherry.artworkespresso.feature_topic_selection.data.remote.data_source.TopTopicsDto
@@ -29,7 +32,7 @@ fun TopTopicsScreen(
     val leftColNum = dataSize - rightColNum
 
     val leftColData = state.data?.subList(0, leftColNum) ?: emptyList()
-    val rightColData = state.data?.subList(leftColNum - 1, dataSize) ?: emptyList()
+    val rightColData = state.data?.subList(leftColNum, dataSize) ?: emptyList()
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -42,19 +45,36 @@ fun TopTopicsScreen(
             paddingBottom = 8.dp
         )
         HeadingText(
-            text = "Follow up to 3 topics",
+            text = "Follow 1 favourite topic",
             headingLevel = HeadingLevel.SECONDARY,
             paddingBottom = 24.dp,
             color = GrayParagraph
         )
 
-
         Row(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(580.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             TopicsColumn(data = leftColData)
             TopicsColumn(data = rightColData)
+        }
+
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            MenuButtonPrimary(
+                buttonDescription = "Continue",
+                enabled = false, //TODO: change along with selection state
+                widthFraction = 0.9f,
+                height = 50.dp,
+                onclick = {
+                    //TODO: Save data & navigate to daily brief
+                }
+            )
         }
 
         if (state.error.isNotBlank()) {
@@ -74,7 +94,6 @@ fun TopTopicsScreen(
 @Composable
 fun TopicsColumn(data: List<TopTopicsDto>) {
     Column(
-        modifier = Modifier.fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         data.forEach { result ->
@@ -87,10 +106,15 @@ fun TopicsColumn(data: List<TopTopicsDto>) {
                     }
                 ),
                 contentDescription = null,
-                modifier = Modifier.size(128.dp)
+                modifier = Modifier.size(116.dp)
             )
             Spacer(modifier = Modifier.height(5.dp))
-            Text(result.name)
+            HeadingText(
+                text = result.name,
+                headingLevel = HeadingLevel.PARAGRAPH,
+                color = GrayParagraph,
+                paddingBottom = 5.dp
+                )
         }
 
     }
