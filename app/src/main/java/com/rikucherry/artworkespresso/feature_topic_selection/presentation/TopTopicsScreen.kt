@@ -1,17 +1,25 @@
 package com.rikucherry.artworkespresso.feature_topic_selection.presentation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
+import com.rikucherry.artworkespresso.R
+import com.rikucherry.artworkespresso.common.component.HeadingLevel
+import com.rikucherry.artworkespresso.common.component.HeadingText
 import com.rikucherry.artworkespresso.common.component.LineLoader
+import com.rikucherry.artworkespresso.common.component.MenuButtonPrimary
+import com.rikucherry.artworkespresso.common.theme.GrayParagraph
 import com.rikucherry.artworkespresso.common.theme.Purple100
+import com.rikucherry.artworkespresso.feature_topic_selection.data.remote.data_source.TopTopicsDto
 import com.rikucherry.artworkespresso.feature_topic_selection.presentation.viewmodel.TopicSelectViewModel
 
 @Composable
@@ -19,20 +27,54 @@ fun TopTopicsScreen(
     viewModel: TopicSelectViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
+    val dataSize: Int = state.data?.size ?: 0 //Number of topics
+    val rightColNum = dataSize / 2
+    val leftColNum = dataSize - rightColNum
 
-    Box(
+    val leftColData = state.data?.subList(0, leftColNum) ?: emptyList()
+    val rightColData = state.data?.subList(leftColNum, dataSize) ?: emptyList()
+
+    Column(
         modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        HeadingText(
+            text = "MENU",
+            headingLevel = HeadingLevel.PRIMARY,
+            paddingTop = 32.dp,
+            paddingBottom = 8.dp
+        )
+        HeadingText(
+            text = "Follow 1 favourite topic",
+            headingLevel = HeadingLevel.SECONDARY,
+            paddingBottom = 24.dp,
+            color = GrayParagraph
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(580.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            items(state.data ?: emptyList()) { result ->
-                Text(result.name)
-                //TODO: use glide to retrieve image
-                Text(result.exampleDeviations?.get(0)?.url ?: "")
-            }
+            TopicsColumn(data = leftColData)
+            TopicsColumn(data = rightColData)
+        }
+
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            MenuButtonPrimary(
+                buttonDescription = "Continue",
+                enabled = false, //TODO: change along with selection state
+                widthFraction = 0.9f,
+                height = 50.dp,
+                onclick = {
+                    //TODO: Save data & navigate to daily brief
+                }
+            )
         }
 
         if (state.error.isNotBlank()) {
@@ -47,5 +89,33 @@ fun TopTopicsScreen(
         }
     }
 
+}
 
+@Composable
+fun TopicsColumn(data: List<TopTopicsDto>) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        data.forEach { result ->
+            Image(
+                painter = rememberImagePainter(
+                    data = result.exampleDeviations?.get(0)?.content?.src ?: "",
+                    builder = {
+                        transformations(CircleCropTransformation())
+                        placeholder(drawableResId = R.drawable.placeholder_topics)
+                    }
+                ),
+                contentDescription = null,
+                modifier = Modifier.size(116.dp)
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            HeadingText(
+                text = result.name,
+                headingLevel = HeadingLevel.PARAGRAPH,
+                color = GrayParagraph,
+                paddingBottom = 5.dp
+                )
+        }
+
+    }
 }
