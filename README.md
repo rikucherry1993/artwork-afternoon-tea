@@ -1,4 +1,6 @@
 --- Draft ---
+## Prototype
+<img src="https://github.com/rikucherry1993/demo-images/blob/main/esprosso_prototype.gif" width="200" height="420">
 
 ## Installation
 ### 1. Get client ID & Secret 
