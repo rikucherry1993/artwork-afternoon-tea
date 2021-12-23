@@ -1,13 +1,16 @@
 package com.rikucherry.artworkespresso.feature_topic_selection.presentation
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
@@ -19,6 +22,7 @@ import com.rikucherry.artworkespresso.common.component.LineLoader
 import com.rikucherry.artworkespresso.common.component.MenuButtonPrimary
 import com.rikucherry.artworkespresso.common.theme.GrayParagraph
 import com.rikucherry.artworkespresso.common.theme.Purple100
+import com.rikucherry.artworkespresso.common.theme.Teal200
 import com.rikucherry.artworkespresso.feature_topic_selection.data.remote.data_source.TopTopicsDto
 import com.rikucherry.artworkespresso.feature_topic_selection.presentation.viewmodel.TopicSelectViewModel
 
@@ -38,6 +42,10 @@ fun TopTopicsScreen(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val selectedTopicState = remember {
+            mutableStateOf("")
+        }
+
         HeadingText(
             text = "MENU",
             headingLevel = HeadingLevel.PRIMARY,
@@ -58,8 +66,8 @@ fun TopTopicsScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            TopicsColumn(data = leftColData)
-            TopicsColumn(data = rightColData)
+            TopicsColumn(topics = leftColData, selectedTopicState)
+            TopicsColumn(topics = rightColData, selectedTopicState)
         }
 
         Box(
@@ -68,11 +76,12 @@ fun TopTopicsScreen(
         ) {
             MenuButtonPrimary(
                 buttonDescription = "Continue",
-                enabled = false, //TODO: change along with selection state
+                enabled = selectedTopicState.value.isNotEmpty(),
                 widthFraction = 0.9f,
                 height = 50.dp,
                 onclick = {
-                    //TODO: Save data & navigate to daily brief
+                    //TODO: Save login state
+                    viewModel.saveFavouriteTopic(selectedTopicState.value)
                 }
             )
         }
@@ -92,11 +101,15 @@ fun TopTopicsScreen(
 }
 
 @Composable
-fun TopicsColumn(data: List<TopTopicsDto>) {
+fun TopicsColumn(topics: List<TopTopicsDto>, selectedTopicState: MutableState<String>) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        data.forEach { result ->
+
+        topics.forEach { result ->
+
+            val isSelected =  result.name == selectedTopicState.value
+
             Image(
                 painter = rememberImagePainter(
                     data = result.exampleDeviations?.get(0)?.content?.src ?: "",
@@ -106,7 +119,19 @@ fun TopicsColumn(data: List<TopTopicsDto>) {
                     }
                 ),
                 contentDescription = null,
-                modifier = Modifier.size(116.dp)
+                modifier = Modifier
+                    .size(116.dp)
+                    .border(
+                        width = 5.dp,
+                        color = if (isSelected) Teal200 else Color.Transparent,
+                        shape = CircleShape
+                    ).clickable {
+                        if (result.name != selectedTopicState.value) {
+                            selectedTopicState.value = result.name
+                        } else {
+                            selectedTopicState.value = ""
+                        }
+                    }
             )
             Spacer(modifier = Modifier.height(5.dp))
             HeadingText(

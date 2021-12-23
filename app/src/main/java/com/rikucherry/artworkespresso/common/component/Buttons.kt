@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rikucherry.artworkespresso.common.theme.ButtonTextPrimary
+import com.rikucherry.artworkespresso.common.theme.GrayButtonNotEnabled
 
 @Composable
 fun MenuButtonPrimary(
@@ -33,7 +34,7 @@ fun MenuButtonPrimary(
         enabled = enabled,
         onClick = onclick,
         colors = ButtonDefaults.textButtonColors(
-            backgroundColor = backgroundColor
+            backgroundColor = if (enabled) backgroundColor else GrayButtonNotEnabled
         ),
         modifier = Modifier
             .fillMaxWidth(widthFraction)
