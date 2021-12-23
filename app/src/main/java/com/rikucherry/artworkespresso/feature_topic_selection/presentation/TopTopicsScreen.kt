@@ -1,6 +1,7 @@
 package com.rikucherry.artworkespresso.feature_topic_selection.presentation
 
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
@@ -108,7 +109,7 @@ fun TopicsColumn(topics: List<TopTopicsDto>, selectedTopicState: MutableState<St
 
         topics.forEach { result ->
 
-            val isSelected =  result.name == selectedTopicState.value
+            val isSelected = result.name == selectedTopicState.value
 
             Image(
                 painter = rememberImagePainter(
@@ -125,7 +126,11 @@ fun TopicsColumn(topics: List<TopTopicsDto>, selectedTopicState: MutableState<St
                         width = 5.dp,
                         color = if (isSelected) Teal200 else Color.Transparent,
                         shape = CircleShape
-                    ).clickable {
+                    )
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                    ) {
                         if (result.name != selectedTopicState.value) {
                             selectedTopicState.value = result.name
                         } else {
@@ -139,7 +144,7 @@ fun TopicsColumn(topics: List<TopTopicsDto>, selectedTopicState: MutableState<St
                 headingLevel = HeadingLevel.PARAGRAPH,
                 color = GrayParagraph,
                 paddingBottom = 5.dp
-                )
+            )
         }
 
     }
