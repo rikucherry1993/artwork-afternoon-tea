@@ -23,6 +23,9 @@ class TopicSelectViewModel @Inject constructor(
     private val _state = mutableStateOf(ViewModelState<List<TopTopicsDto>>())
     val state: State<ViewModelState<List<TopTopicsDto>>> = _state
 
+    private var isClient = false
+    private var token = ""
+
     init {
         getTopTopics()
     }
@@ -31,11 +34,13 @@ class TopicSelectViewModel @Inject constructor(
         val userToken = prefs.getUserAccessToken()
         val clientToken = prefs.getClientAccessToken()
 
-        val token = if (userToken.isNullOrEmpty()) {
-            clientToken
+       if (userToken.isNullOrEmpty()) {
+            token = clientToken ?: ""
+            isClient = true
         } else {
-            userToken
-        } ?: ""
+            token = userToken
+            isClient = false
+        }
 
         topicSelectUseCase(token).onEach { result ->
             when (result) {
@@ -71,6 +76,15 @@ class TopicSelectViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+
+    fun saveFavouriteTopic (topicName : String) {
+        if (isClient) {
+            prefs.saveClientFavoriteTopics(mutableSetOf(topicName))
+        } else {
+            prefs.saveUserFavoriteTopics(mutableSetOf(topicName))
+        }
     }
 
 }

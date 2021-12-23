@@ -80,7 +80,8 @@ fun TopTopicsScreen(
                 widthFraction = 0.9f,
                 height = 50.dp,
                 onclick = {
-                    //TODO: Save data & navigate to daily brief
+                    //TODO: Save login state
+                    viewModel.saveFavouriteTopic(selectedTopicState.value)
                 }
             )
         }

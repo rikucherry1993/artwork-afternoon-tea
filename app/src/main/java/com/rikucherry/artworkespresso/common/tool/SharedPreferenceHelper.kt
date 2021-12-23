@@ -37,6 +37,9 @@ class SharedPreferenceHelper @Inject constructor(
         }
     }
 
+    /**
+     * TODO: Still using a set because might increase max number of topics in the future
+     */
     fun saveUserFavoriteTopics(topics: MutableSet<String>) {
         prefs?.edit(commit = true) {
             putStringSet(Constants.USER_TOPICS, topics)
