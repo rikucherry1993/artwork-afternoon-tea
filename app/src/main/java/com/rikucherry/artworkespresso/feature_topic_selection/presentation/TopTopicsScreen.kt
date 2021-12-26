@@ -44,7 +44,8 @@ fun TopTopicsScreen(
     val rightColData = topicState.data?.subList(leftColNum, dataSize) ?: emptyList()
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val selectedTopicState = remember {
