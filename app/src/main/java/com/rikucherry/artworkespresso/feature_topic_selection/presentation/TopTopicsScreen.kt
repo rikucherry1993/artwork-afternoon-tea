@@ -26,18 +26,22 @@ import com.rikucherry.artworkespresso.common.theme.Purple100
 import com.rikucherry.artworkespresso.common.theme.Teal200
 import com.rikucherry.artworkespresso.feature_topic_selection.data.remote.data_source.TopTopicsDto
 import com.rikucherry.artworkespresso.feature_topic_selection.presentation.viewmodel.TopicSelectViewModel
+import com.skydoves.sandwich.StatusCode
 
 @Composable
 fun TopTopicsScreen(
     viewModel: TopicSelectViewModel = hiltViewModel()
 ) {
-    val state = viewModel.state.value
-    val dataSize: Int = state.data?.size ?: 0 //Number of topics
+    val topicState = viewModel.topicState.value
+    val userState = viewModel.userState.value
+    val loginInfoState = viewModel.loginInfoState.value
+
+    val dataSize: Int = topicState.data?.size ?: 0 //Number of topics
     val rightColNum = dataSize / 2
     val leftColNum = dataSize - rightColNum
 
-    val leftColData = state.data?.subList(0, leftColNum) ?: emptyList()
-    val rightColData = state.data?.subList(leftColNum, dataSize) ?: emptyList()
+    val leftColData = topicState.data?.subList(0, leftColNum) ?: emptyList()
+    val rightColData = topicState.data?.subList(leftColNum, dataSize) ?: emptyList()
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -81,21 +85,35 @@ fun TopTopicsScreen(
                 widthFraction = 0.9f,
                 height = 50.dp,
                 onclick = {
-                    //TODO: Save login state
-                    viewModel.saveFavouriteTopic(selectedTopicState.value)
+                    viewModel.insertLoginInfo()
                 }
             )
         }
 
-        if (state.error.isNotBlank()) {
+        if (topicState.error.isNotBlank()) {
             //TODO: Temporary workaround
-            Text(text = state.error)
+            Text(text = topicState.error)
         }
 
-        if (state.isLoading) {
+        if (userState.error.isNotBlank()) {
+            //TODO: Temporary workaround
+            Text(text = userState.error)
+        }
+
+        if (loginInfoState.error.isNotBlank()) {
+            //TODO: Temporary workaround
+            Text(text = loginInfoState.error)
+        }
+
+        if (topicState.isLoading || userState.isLoading || loginInfoState.isLoading) {
             LineLoader(
                 backgroundColor = Purple100
             )
+        }
+
+        if (loginInfoState.status == StatusCode.OK) {
+            viewModel.saveFavouriteTopic(selectedTopicState.value)
+            //TODO: Close this screen & move to daily brief activity
         }
     }
 

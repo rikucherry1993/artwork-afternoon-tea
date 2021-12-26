@@ -9,8 +9,11 @@ import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.common.data.local.ArtworkEspressoDatabase
 import com.rikucherry.artworkespresso.common.tool.SharedPreferenceHelper
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.AuthenticationApiService
+import com.rikucherry.artworkespresso.feature_authentication.data.remote.UserApiService
 import com.rikucherry.artworkespresso.feature_authentication.data.repository.AuthenticationRepository
+import com.rikucherry.artworkespresso.feature_authentication.data.repository.UserRepository
 import com.rikucherry.artworkespresso.feature_authentication.domain.repository.AuthenticationRepositoryImpl
+import com.rikucherry.artworkespresso.feature_authentication.domain.repository.UserRepositoryImpl
 import com.skydoves.sandwich.coroutines.CoroutinesResponseCallAdapterFactory
 import dagger.Module
 import dagger.Provides
@@ -49,12 +52,32 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideUserApi() : UserApiService {
+        return Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL + Constants.BASE_API_PATH)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(CoroutinesResponseCallAdapterFactory.create())
+            .build()
+            .create(UserApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun providesAuthenticationRepository(
         database: ArtworkEspressoDatabase,
         authApi: AuthenticationApiService)
             : AuthenticationRepository {
         return AuthenticationRepositoryImpl(database.loginInfoDao(), authApi)
     }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        userApi: UserApiService)
+            : UserRepository {
+        return UserRepositoryImpl(userApi)
+    }
+
 
     @Provides
     @Singleton
