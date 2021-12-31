@@ -186,7 +186,7 @@ class TopicSelectViewModel @Inject constructor(
 
     }
 
-    private fun isClientLogin (): Boolean {
+    private fun isClientLogin(): Boolean {
         return prefs.getUserAccessToken().isNullOrEmpty()
     }
 
