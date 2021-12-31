@@ -1,5 +1,6 @@
 package com.rikucherry.artworkespresso.feature_topic_selection.presentation
 
+import android.content.Intent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -12,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
@@ -24,6 +26,7 @@ import com.rikucherry.artworkespresso.common.component.MenuButtonPrimary
 import com.rikucherry.artworkespresso.common.theme.GrayParagraph
 import com.rikucherry.artworkespresso.common.theme.Purple100
 import com.rikucherry.artworkespresso.common.theme.Teal200
+import com.rikucherry.artworkespresso.feature_daily_brief.presentation.DailyBriefActivity
 import com.rikucherry.artworkespresso.feature_topic_selection.data.remote.data_source.TopTopicsDto
 import com.rikucherry.artworkespresso.feature_topic_selection.presentation.viewmodel.TopicSelectViewModel
 import com.skydoves.sandwich.StatusCode
@@ -44,7 +47,8 @@ fun TopTopicsScreen(
     val rightColData = topicState.data?.subList(leftColNum, dataSize) ?: emptyList()
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val selectedTopicState = remember {
@@ -113,7 +117,11 @@ fun TopTopicsScreen(
 
         if (loginInfoState.status == StatusCode.OK) {
             viewModel.saveFavouriteTopic(selectedTopicState.value)
-            //TODO: Close this screen & move to daily brief activity
+            val context = LocalContext.current
+            val intent = Intent(context, DailyBriefActivity::class.java).apply {
+                this.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            }
+            context.startActivity(intent)
         }
     }
 

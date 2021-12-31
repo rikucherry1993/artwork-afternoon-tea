@@ -3,6 +3,8 @@ package com.rikucherry.artworkespresso.feature_topic_selection.domain.use_case
 import com.rikucherry.artworkespresso.common.tool.Resource
 import com.rikucherry.artworkespresso.feature_topic_selection.data.remote.data_source.TopTopicsDto
 import com.rikucherry.artworkespresso.feature_topic_selection.domain.repository.FakeTopicSelectRepositoryImpl
+import com.rikucherry.artworkespresso.feature_topic_selection.domain.repository.topicHasExamples
+import com.rikucherry.artworkespresso.feature_topic_selection.domain.repository.topicNoExample
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -41,8 +43,8 @@ class TopicSelectUseCaseTest {
         //When
         val flow = topicSelectUseCase(token = "fake token")
         //Then
-        val expectedTopic1 = repository.topicNoExample
-        val expectedTopic2 = repository.topicHasExamples
+        val expectedTopic1 = topicNoExample
+        val expectedTopic2 = topicHasExamples
 
         flow.onEach {
                 response ->
