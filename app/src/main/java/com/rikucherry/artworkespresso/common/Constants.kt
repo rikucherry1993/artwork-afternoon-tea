@@ -32,5 +32,8 @@ object Constants {
     const val IS_TOPIC_EMPTY = "is_topic_empty"
     const val IS_FREE_TRAIL = "is_free_trail"
 
+    //intent keys
+    const val IS_AUTHENTICATED = "is_authenticated"
+
     const val DEFAULT_AVATAR_URL = "https://a.deviantart.net/avatars/default.gif"
 }

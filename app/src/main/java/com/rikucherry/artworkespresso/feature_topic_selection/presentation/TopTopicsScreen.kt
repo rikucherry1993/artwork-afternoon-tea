@@ -19,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.rikucherry.artworkespresso.R
+import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.common.component.HeadingLevel
 import com.rikucherry.artworkespresso.common.component.HeadingText
 import com.rikucherry.artworkespresso.common.component.LineLoader
@@ -120,6 +121,7 @@ fun TopTopicsScreen(
             val context = LocalContext.current
             val intent = Intent(context, DailyBriefActivity::class.java).apply {
                 this.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                this.putExtra(Constants.IS_AUTHENTICATED, true)
             }
             context.startActivity(intent)
         }
