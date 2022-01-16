@@ -56,6 +56,7 @@ class EntranceActivity : ComponentActivity() {
                                 val intent =
                                     Intent(this@EntranceActivity, DailyBriefActivity::class.java)
                                 intent.putExtra(Constants.IS_FREE_TRAIL, false)
+                                intent.putExtra(Constants.IS_AUTHENTICATED, true)
                                 startActivity(intent)
                                 finish()
                             }
@@ -63,6 +64,7 @@ class EntranceActivity : ComponentActivity() {
                                 val intent =
                                     Intent(this@EntranceActivity, DailyBriefActivity::class.java)
                                 intent.putExtra(Constants.IS_FREE_TRAIL, true)
+                                intent.putExtra(Constants.IS_AUTHENTICATED, true)
                                 startActivity(intent)
                                 finish()
                             }
