@@ -147,7 +147,7 @@ fun TopicsColumn(topics: List<TopTopicsDto>, selectedTopicState: MutableState<St
                         placeholder(drawableResId = R.drawable.placeholder_topics)
                     }
                 ),
-                contentDescription = null,
+                contentDescription = result.exampleDeviations?.get(0)?.title ?: "",
                 modifier = Modifier
                     .size(116.dp)
                     .border(
