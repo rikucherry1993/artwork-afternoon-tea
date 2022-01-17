@@ -61,6 +61,7 @@ fun HeadingText(
         fontFamily = robotSlabFamily,
         fontWeight = fontWeight,
         modifier = Modifier.padding(paddingLeft,paddingTop,paddingRight,paddingBottom),
-        color = color
+        color = color,
+        maxLines = 1
     )
 }
