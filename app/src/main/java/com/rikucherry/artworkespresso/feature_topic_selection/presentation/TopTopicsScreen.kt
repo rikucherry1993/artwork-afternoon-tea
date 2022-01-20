@@ -34,6 +34,7 @@ import com.skydoves.sandwich.StatusCode
 
 @Composable
 fun TopTopicsScreen(
+    isFreeTrail: Boolean,
     viewModel: TopicSelectViewModel = hiltViewModel()
 ) {
     val topicState = viewModel.topicState.value
@@ -122,6 +123,7 @@ fun TopTopicsScreen(
             val intent = Intent(context, DailyBriefActivity::class.java).apply {
                 this.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 this.putExtra(Constants.IS_AUTHENTICATED, true)
+                this.putExtra(Constants.IS_FREE_TRAIL, isFreeTrail)
             }
             context.startActivity(intent)
         }

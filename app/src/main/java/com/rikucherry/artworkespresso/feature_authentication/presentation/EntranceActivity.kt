@@ -55,7 +55,6 @@ class EntranceActivity : ComponentActivity() {
                             state.data == LoginStatus.USER_LOGGED_IN -> {
                                 val intent =
                                     Intent(this@EntranceActivity, DailyBriefActivity::class.java)
-                                intent.putExtra(Constants.IS_FREE_TRAIL, false)
                                 intent.putExtra(Constants.IS_AUTHENTICATED, true)
                                 startActivity(intent)
                                 finish()

@@ -73,7 +73,7 @@ class TopicSelectionActivity : ComponentActivity() {
                             }
 
                             else -> {
-                                TopTopicsScreen()
+                                TopTopicsScreen(isFreeTrail)
                             }
                         }
 
