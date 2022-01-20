@@ -11,6 +11,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -173,8 +175,8 @@ fun ListItemCard(
     createDate: String,
     title: String,
     isFreeTrail: Boolean,
-    isFavourite: Boolean?, //invisible if it's a free trail.
-    isDownloadable: Boolean?, //invisible if it's a free trail.
+    isFavourite: Boolean, //invisible if it's a free trail.
+    isDownloadable: Boolean, //invisible if it's a free trail.
     itemWidth: Dp,
     modifier: Modifier = Modifier
 ) {
@@ -191,6 +193,9 @@ fun ListItemCard(
         val imageHeightPx = with(LocalDensity.current) {
             imageHeight.toPx()
         }
+
+        //states
+        val favouriteState = remember { mutableStateOf(isFavourite) }
 
         Column {
             Box {
@@ -251,33 +256,37 @@ fun ListItemCard(
                             modifier = Modifier.fillMaxHeight(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            //Favourite button
                             IconButton(
-                                onClick = { /*TODO*/ },
+                                onClick = {
+                                    favouriteState.value = !favouriteState.value
+                                },
                                 modifier = Modifier
                                     .size(itemWidth * 0.1f)
                                     .padding(4.dp)
                             ) {
                                 Icon(
                                     modifier = Modifier.fillMaxSize(),
-                                    painter = if (isFavourite == true) painterResource(R.drawable.ic_baseline_favorited_24)
+                                    painter = if (favouriteState.value) painterResource(R.drawable.ic_baseline_favorited_24)
                                     else painterResource(R.drawable.ic_baseline_not_favorited_24),
                                     contentDescription = "Download button",
                                     tint = Purple200
                                 )
                             }
                             Spacer(modifier = Modifier.width(8.dp))
+                            //Download button
                             IconButton(
                                 onClick = { /*TODO*/ },
                                 modifier = Modifier
                                     .size(itemWidth * 0.1f)
                                     .padding(4.dp),
-                                enabled = isDownloadable ?: false,
+                                enabled = isDownloadable,
                             ) {
                                 Icon(
                                     modifier = Modifier.fillMaxSize(),
                                     painter = painterResource(R.drawable.ic_baseline_download_24),
                                     contentDescription = "Download button",
-                                    tint = if (isDownloadable == true) Teal200 else GrayParagraph
+                                    tint = if (isDownloadable) Teal200 else GrayParagraph
                                 )
                             }
                         }
