@@ -161,6 +161,7 @@ fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean) {
                             .fillMaxWidth()
                             .height(itemWidth * 0.9f)
                     )
+                    Spacer(modifier = Modifier.height(12.dp))
                 }
             }
         }
