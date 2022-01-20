@@ -159,7 +159,7 @@ fun TopicsColumn(topics: List<TopTopicsDto>, selectedTopicState: MutableState<St
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
                     ) {
-                        if (result.name != selectedTopicState.value) {
+                        if (!isSelected) {
                             selectedTopicState.value = result.name
                         } else {
                             selectedTopicState.value = ""
