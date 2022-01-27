@@ -50,6 +50,7 @@ fun HeadingText(
     paddingRight: Dp = 0.dp,
     paddingTop: Dp = 0.dp,
     paddingBottom: Dp = 0.dp,
+    modifier:Modifier = Modifier
 ) {
 
     val fontSize = headTextSizeMap[headingLevel]!!
@@ -60,7 +61,7 @@ fun HeadingText(
         text = text,
         fontFamily = robotSlabFamily,
         fontWeight = fontWeight,
-        modifier = Modifier.padding(paddingLeft,paddingTop,paddingRight,paddingBottom),
+        modifier = modifier.padding(paddingLeft,paddingTop,paddingRight,paddingBottom),
         color = color,
         maxLines = 1
     )

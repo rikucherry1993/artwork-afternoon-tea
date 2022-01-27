@@ -65,9 +65,13 @@ fun DailyBriefScreen(
         },
         content = {
             Box(modifier = Modifier.fillMaxSize()) {
+                // list of artwork items displayed under the collapsable toolbar view
                 DailyArtWorkList(scrollState, isFreeTrail)
+                // Collapsable toolbar contains roughly a header image and a tool bar, both can
+                // adjust the position of their elements or themselves dynamically during scrolling.
                 CollapsableToolBar(scrollState)
 
+                // Press menu button to open the navigation drawer
                 IconButton(
                     modifier = Modifier.size(CollapsedAppBarHeight, CollapsedAppBarHeight),
                     onClick = { openNavDrawer(drawerState, scope) }
@@ -99,9 +103,7 @@ fun CollapsableToolBar(scrollState: LazyListState) {
     TopAppBar(
         modifier = Modifier
             .height(ExpandedAppBarHeight)
-            .offset {
-                IntOffset(x = 0, y = -offset)
-            },
+            .offset { IntOffset(x = 0, y = -offset) },
         backgroundColor = Color.Transparent,
         contentColor = GrayParagraph,
     ) {
@@ -112,20 +114,44 @@ fun CollapsableToolBar(scrollState: LazyListState) {
                     .height(imageHeight)
                     .background(Color.Transparent)
             ) {
+                // Top image
                 ShadowedImage(
                     //TODO: Replace placeholder
                     imageData = Constants.DEFAULT_AVATAR_URL,
                     contentDescription = "Top Artwork for today",
                     imageModifier = Modifier
                         .fillMaxSize()
-                        .graphicsLayer {
-                            alpha = 1f - offsetProgress
-                        },
+                        .graphicsLayer { alpha = 1f - offsetProgress },
                     shadowModifier = Modifier.fillMaxSize(),
                     imageHeight = maxOffset
                 )
+
+                // Title and author info of the top image
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight(0.3f)
+                        .fillMaxWidth(0.5f)
+                        .align(Alignment.BottomEnd),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    HeadingText(
+                        text = "Heading Image", //TODO: Replace with response data
+                        headingLevel = HeadingLevel.SECONDARY,
+                        color = GrayParagraph,
+                        paddingRight = 8.dp,
+                        paddingBottom = 4.dp
+                    )
+                    HeadingText(
+                        text = "AAA BBB", //TODO: Replace with response data
+                        headingLevel = HeadingLevel.THIRD,
+                        color = GrayParagraph,
+                        paddingRight = 8.dp
+                    )
+                }
+
             }
 
+            // Toolbar with current date
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
