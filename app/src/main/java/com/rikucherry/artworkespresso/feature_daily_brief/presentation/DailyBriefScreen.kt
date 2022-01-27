@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,6 +40,8 @@ import com.rikucherry.artworkespresso.common.theme.GrayParagraph
 import com.rikucherry.artworkespresso.common.theme.Purple200
 import com.rikucherry.artworkespresso.common.theme.Teal200
 import com.rikucherry.artworkespresso.feature_daily_brief.presentation.viewmodel.DailyBriefViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlin.math.max
 
 //Collapsable AppToolBar
@@ -51,25 +54,37 @@ fun DailyBriefScreen(
     viewModel: DailyBriefViewModel = hiltViewModel()
 ) {
     val scrollState = rememberLazyListState()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        DailyArtWorkList(scrollState, isFreeTrail)
-        CollapsableToolBar(scrollState)
+    ModalDrawer(
+        drawerState = drawerState,
+        gesturesEnabled = drawerState.isOpen,
+        drawerContent = {
+            NavDrawerScreen()
+        },
+        content = {
+            Box(modifier = Modifier.fillMaxSize()) {
+                DailyArtWorkList(scrollState, isFreeTrail)
+                CollapsableToolBar(scrollState)
 
-        IconButton(
-            modifier = Modifier.size(CollapsedAppBarHeight, CollapsedAppBarHeight),
-            onClick = { /*TODO*/ }
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Menu,
-                contentDescription = "Menu button",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(8.dp, 4.dp)
-            )
+                IconButton(
+                    modifier = Modifier.size(CollapsedAppBarHeight, CollapsedAppBarHeight),
+                    onClick = { openNavDrawer(drawerState, scope) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Menu,
+                        contentDescription = "Menu button",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp, 4.dp)
+                    )
+                }
+            }
         }
-    }
+    )
 }
+
 
 @Composable
 fun CollapsableToolBar(scrollState: LazyListState) {
@@ -295,6 +310,18 @@ fun ListItemCard(
                 }
             }
         }
+    }
+}
+
+fun openNavDrawer(drawerState: DrawerState, scope: CoroutineScope) {
+    scope.launch {
+        drawerState.open()
+    }
+}
+
+fun closeNavDrawer(drawerState: DrawerState, scope: CoroutineScope) {
+    scope.launch {
+        drawerState.close()
     }
 }
 
