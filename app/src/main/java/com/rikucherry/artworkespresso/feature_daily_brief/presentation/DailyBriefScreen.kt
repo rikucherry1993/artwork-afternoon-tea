@@ -11,6 +11,9 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +40,8 @@ import com.rikucherry.artworkespresso.common.theme.GrayParagraph
 import com.rikucherry.artworkespresso.common.theme.Purple200
 import com.rikucherry.artworkespresso.common.theme.Teal200
 import com.rikucherry.artworkespresso.feature_daily_brief.presentation.viewmodel.DailyBriefViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlin.math.max
 
 //Collapsable AppToolBar
@@ -49,25 +54,41 @@ fun DailyBriefScreen(
     viewModel: DailyBriefViewModel = hiltViewModel()
 ) {
     val scrollState = rememberLazyListState()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        DailyArtWorkList(scrollState, isFreeTrail)
-        CollapsableToolBar(scrollState)
+    ModalDrawer(
+        drawerState = drawerState,
+        gesturesEnabled = drawerState.isOpen,
+        drawerContent = {
+            NavDrawerScreen(isFreeTrail)
+        },
+        content = {
+            Box(modifier = Modifier.fillMaxSize()) {
+                // list of artwork items displayed under the collapsable toolbar view
+                DailyArtWorkList(scrollState, isFreeTrail)
+                // Collapsable toolbar contains roughly a header image and a tool bar, both can
+                // adjust the position of their elements or themselves dynamically during scrolling.
+                CollapsableToolBar(scrollState)
 
-        IconButton(
-            modifier = Modifier.size(CollapsedAppBarHeight, CollapsedAppBarHeight),
-            onClick = { /*TODO*/ }
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Menu,
-                contentDescription = "Menu button",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(8.dp, 4.dp)
-            )
+                // Press menu button to open the navigation drawer
+                IconButton(
+                    modifier = Modifier.size(CollapsedAppBarHeight, CollapsedAppBarHeight),
+                    onClick = { openNavDrawer(drawerState, scope) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Menu,
+                        contentDescription = "Menu button",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp, 4.dp)
+                    )
+                }
+            }
         }
-    }
+    )
 }
+
 
 @Composable
 fun CollapsableToolBar(scrollState: LazyListState) {
@@ -82,9 +103,7 @@ fun CollapsableToolBar(scrollState: LazyListState) {
     TopAppBar(
         modifier = Modifier
             .height(ExpandedAppBarHeight)
-            .offset {
-                IntOffset(x = 0, y = -offset)
-            },
+            .offset { IntOffset(x = 0, y = -offset) },
         backgroundColor = Color.Transparent,
         contentColor = GrayParagraph,
     ) {
@@ -95,20 +114,44 @@ fun CollapsableToolBar(scrollState: LazyListState) {
                     .height(imageHeight)
                     .background(Color.Transparent)
             ) {
+                // Top image
                 ShadowedImage(
                     //TODO: Replace placeholder
                     imageData = Constants.DEFAULT_AVATAR_URL,
                     contentDescription = "Top Artwork for today",
                     imageModifier = Modifier
                         .fillMaxSize()
-                        .graphicsLayer {
-                            alpha = 1f - offsetProgress
-                        },
+                        .graphicsLayer { alpha = 1f - offsetProgress },
                     shadowModifier = Modifier.fillMaxSize(),
                     imageHeight = maxOffset
                 )
+
+                // Title and author info of the top image
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight(0.3f)
+                        .fillMaxWidth(0.5f)
+                        .align(Alignment.BottomEnd),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    HeadingText(
+                        text = "Heading Image", //TODO: Replace with response data
+                        headingLevel = HeadingLevel.SECONDARY,
+                        color = GrayParagraph,
+                        paddingRight = 8.dp,
+                        paddingBottom = 4.dp
+                    )
+                    HeadingText(
+                        text = "AAA BBB", //TODO: Replace with response data
+                        headingLevel = HeadingLevel.THIRD,
+                        color = GrayParagraph,
+                        paddingRight = 8.dp
+                    )
+                }
+
             }
 
+            // Toolbar with current date
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -159,6 +202,7 @@ fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean) {
                             .fillMaxWidth()
                             .height(itemWidth * 0.9f)
                     )
+                    Spacer(modifier = Modifier.height(12.dp))
                 }
             }
         }
@@ -173,8 +217,8 @@ fun ListItemCard(
     createDate: String,
     title: String,
     isFreeTrail: Boolean,
-    isFavourite: Boolean?, //invisible if it's a free trail.
-    isDownloadable: Boolean?, //invisible if it's a free trail.
+    isFavourite: Boolean, //invisible if it's a free trail.
+    isDownloadable: Boolean, //invisible if it's a free trail.
     itemWidth: Dp,
     modifier: Modifier = Modifier
 ) {
@@ -191,6 +235,9 @@ fun ListItemCard(
         val imageHeightPx = with(LocalDensity.current) {
             imageHeight.toPx()
         }
+
+        //states
+        val favouriteState = remember { mutableStateOf(isFavourite) }
 
         Column {
             Box {
@@ -251,33 +298,37 @@ fun ListItemCard(
                             modifier = Modifier.fillMaxHeight(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            //Favourite button
                             IconButton(
-                                onClick = { /*TODO*/ },
+                                onClick = {
+                                    favouriteState.value = !favouriteState.value
+                                },
                                 modifier = Modifier
                                     .size(itemWidth * 0.1f)
                                     .padding(4.dp)
                             ) {
                                 Icon(
                                     modifier = Modifier.fillMaxSize(),
-                                    painter = if (isFavourite == true) painterResource(R.drawable.ic_baseline_favorited_24)
+                                    painter = if (favouriteState.value) painterResource(R.drawable.ic_baseline_favorited_24)
                                     else painterResource(R.drawable.ic_baseline_not_favorited_24),
                                     contentDescription = "Download button",
                                     tint = Purple200
                                 )
                             }
                             Spacer(modifier = Modifier.width(8.dp))
+                            //Download button
                             IconButton(
                                 onClick = { /*TODO*/ },
                                 modifier = Modifier
                                     .size(itemWidth * 0.1f)
                                     .padding(4.dp),
-                                enabled = isDownloadable ?: false,
+                                enabled = isDownloadable,
                             ) {
                                 Icon(
                                     modifier = Modifier.fillMaxSize(),
                                     painter = painterResource(R.drawable.ic_baseline_download_24),
                                     contentDescription = "Download button",
-                                    tint = if (isDownloadable == true) Teal200 else GrayParagraph
+                                    tint = if (isDownloadable) Teal200 else GrayParagraph
                                 )
                             }
                         }
@@ -285,6 +336,18 @@ fun ListItemCard(
                 }
             }
         }
+    }
+}
+
+fun openNavDrawer(drawerState: DrawerState, scope: CoroutineScope) {
+    scope.launch {
+        drawerState.open()
+    }
+}
+
+fun closeNavDrawer(drawerState: DrawerState, scope: CoroutineScope) {
+    scope.launch {
+        drawerState.close()
     }
 }
 
