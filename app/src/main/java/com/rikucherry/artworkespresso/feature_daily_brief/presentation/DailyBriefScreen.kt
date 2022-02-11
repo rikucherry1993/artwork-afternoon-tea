@@ -35,6 +35,7 @@ import com.rikucherry.artworkespresso.common.component.HeadingLevel
 import com.rikucherry.artworkespresso.common.component.HeadingText
 import com.rikucherry.artworkespresso.common.component.ShadowedImage
 import com.rikucherry.artworkespresso.common.component.drawColoredShadow
+import com.rikucherry.artworkespresso.common.data.remote.DeviationDto
 import com.rikucherry.artworkespresso.common.theme.BackgroundPrimary
 import com.rikucherry.artworkespresso.common.theme.GrayParagraph
 import com.rikucherry.artworkespresso.common.theme.Purple200
@@ -53,9 +54,12 @@ fun DailyBriefScreen(
     isFreeTrail: Boolean,
     viewModel: DailyBriefViewModel = hiltViewModel()
 ) {
+    val listState = viewModel.listState.value
     val scrollState = rememberLazyListState()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    val artworks = listState.data
 
     ModalDrawer(
         drawerState = drawerState,
@@ -66,7 +70,7 @@ fun DailyBriefScreen(
         content = {
             Box(modifier = Modifier.fillMaxSize()) {
                 // list of artwork items displayed under the collapsable toolbar view
-                DailyArtWorkList(scrollState, isFreeTrail)
+                DailyArtWorkList(scrollState, isFreeTrail, artworks)
                 // Collapsable toolbar contains roughly a header image and a tool bar, both can
                 // adjust the position of their elements or themselves dynamically during scrolling.
                 CollapsableToolBar(scrollState)
@@ -173,7 +177,8 @@ fun CollapsableToolBar(scrollState: LazyListState) {
 }
 
 @Composable
-fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean) {
+fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean
+                     , artworks: List<DeviationDto>?) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(top = ExpandedAppBarHeight),
@@ -185,18 +190,17 @@ fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean) {
                 modifier = Modifier.padding(marginHorizontal, 0.dp)
             ) {
                 val itemWidth = LocalConfiguration.current.screenWidthDp.dp - marginHorizontal * 2f
-                for (i in 0..10) {
+                artworks?.forEach { artwork ->
                     Spacer(modifier = Modifier.height(12.dp))
-                    //TODO: replace with actual response data
                     ListItemCard(
-                        imageUrl = Constants.DEFAULT_AVATAR_URL,
-                        authorIconUrl = Constants.DEFAULT_AVATAR_URL,
-                        authorName = "Author",
-                        createDate = "Oct 28, 2021",
-                        title = "Titledddddddddddddddddddddddddddddddddd",
+                        imageUrl = artwork.content!!.src,
+                        authorIconUrl = artwork.author?.userIconUrl ?: Constants.DEFAULT_AVATAR_URL,
+                        authorName = artwork.author?.username ?: "Unknown",
+                        createDate = artwork.publishedTime ?: "Unknown", //TODO: Convert type
+                        title = artwork.title ?: "Untitled",
                         isFreeTrail = isFreeTrail,
-                        isFavourite = false,
-                        isDownloadable = false,
+                        isFavourite = artwork.isFavourited ?: false,
+                        isDownloadable = artwork.isDownloadable ?: false,
                         itemWidth = itemWidth,
                         modifier = Modifier
                             .fillMaxWidth()

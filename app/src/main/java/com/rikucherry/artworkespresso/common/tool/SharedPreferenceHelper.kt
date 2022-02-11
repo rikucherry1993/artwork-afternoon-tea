@@ -87,4 +87,9 @@ class SharedPreferenceHelper @Inject constructor(
             remove(key)
         }
     }
+
+
+    fun isClientLogin(): Boolean {
+        return getUserAccessToken().isNullOrEmpty()
+    }
 }

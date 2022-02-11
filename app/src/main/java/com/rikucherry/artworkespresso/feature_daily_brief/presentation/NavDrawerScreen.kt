@@ -96,7 +96,7 @@ fun NavDrawerScreen(isFreeTrail: Boolean) {
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = GrayDark
                         ),
-                        onClick = { onWeeklyDateClicked(i)} //TODO
+                        onClick = { onWeeklyDateClicked(index = i)} //TODO
                     ) {
                         HeadingText(
                             text = weeklyDates[i],
