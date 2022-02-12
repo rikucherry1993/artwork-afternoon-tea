@@ -31,15 +31,9 @@ import coil.transform.CircleCropTransformation
 import com.google.accompanist.insets.LocalWindowInsets
 import com.rikucherry.artworkespresso.R
 import com.rikucherry.artworkespresso.common.Constants
-import com.rikucherry.artworkespresso.common.component.HeadingLevel
-import com.rikucherry.artworkespresso.common.component.HeadingText
-import com.rikucherry.artworkespresso.common.component.ShadowedImage
-import com.rikucherry.artworkespresso.common.component.drawColoredShadow
+import com.rikucherry.artworkespresso.common.component.*
 import com.rikucherry.artworkespresso.common.data.remote.DeviationDto
-import com.rikucherry.artworkespresso.common.theme.BackgroundPrimary
-import com.rikucherry.artworkespresso.common.theme.GrayParagraph
-import com.rikucherry.artworkespresso.common.theme.Purple200
-import com.rikucherry.artworkespresso.common.theme.Teal200
+import com.rikucherry.artworkespresso.common.theme.*
 import com.rikucherry.artworkespresso.feature_daily_brief.presentation.viewmodel.DailyBriefViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -88,6 +82,18 @@ fun DailyBriefScreen(
                             .padding(8.dp, 4.dp)
                     )
                 }
+
+                // Show loading spinner while loading
+                if (listState.isLoading) {
+                    Box(modifier = Modifier.fillMaxSize().background(BackgroundPrimary.copy(alpha = 0.7f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        LineLoader(
+                            backgroundColor = Purple100
+                        )
+                    }
+                }
+
             }
         }
     )
