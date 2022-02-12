@@ -34,6 +34,7 @@ import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.common.component.*
 import com.rikucherry.artworkespresso.common.data.remote.DeviationDto
 import com.rikucherry.artworkespresso.common.theme.*
+import com.rikucherry.artworkespresso.common.tool.DataFormatHelper
 import com.rikucherry.artworkespresso.feature_daily_brief.presentation.viewmodel.DailyBriefViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -88,7 +89,9 @@ fun DailyBriefScreen(
 
                 // Show loading spinner while loading
                 if (listState.isLoading || topState.isLoading) {
-                    Box(modifier = Modifier.fillMaxSize().background(BackgroundPrimary.copy(alpha = 0.7f)),
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .background(BackgroundPrimary.copy(alpha = 0.7f)),
                         contentAlignment = Alignment.Center
                     ) {
                         LineLoader(
@@ -189,7 +192,9 @@ fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?) {
 fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean
                      , artworks: List<DeviationDto>?) {
     LazyColumn(
-        modifier = Modifier.fillMaxWidth().background(Color.Black),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Black),
         contentPadding = PaddingValues(top = ExpandedAppBarHeight),
         state = scrollState
     ) {
@@ -205,7 +210,8 @@ fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean
                         imageUrl = artwork.content!!.src,
                         authorIconUrl = artwork.author?.userIconUrl ?: Constants.DEFAULT_AVATAR_URL,
                         authorName = artwork.author?.username ?: "Unknown",
-                        createDate = artwork.publishedTime ?: "Unknown", //TODO: Convert type
+                        createDate = DataFormatHelper.convertLongStringToTime(artwork.publishedTime)
+                            ?: "Unknown",
                         title = artwork.title ?: "Untitled",
                         isFreeTrail = isFreeTrail,
                         isFavourite = artwork.isFavourited ?: false,
@@ -289,12 +295,20 @@ fun ListItemCard(
                 Column(
                     modifier = Modifier.width(itemWidth * 0.5f)
                 ) {
-                    HeadingText(
-                        text = "$authorName $createDate",
-                        headingLevel = HeadingLevel.PARAGRAPH,
-                        color = GrayParagraph
-                    )
-
+                    Row {
+                        HeadingText(
+                            text = "$authorName",
+                            headingLevel = HeadingLevel.PARAGRAPH,
+                            color = GrayParagraph,
+                            modifier = Modifier.widthIn(0.dp, itemWidth * 0.3f)
+                        )
+                        HeadingText(
+                            text = " $createDate",
+                            headingLevel = HeadingLevel.PARAGRAPH,
+                            color = GrayParagraph
+                        )
+                    }
+                    
                     HeadingText(
                         text = title,
                         headingLevel = HeadingLevel.THIRD,
