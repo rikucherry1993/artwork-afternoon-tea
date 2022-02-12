@@ -189,7 +189,7 @@ fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?) {
 fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean
                      , artworks: List<DeviationDto>?) {
     LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().background(Color.Black),
         contentPadding = PaddingValues(top = ExpandedAppBarHeight),
         state = scrollState
     ) {
