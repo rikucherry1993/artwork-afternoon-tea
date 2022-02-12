@@ -28,11 +28,12 @@ fun ShadowedImage(
     contentDescription: String?,
     imageModifier: Modifier,
     shadowModifier: Modifier,
-    imageHeight: Number
+    imageHeight: Number,
+    imageScale: ContentScale = ContentScale.Fit
 ) {
     Image(
         painter = rememberImagePainter(data = imageData),
-        contentScale = ContentScale.Fit,
+        contentScale = imageScale,
         contentDescription = contentDescription,
         modifier = imageModifier
     )

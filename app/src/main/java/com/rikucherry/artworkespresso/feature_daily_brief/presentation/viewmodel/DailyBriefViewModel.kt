@@ -25,6 +25,9 @@ class DailyBriefViewModel @Inject constructor(
     private val _listState = mutableStateOf(ViewModelState<List<DeviationDto>>())
     val listState: State<ViewModelState<List<DeviationDto>>> = _listState
 
+    private val _topState = mutableStateOf(ViewModelState<DeviationDto>())
+    val topState: State<ViewModelState<DeviationDto>> = _topState
+
     private var token: String
     private var topic: String
 
@@ -37,8 +40,48 @@ class DailyBriefViewModel @Inject constructor(
             token = prefs.getUserAccessToken() ?: ""
             topic = prefs.getUserFavoriteTopics()?.elementAt(0) ?: ""
         }
+        getDailyTopArtwork()
         getArtworkListByTopic()
     }
+
+    private fun getDailyTopArtwork() {
+        getDailyTopUseCase(token,null).onEach { result ->
+            when(result) {
+                is Resource.Loading -> {
+                    _topState.value = ViewModelState(
+                        isLoading = true
+                    )
+                }
+
+                is Resource.Success -> {
+                    _topState.value = ViewModelState(
+                        isLoading = false,
+                        data = result.data,
+                        statusCode = result.statusCode.code,
+                        status = result.statusCode
+                    )
+                }
+
+                is Resource.Error -> {
+                    _topState.value = ViewModelState(
+                        isLoading = false,
+                        statusCode = result.statusCode.code,
+                        status = result.statusCode,
+                        error = result.message
+                    )
+                }
+
+                is Resource.Exception -> {
+                    _topState.value = ViewModelState(
+                        isLoading = false,
+                        error = result.message
+                    )
+                }
+            }
+
+        }.launchIn(viewModelScope)
+    }
+
 
 
     private fun getArtworkListByTopic() {

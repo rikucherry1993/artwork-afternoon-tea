@@ -49,10 +49,13 @@ fun DailyBriefScreen(
     viewModel: DailyBriefViewModel = hiltViewModel()
 ) {
     val listState = viewModel.listState.value
+    val topState = viewModel.topState.value
+
     val scrollState = rememberLazyListState()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    val topArt = topState.data
     val artworks = listState.data
 
     ModalDrawer(
@@ -67,7 +70,7 @@ fun DailyBriefScreen(
                 DailyArtWorkList(scrollState, isFreeTrail, artworks)
                 // Collapsable toolbar contains roughly a header image and a tool bar, both can
                 // adjust the position of their elements or themselves dynamically during scrolling.
-                CollapsableToolBar(scrollState)
+                CollapsableToolBar(scrollState, topArt)
 
                 // Press menu button to open the navigation drawer
                 IconButton(
@@ -84,7 +87,7 @@ fun DailyBriefScreen(
                 }
 
                 // Show loading spinner while loading
-                if (listState.isLoading) {
+                if (listState.isLoading || topState.isLoading) {
                     Box(modifier = Modifier.fillMaxSize().background(BackgroundPrimary.copy(alpha = 0.7f)),
                         contentAlignment = Alignment.Center
                     ) {
@@ -101,7 +104,7 @@ fun DailyBriefScreen(
 
 
 @Composable
-fun CollapsableToolBar(scrollState: LazyListState) {
+fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?) {
     val imageHeight = ExpandedAppBarHeight - CollapsedAppBarHeight
     val maxOffset = with(LocalDensity.current) {
         imageHeight.roundToPx()
@@ -126,14 +129,14 @@ fun CollapsableToolBar(scrollState: LazyListState) {
             ) {
                 // Top image
                 ShadowedImage(
-                    //TODO: Replace placeholder
-                    imageData = Constants.DEFAULT_AVATAR_URL,
+                    imageData = topArt?.content?.src ?: "",
                     contentDescription = "Top Artwork for today",
                     imageModifier = Modifier
                         .fillMaxSize()
                         .graphicsLayer { alpha = 1f - offsetProgress },
                     shadowModifier = Modifier.fillMaxSize(),
-                    imageHeight = maxOffset
+                    imageHeight = maxOffset,
+                    imageScale = ContentScale.Crop
                 )
 
                 // Title and author info of the top image
@@ -145,14 +148,14 @@ fun CollapsableToolBar(scrollState: LazyListState) {
                     horizontalAlignment = Alignment.End
                 ) {
                     HeadingText(
-                        text = "Heading Image", //TODO: Replace with response data
+                        text = topArt?.title ?: "Untitled",
                         headingLevel = HeadingLevel.SECONDARY,
                         color = GrayParagraph,
                         paddingRight = 8.dp,
                         paddingBottom = 4.dp
                     )
                     HeadingText(
-                        text = "AAA BBB", //TODO: Replace with response data
+                        text = topArt?.author?.username ?: "Unknown",
                         headingLevel = HeadingLevel.THIRD,
                         color = GrayParagraph,
                         paddingRight = 8.dp
