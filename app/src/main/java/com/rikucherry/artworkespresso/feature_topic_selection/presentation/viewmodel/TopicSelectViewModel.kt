@@ -43,7 +43,7 @@ class TopicSelectViewModel @Inject constructor(
     }
 
     private fun getTopTopics() {
-        val token = if (isClientLogin()) {
+        val token = if (prefs.isClientLogin()) {
             prefs.getClientAccessToken()
         } else {
             prefs.getUserAccessToken()
@@ -86,8 +86,9 @@ class TopicSelectViewModel @Inject constructor(
     }
 
 
-    fun saveFavouriteTopic (topicName : String) {
-        if (isClientLogin()) {
+    fun saveFavouriteTopic (raw : String) {
+        val topicName = raw.replace("\\s+".toRegex(), "").lowercase()
+        if (prefs.isClientLogin()) {
             prefs.saveClientFavoriteTopics(mutableSetOf(topicName))
             Timber.d("Saving client favorite topic: $topicName")
         } else {
@@ -98,7 +99,7 @@ class TopicSelectViewModel @Inject constructor(
 
 
     private fun setLoginInfoByUser () {
-        if (isClientLogin()) {
+        if (prefs.isClientLogin()) {
             _userState.value = ViewModelState(
                 isLoading = false,
                 data = LoginInfoItem(1, "", "", "", 3),
@@ -184,10 +185,6 @@ class TopicSelectViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
 
-    }
-
-    private fun isClientLogin(): Boolean {
-        return prefs.getUserAccessToken().isNullOrEmpty()
     }
 
 }

@@ -69,3 +69,8 @@ data class DeviationDto(
 //    @SerializedName("suggested_reasons")
 //    val suggestedReasons: List<String>? = null
 )
+
+data class DeviationListDto(
+    @SerializedName("results")
+    val results: List<DeviationDto>
+)
