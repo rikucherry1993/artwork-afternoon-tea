@@ -206,7 +206,7 @@ fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean
                 artworks?.forEach { artwork ->
                     Spacer(modifier = Modifier.height(12.dp))
                     ListItemCard(
-                        imageUrl = artwork.content?.src ?: "",
+                        imageUrl = artwork.content!!.src,
                         authorIconUrl = artwork.author?.userIconUrl ?: Constants.DEFAULT_AVATAR_URL,
                         authorName = artwork.author?.username ?: "Unknown",
                         createDate = DataFormatHelper.convertLongStringToTime(artwork.publishedTime)

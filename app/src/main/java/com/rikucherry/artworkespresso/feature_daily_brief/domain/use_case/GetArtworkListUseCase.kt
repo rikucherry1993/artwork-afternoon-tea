@@ -20,13 +20,8 @@ class GetArtworkListUseCase @Inject constructor(
         val artworkListResult = dailyBriefRepository.getArtworksByTopic(token, topic)
 
         artworkListResult.suspendOnSuccess {
-            // Only the first ten elements are required
-            // TODO: Implement filtering logic
-            val dataRequired = if (data.results.size > 10) {
-                data.results.subList(0, 10)
-            } else {
-                data.results
-            }
+            // Only the first 5 elements meeting filtering conditions are required
+            val dataRequired = filter(data.results)
             emit(Resource.Success(dataRequired, statusCode))
         }.suspendOnError {
             emit(Resource.Error<List<DeviationDto>>(statusCode, toString()))
@@ -34,6 +29,22 @@ class GetArtworkListUseCase @Inject constructor(
             emit(Resource.Exception<List<DeviationDto>>(message ?: "Undefined exception."))
         }
 
+    }
+
+    private fun filter(list: List<DeviationDto>): List<DeviationDto> {
+        val result: MutableList<DeviationDto> = mutableListOf()
+        run loop@ {
+            list.forEach { item ->
+                if (item.content?.src != null) {
+                    result.add(item)
+                }
+
+                if (result.size >= 5) {
+                    return@loop
+                }
+            }
+        }
+        return result
     }
     
 }
