@@ -36,8 +36,6 @@ import com.rikucherry.artworkespresso.common.data.remote.DeviationDto
 import com.rikucherry.artworkespresso.common.theme.*
 import com.rikucherry.artworkespresso.common.tool.DataFormatHelper
 import com.rikucherry.artworkespresso.feature_daily_brief.presentation.viewmodel.DailyBriefViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import kotlin.math.max
 
 //Collapsable AppToolBar
@@ -49,7 +47,9 @@ fun DailyBriefScreen(
     isFreeTrail: Boolean,
     viewModel: DailyBriefViewModel = hiltViewModel()
 ) {
+    // ViewModel State of the artwork list
     val listState = viewModel.listState.value
+    // ViewModel State of the top artwork
     val topState = viewModel.topState.value
 
     val scrollState = rememberLazyListState()
@@ -63,7 +63,7 @@ fun DailyBriefScreen(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
-            NavDrawerScreen(isFreeTrail)
+            NavDrawerScreen(isFreeTrail, drawerState, scope)
         },
         content = {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -296,7 +296,7 @@ fun ListItemCard(
                 ) {
                     Row {
                         HeadingText(
-                            text = "$authorName",
+                            text = authorName,
                             headingLevel = HeadingLevel.PARAGRAPH,
                             color = GrayParagraph,
                             modifier = Modifier.widthIn(0.dp, itemWidth * 0.3f)
@@ -362,18 +362,6 @@ fun ListItemCard(
                 }
             }
         }
-    }
-}
-
-fun openNavDrawer(drawerState: DrawerState, scope: CoroutineScope) {
-    scope.launch {
-        drawerState.open()
-    }
-}
-
-fun closeNavDrawer(drawerState: DrawerState, scope: CoroutineScope) {
-    scope.launch {
-        drawerState.close()
     }
 }
 
