@@ -9,7 +9,10 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.DrawerState
 import androidx.compose.material.DrawerValue
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -110,12 +113,9 @@ fun NavDrawerScreen(
                             }
                         ),
                         onClick = {
-                            onWeeklyDateClicked(
-                                index = i,
-                                selected = selectedIdx,
-                                drawerState,
-                                scope
-                            )
+                            selectedIdx.value = i
+                            closeNavDrawer(drawerState, scope)
+                            //TODO: change viewModel state accordingly
                         }
                     ) {
                         HeadingText(
@@ -137,14 +137,6 @@ fun NavDrawerScreen(
     }
 }
 
-fun onWeeklyDateClicked(index: Int
-                        , selected: MutableState<Int>
-                        , state: DrawerState
-                        , scope: CoroutineScope) {
-    selected.value = index
-    closeNavDrawer(state, scope)
-    //TODO: change viewModel state accordingly
-}
 
 fun openNavDrawer(drawerState: DrawerState, scope: CoroutineScope) {
     scope.launch {
