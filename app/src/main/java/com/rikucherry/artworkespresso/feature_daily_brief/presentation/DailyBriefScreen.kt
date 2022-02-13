@@ -176,8 +176,7 @@ fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?) {
                 verticalArrangement = Arrangement.Center,
             ) {
                 HeadingText(
-                    //TODO: Replace with current date
-                    text = "Friday, Oct 29th",
+                    text = DataFormatHelper.getWeekDayOfToday(),
                     headingLevel = HeadingLevel.SECONDARY,
                     color = GrayParagraph,
                     // Set horizontal margin to 8.dp
