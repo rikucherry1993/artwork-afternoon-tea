@@ -6,24 +6,45 @@ import java.util.*
 
 object DataFormatHelper {
 
-    fun convertLongStringToTime(time: String?): String? {
+    fun convertLongStringToDate(time: String?): String? {
         if (time == null || time.isEmpty() || !time.isDigitsOnly()) {
             return null
         }
         val timeLong = time.toLong() * 1000
-        return convertLongToTime(timeLong)
+        return convertTimeStampToDate(timeLong)
     }
 
-    fun convertLongToTime(time: Long): String {
+    fun convertTimeStampToDate(time: Long): String {
         val date = Date(time)
         val format = SimpleDateFormat("yyyy.MM.dd", Locale.US)
         return format.format(date)
     }
 
-    fun getWeekDayOfToday(): String {
+    fun convertTimeStampToWeekday(time: Long): String {
+        val date = Date(time)
+        val format = SimpleDateFormat("EEE", Locale.US)
+        return format.format(date)
+    }
+
+    fun getDateWithWeekdayOfToday(): String {
         val date = Date()
         val format = SimpleDateFormat("EEEE, MMM d", Locale.US)
         return format.format(date)
+    }
+
+    fun getWeekdayOfToday(): String {
+        val date = Date()
+        val format = SimpleDateFormat("EEE", Locale.US)
+        return format.format(date)
+    }
+
+    fun getWeekDayOfTimeStamp(time: String?): String {
+        if (time == null || time.isEmpty() || !time.isDigitsOnly()) {
+            return "Invalid"
+        }
+
+        val timeLong = time.toLong() * 1000
+        return convertTimeStampToWeekday(timeLong)
     }
 
 }

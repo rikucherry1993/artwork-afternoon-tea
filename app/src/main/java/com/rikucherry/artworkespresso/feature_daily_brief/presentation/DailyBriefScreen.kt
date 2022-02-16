@@ -176,7 +176,7 @@ fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?) {
                 verticalArrangement = Arrangement.Center,
             ) {
                 HeadingText(
-                    text = DataFormatHelper.getWeekDayOfToday(),
+                    text = DataFormatHelper.getDateWithWeekdayOfToday(),
                     headingLevel = HeadingLevel.SECONDARY,
                     color = GrayParagraph,
                     // Set horizontal margin to 8.dp
@@ -209,7 +209,7 @@ fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean
                         imageUrl = artwork.content!!.src,
                         authorIconUrl = artwork.author?.userIconUrl ?: Constants.DEFAULT_AVATAR_URL,
                         authorName = artwork.author?.username ?: "Unknown",
-                        createDate = DataFormatHelper.convertLongStringToTime(artwork.publishedTime)
+                        createDate = DataFormatHelper.convertLongStringToDate(artwork.publishedTime)
                             ?: "Unknown",
                         title = artwork.title ?: "Untitled",
                         isFreeTrail = isFreeTrail,

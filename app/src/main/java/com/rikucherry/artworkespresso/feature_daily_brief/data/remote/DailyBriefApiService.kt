@@ -16,7 +16,9 @@ interface DailyBriefApiService {
         "browse/tags"
     )
     suspend fun getArtworksByTopic(@Header("Authorization") token: String
-                                   , @Query("tag") topic: String): ApiResponse<DeviationListDto>
+                                   , @Query("tag") topic: String
+                                   , @Query("limit") limit: Int?
+                                   , @Query("offset") offset: Int?): ApiResponse<DeviationListDto>
 
 
     /**

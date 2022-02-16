@@ -41,7 +41,7 @@ class DailyBriefViewModel @Inject constructor(
             topic = prefs.getUserFavoriteTopics()?.elementAt(0) ?: ""
         }
         getDailyTopArtwork()
-        getArtworkListByTopic()
+        getArtworkListByTopic(offset = 0)
     }
 
     private fun getDailyTopArtwork() {
@@ -84,8 +84,8 @@ class DailyBriefViewModel @Inject constructor(
 
 
 
-    private fun getArtworkListByTopic() {
-        getArtworkListUseCase(token, topic).onEach { result ->
+    private fun getArtworkListByTopic(offset: Int) {
+        getArtworkListUseCase(token, topic, offset).onEach { result ->
             when(result) {
                 is Resource.Loading -> {
                     _listState.value = ViewModelState(
@@ -94,12 +94,18 @@ class DailyBriefViewModel @Inject constructor(
                 }
 
                 is Resource.Success -> {
-                    _listState.value = ViewModelState(
-                        isLoading = false,
-                        data = result.data,
-                        statusCode = result.statusCode.code,
-                        status = result.statusCode
-                    )
+                    val data = result.data
+                    // expand max searching targets to 500
+                    if (data.results.size < 5 && data.hasMore && data.nextOffset < 500) {
+                        this.getArtworkListByTopic(data.nextOffset)
+                    } else {
+                        _listState.value = ViewModelState(
+                            isLoading = false,
+                            data = result.data.results,
+                            statusCode = result.statusCode.code,
+                            status = result.statusCode
+                        )
+                    }
                 }
 
                 is Resource.Error -> {

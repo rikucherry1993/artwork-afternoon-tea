@@ -5,7 +5,7 @@ import com.skydoves.sandwich.ApiResponse
 
 interface DailyBriefRepository {
 
-    suspend fun getArtworksByTopic(token: String, topic: String): ApiResponse<DeviationListDto>
+    suspend fun getArtworksByTopic(token: String, topic: String, limit: Int?, offset: Int?): ApiResponse<DeviationListDto>
 
     suspend fun getDailyArtworks(token: String, date: String?): ApiResponse<DeviationListDto>
 }

@@ -10,8 +10,13 @@ class DailyBriefRepositoryImpl @Inject constructor(
     private val dailyBriefApi: DailyBriefApiService
 ) : DailyBriefRepository{
 
-    override suspend fun getArtworksByTopic(token: String, topic: String): ApiResponse<DeviationListDto> {
-        return dailyBriefApi.getArtworksByTopic(token, topic)
+    override suspend fun getArtworksByTopic(
+        token: String,
+        topic: String,
+        limit: Int?,
+        offset: Int?
+    ): ApiResponse<DeviationListDto> {
+        return dailyBriefApi.getArtworksByTopic(token, topic, limit, offset)
     }
 
     override suspend fun getDailyArtworks(token: String, date: String?): ApiResponse<DeviationListDto> {
