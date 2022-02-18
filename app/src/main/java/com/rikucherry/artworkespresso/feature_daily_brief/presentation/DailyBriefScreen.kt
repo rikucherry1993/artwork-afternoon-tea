@@ -63,7 +63,7 @@ fun DailyBriefScreen(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
-            NavDrawerScreen(isFreeTrail, drawerState, scope)
+            NavDrawerScreen(isFreeTrail, drawerState, scope, viewModel)
         },
         content = {
             Box(modifier = Modifier.fillMaxSize()) {

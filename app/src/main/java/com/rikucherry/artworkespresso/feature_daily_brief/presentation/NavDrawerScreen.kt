@@ -27,6 +27,7 @@ import com.rikucherry.artworkespresso.common.component.HeadingLevel
 import com.rikucherry.artworkespresso.common.component.HeadingText
 import com.rikucherry.artworkespresso.common.theme.*
 import com.rikucherry.artworkespresso.common.tool.DataFormatHelper
+import com.rikucherry.artworkespresso.feature_daily_brief.presentation.viewmodel.DailyBriefViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -36,7 +37,9 @@ val weeklyDates = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
 fun NavDrawerScreen(
     isFreeTrail: Boolean,
     drawerState: DrawerState,
-    scope: CoroutineScope) {
+    scope: CoroutineScope,
+    viewModel: DailyBriefViewModel?
+    ) {
 
     val userName: String
     val iconUrl: String
@@ -118,6 +121,7 @@ fun NavDrawerScreen(
                         ),
                         onClick = {
                             selectedIdx.value = i
+                            viewModel?.getArtworkListByTopic(offset = 0, weekday = weeklyDates[i])
                             closeNavDrawer(drawerState, scope)
                             //TODO: change viewModel state accordingly
                         }
@@ -163,5 +167,6 @@ fun closeNavDrawer(drawerState: DrawerState, scope: CoroutineScope) {
 fun Preview(){
     NavDrawerScreen(false
         , DrawerState(DrawerValue.Open)
-        , rememberCoroutineScope())
+        , rememberCoroutineScope(),
+    null)
 }

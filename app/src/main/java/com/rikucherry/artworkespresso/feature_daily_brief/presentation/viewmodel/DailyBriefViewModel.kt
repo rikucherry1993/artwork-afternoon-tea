@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rikucherry.artworkespresso.common.data.remote.DeviationDto
+import com.rikucherry.artworkespresso.common.tool.DataFormatHelper
 import com.rikucherry.artworkespresso.common.tool.Resource
 import com.rikucherry.artworkespresso.common.tool.SharedPreferenceHelper
 import com.rikucherry.artworkespresso.common.tool.ViewModelState
@@ -41,7 +42,7 @@ class DailyBriefViewModel @Inject constructor(
             topic = prefs.getUserFavoriteTopics()?.elementAt(0) ?: ""
         }
         getDailyTopArtwork()
-        getArtworkListByTopic(offset = 0)
+        getArtworkListByTopic(offset = 0, weekday = DataFormatHelper.getWeekdayOfToday())
     }
 
     private fun getDailyTopArtwork() {
@@ -84,8 +85,8 @@ class DailyBriefViewModel @Inject constructor(
 
 
 
-    private fun getArtworkListByTopic(offset: Int) {
-        getArtworkListUseCase(token, topic, offset).onEach { result ->
+    fun getArtworkListByTopic(offset: Int, weekday: String) {
+        getArtworkListUseCase(token, topic, offset, weekday).onEach { result ->
             when(result) {
                 is Resource.Loading -> {
                     _listState.value = ViewModelState(
@@ -97,7 +98,7 @@ class DailyBriefViewModel @Inject constructor(
                     val data = result.data
                     // expand max searching targets to 500
                     if (data.results.size < 5 && data.hasMore && data.nextOffset < 500) {
-                        this.getArtworkListByTopic(data.nextOffset)
+                        this.getArtworkListByTopic(data.nextOffset, weekday)
                     } else {
                         _listState.value = ViewModelState(
                             isLoading = false,

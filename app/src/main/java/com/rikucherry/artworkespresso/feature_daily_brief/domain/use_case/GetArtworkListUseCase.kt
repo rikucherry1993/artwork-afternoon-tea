@@ -19,7 +19,8 @@ class GetArtworkListUseCase @Inject constructor(
     operator fun invoke(
         token: String,
         topic: String,
-        offset: Int
+        offset: Int,
+        weekday: String
     ): Flow<Resource<DeviationListDto>> = flow {
         emit(Resource.Loading<DeviationListDto>("Requesting daily artwork list..."))
 
@@ -27,7 +28,7 @@ class GetArtworkListUseCase @Inject constructor(
 
         artworkListResult.suspendOnSuccess {
             // Only the first 5 elements meeting filtering conditions are required
-            val dataRequired = filter(data.results)
+            val dataRequired = filter(data.results, weekday)
             val hasMore = data.hasMore
             val nextOffset = data.nextOffset
             val filteredResult = DeviationListDto(
@@ -44,7 +45,7 @@ class GetArtworkListUseCase @Inject constructor(
 
     }
 
-    private fun filter(list: List<DeviationDto>): List<DeviationDto> {
+    private fun filter(list: List<DeviationDto>, weekday: String): List<DeviationDto> {
         val result: MutableList<DeviationDto> = mutableListOf()
         run loop@{
             list.filter { it.content?.src != null } // the ones that have contents
@@ -54,7 +55,7 @@ class GetArtworkListUseCase @Inject constructor(
                 .filter {
                     // if the weekday is equal to the given weekday
                     // TODO: use passed weekday instead of today
-                    DataFormatHelper.getWeekDayOfTimeStamp(it.publishedTime) == DataFormatHelper.getWeekdayOfToday()
+                    DataFormatHelper.getWeekDayOfTimeStamp(it.publishedTime) == weekday
                 }
                 .forEach { item ->
                     result.add(item)
