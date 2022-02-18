@@ -26,6 +26,7 @@ import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.common.component.HeadingLevel
 import com.rikucherry.artworkespresso.common.component.HeadingText
 import com.rikucherry.artworkespresso.common.theme.*
+import com.rikucherry.artworkespresso.common.tool.DataFormatHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -39,7 +40,10 @@ fun NavDrawerScreen(
 
     val userName: String
     val iconUrl: String
-    val selectedIdx = remember { mutableStateOf(0)}
+
+    val defaultWeekday = DataFormatHelper.getWeekdayOfToday()
+    // The drawer activate the weekday of current date by default
+    val selectedIdx = remember { mutableStateOf(weeklyDates.indexOf(defaultWeekday))}
 
     if (isFreeTrail) {
         userName = "Client"

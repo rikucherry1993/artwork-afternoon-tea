@@ -48,7 +48,9 @@ class GetArtworkListUseCase @Inject constructor(
         val result: MutableList<DeviationDto> = mutableListOf()
         run loop@{
             list.filter { it.content?.src != null } // the ones that have contents
-//                .filterNot { it.isFavourited == true } // the ones that haven't got a Like
+                // NOTE: Why I commented out the line below is because there wouldn't be enough data
+                // to display if the list is filtered to only non-favourited items.
+                // .filterNot { it.isFavourited == true } // the ones that haven't got a Like
                 .filter {
                     // if the weekday is equal to the given weekday
                     // TODO: use passed weekday instead of today
