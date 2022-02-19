@@ -27,11 +27,10 @@ import com.rikucherry.artworkespresso.common.component.HeadingLevel
 import com.rikucherry.artworkespresso.common.component.HeadingText
 import com.rikucherry.artworkespresso.common.theme.*
 import com.rikucherry.artworkespresso.common.tool.DataFormatHelper
+import com.rikucherry.artworkespresso.common.tool.DataFormatHelper.weeklyDates
 import com.rikucherry.artworkespresso.feature_daily_brief.presentation.viewmodel.DailyBriefViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
-val weeklyDates = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
 
 @Composable
 fun NavDrawerScreen(
@@ -46,7 +45,8 @@ fun NavDrawerScreen(
 
     val defaultWeekday = DataFormatHelper.getWeekdayOfToday()
     // The drawer activate the weekday of current date by default
-    val selectedIdx = remember { mutableStateOf(weeklyDates.indexOf(defaultWeekday))}
+    val indexOfToday = weeklyDates.indexOf(defaultWeekday)
+    val selectedIdx = remember { mutableStateOf(indexOfToday)}
 
     if (isFreeTrail) {
         userName = "Client"
@@ -119,20 +119,30 @@ fun NavDrawerScreen(
                                 GrayDark
                             }
                         ),
+                        enabled = i <= indexOfToday, // Cannot check future dates
                         onClick = {
                             selectedIdx.value = i
-                            viewModel?.getArtworkListByTopic(offset = 0, weekday = weeklyDates[i])
+                            val weekday = weeklyDates[i]
+                            viewModel?.selectedWeekday = weekday
+                            viewModel?.getDailyTopArtwork(weekday = weekday)
+                            viewModel?.getArtworkListByTopic(offset = 0, weekday = weekday)
                             closeNavDrawer(drawerState, scope)
-                            //TODO: change viewModel state accordingly
                         }
                     ) {
                         HeadingText(
                             text = weeklyDates[i],
                             // Highlighted the selected item label
-                            color = if (i == selectedIdx.value) {
-                                Teal200
-                            } else {
-                                GrayParagraph
+                            color =
+                            when {
+                                i > indexOfToday -> {
+                                    GrayDark
+                                }
+                                i == selectedIdx.value -> {
+                                    Teal200
+                                }
+                                else -> {
+                                    GrayParagraph
+                                }
                             },
                             headingLevel = HeadingLevel.SECONDARY,
                             paddingTop = 4.dp,

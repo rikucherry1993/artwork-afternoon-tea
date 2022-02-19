@@ -31,7 +31,7 @@ class DailyBriefViewModel @Inject constructor(
 
     private var token: String
     private var topic: String
-
+    var selectedWeekday: String
 
     init {
         if (prefs.isClientLogin()) {
@@ -41,12 +41,15 @@ class DailyBriefViewModel @Inject constructor(
             token = prefs.getUserAccessToken() ?: ""
             topic = prefs.getUserFavoriteTopics()?.elementAt(0) ?: ""
         }
-        getDailyTopArtwork()
-        getArtworkListByTopic(offset = 0, weekday = DataFormatHelper.getWeekdayOfToday())
+
+        // Show data of current date by default
+        selectedWeekday = DataFormatHelper.getWeekdayOfToday()
+        getDailyTopArtwork(weekday = selectedWeekday)
+        getArtworkListByTopic(offset = 0, weekday = selectedWeekday)
     }
 
-    private fun getDailyTopArtwork() {
-        getDailyTopUseCase(token,null).onEach { result ->
+    fun getDailyTopArtwork(weekday: String) {
+        getDailyTopUseCase(token,weekday).onEach { result ->
             when(result) {
                 is Resource.Loading -> {
                     _topState.value = ViewModelState(
@@ -127,6 +130,13 @@ class DailyBriefViewModel @Inject constructor(
             }
 
         }.launchIn(viewModelScope)
+    }
+
+
+    fun hasSavedAlready(weekday: String): Boolean {
+
+        // TODO: search DB
+        return false
     }
 
 }

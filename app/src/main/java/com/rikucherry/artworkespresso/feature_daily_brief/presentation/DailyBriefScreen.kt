@@ -71,7 +71,7 @@ fun DailyBriefScreen(
                 DailyArtWorkList(scrollState, isFreeTrail, artworks)
                 // Collapsable toolbar contains roughly a header image and a tool bar, both can
                 // adjust the position of their elements or themselves dynamically during scrolling.
-                CollapsableToolBar(scrollState, topArt)
+                CollapsableToolBar(scrollState, topArt, viewModel)
 
                 // Press menu button to open the navigation drawer
                 IconButton(
@@ -107,7 +107,7 @@ fun DailyBriefScreen(
 
 
 @Composable
-fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?) {
+fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?, viewModel: DailyBriefViewModel) {
     val imageHeight = ExpandedAppBarHeight - CollapsedAppBarHeight
     val maxOffset = with(LocalDensity.current) {
         imageHeight.roundToPx()
@@ -176,7 +176,7 @@ fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?) {
                 verticalArrangement = Arrangement.Center,
             ) {
                 HeadingText(
-                    text = DataFormatHelper.getDateWithWeekdayOfToday(),
+                    text = DataFormatHelper.getFormalDateFromWeekday(weekday = viewModel.selectedWeekday),
                     headingLevel = HeadingLevel.SECONDARY,
                     color = GrayParagraph,
                     // Set horizontal margin to 8.dp
