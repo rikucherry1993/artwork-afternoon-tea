@@ -2,33 +2,33 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "9fea81de56c83416f027509beda39eab",
+    "identityHash": "b8fa2945c6cbf9e92981444900432681",
     "entities": [
       {
         "tableName": "login_info",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `userId` TEXT NOT NULL, `userName` TEXT NOT NULL, `userIconUrl` TEXT NOT NULL, `status` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `user_id` TEXT NOT NULL, `user_name` TEXT NOT NULL, `user_icon_url` TEXT NOT NULL, `status` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "userId",
-            "columnName": "userId",
+            "columnName": "user_id",
             "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "userName",
-            "columnName": "userName",
+            "columnName": "user_name",
             "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "userIconUrl",
-            "columnName": "userIconUrl",
+            "columnName": "user_icon_url",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -47,12 +47,56 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "saved_artworks",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `deviation_id` TEXT NOT NULL, `week_day` TEXT NOT NULL, `is_free_trail` INTEGER NOT NULL, `is_top_art` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deviationId",
+            "columnName": "deviation_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weekDay",
+            "columnName": "week_day",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFreeTrail",
+            "columnName": "is_free_trail",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isTopArt",
+            "columnName": "is_top_art",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9fea81de56c83416f027509beda39eab')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b8fa2945c6cbf9e92981444900432681')"
     ]
   }
 }
