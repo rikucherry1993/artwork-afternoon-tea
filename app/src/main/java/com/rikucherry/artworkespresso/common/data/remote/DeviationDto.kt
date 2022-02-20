@@ -71,6 +71,10 @@ data class DeviationDto(
 )
 
 data class DeviationListDto(
+    @SerializedName("has_more")
+    val hasMore: Boolean,
+    @SerializedName("next_offset")
+    val nextOffset: Int,
     @SerializedName("results")
     val results: List<DeviationDto>
 )

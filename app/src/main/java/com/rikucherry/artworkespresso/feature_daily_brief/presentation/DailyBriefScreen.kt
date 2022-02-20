@@ -36,8 +36,6 @@ import com.rikucherry.artworkespresso.common.data.remote.DeviationDto
 import com.rikucherry.artworkespresso.common.theme.*
 import com.rikucherry.artworkespresso.common.tool.DataFormatHelper
 import com.rikucherry.artworkespresso.feature_daily_brief.presentation.viewmodel.DailyBriefViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import kotlin.math.max
 
 //Collapsable AppToolBar
@@ -49,8 +47,12 @@ fun DailyBriefScreen(
     isFreeTrail: Boolean,
     viewModel: DailyBriefViewModel = hiltViewModel()
 ) {
+    // ViewModel State of the artwork list
     val listState = viewModel.listState.value
+    // ViewModel State of the top artwork
     val topState = viewModel.topState.value
+    // ViewModel State of db transition
+    val dbTransactionState = viewModel.dbTransactionState.value
 
     val scrollState = rememberLazyListState()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -63,7 +65,7 @@ fun DailyBriefScreen(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
-            NavDrawerScreen(isFreeTrail)
+            NavDrawerScreen(isFreeTrail, drawerState, scope, viewModel)
         },
         content = {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -71,7 +73,7 @@ fun DailyBriefScreen(
                 DailyArtWorkList(scrollState, isFreeTrail, artworks)
                 // Collapsable toolbar contains roughly a header image and a tool bar, both can
                 // adjust the position of their elements or themselves dynamically during scrolling.
-                CollapsableToolBar(scrollState, topArt)
+                CollapsableToolBar(scrollState, topArt, viewModel)
 
                 // Press menu button to open the navigation drawer
                 IconButton(
@@ -88,7 +90,7 @@ fun DailyBriefScreen(
                 }
 
                 // Show loading spinner while loading
-                if (listState.isLoading || topState.isLoading) {
+                if (listState.isLoading || topState.isLoading || dbTransactionState.isLoading) {
                     Box(modifier = Modifier
                         .fillMaxSize()
                         .background(BackgroundPrimary.copy(alpha = 0.7f)),
@@ -107,7 +109,7 @@ fun DailyBriefScreen(
 
 
 @Composable
-fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?) {
+fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?, viewModel: DailyBriefViewModel) {
     val imageHeight = ExpandedAppBarHeight - CollapsedAppBarHeight
     val maxOffset = with(LocalDensity.current) {
         imageHeight.roundToPx()
@@ -176,8 +178,7 @@ fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?) {
                 verticalArrangement = Arrangement.Center,
             ) {
                 HeadingText(
-                    //TODO: Replace with current date
-                    text = "Friday, Oct 29th",
+                    text = DataFormatHelper.getFormalDateFromWeekday(weekday = viewModel.selectedWeekday),
                     headingLevel = HeadingLevel.SECONDARY,
                     color = GrayParagraph,
                     // Set horizontal margin to 8.dp
@@ -210,7 +211,7 @@ fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean
                         imageUrl = artwork.content!!.src,
                         authorIconUrl = artwork.author?.userIconUrl ?: Constants.DEFAULT_AVATAR_URL,
                         authorName = artwork.author?.username ?: "Unknown",
-                        createDate = DataFormatHelper.convertLongStringToTime(artwork.publishedTime)
+                        createDate = DataFormatHelper.convertLongStringToDate(artwork.publishedTime)
                             ?: "Unknown",
                         title = artwork.title ?: "Untitled",
                         isFreeTrail = isFreeTrail,
@@ -297,7 +298,7 @@ fun ListItemCard(
                 ) {
                     Row {
                         HeadingText(
-                            text = "$authorName",
+                            text = authorName,
                             headingLevel = HeadingLevel.PARAGRAPH,
                             color = GrayParagraph,
                             modifier = Modifier.widthIn(0.dp, itemWidth * 0.3f)
@@ -363,18 +364,6 @@ fun ListItemCard(
                 }
             }
         }
-    }
-}
-
-fun openNavDrawer(drawerState: DrawerState, scope: CoroutineScope) {
-    scope.launch {
-        drawerState.open()
-    }
-}
-
-fun closeNavDrawer(drawerState: DrawerState, scope: CoroutineScope) {
-    scope.launch {
-        drawerState.close()
     }
 }
 

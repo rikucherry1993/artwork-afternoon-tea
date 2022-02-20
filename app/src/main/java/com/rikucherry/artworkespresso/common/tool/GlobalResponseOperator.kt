@@ -21,6 +21,6 @@ class GlobalResponseOperator<T> constructor(
     }
 
     override suspend fun onSuccess(apiResponse: ApiResponse.Success<T>) {
-        Timber.d("API calling succeeded. \nData: ${apiResponse.data}")
+        Timber.d("API calling succeeded. \nRequest: ${apiResponse.raw.request.url}")
     }
 }

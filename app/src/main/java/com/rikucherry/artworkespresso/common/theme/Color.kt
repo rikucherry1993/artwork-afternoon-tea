@@ -18,4 +18,5 @@ val PurplePrimary = Color(0xFFD0AAFF)
 //Gray
 val GrayParagraph = Color(0xFFE6E6E6)
 val GrayButtonNotEnabled = Color(0xFF9E9E9E)
+val GrayMedium = Color(0xFF616161)
 val GrayDark = Color(0xFF424242)
