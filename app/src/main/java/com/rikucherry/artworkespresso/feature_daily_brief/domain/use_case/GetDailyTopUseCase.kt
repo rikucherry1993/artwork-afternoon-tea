@@ -11,12 +11,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GetDailyTopUseCase@Inject constructor(
+class GetDailyTopUseCase @Inject constructor(
     private val dailyBriefRepository: DailyBriefRepository
 ) {
 
     operator fun invoke(token: String, weekday: String): Flow<Resource<DeviationDto>> = flow {
-        emit(Resource.Loading<DeviationDto>("Requesting data..."))
+        emit(Resource.Loading<DeviationDto>("Requesting daily top artwork..."))
 
         val date = if (weekday == DataFormatHelper.getWeekdayOfToday()) {
             null

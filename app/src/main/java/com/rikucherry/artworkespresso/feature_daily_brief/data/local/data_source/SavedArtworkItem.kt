@@ -8,7 +8,7 @@ import com.rikucherry.artworkespresso.common.data.local.ArtworkEspressoDatabase.
 @Entity(tableName = SAVED_ARTWORK_TABLE_NAME)
 data class SavedArtworkItem(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int? = null,
     @ColumnInfo(name = "deviation_id")
     val deviationId: String,
     @ColumnInfo(name = "week_day")

@@ -1,9 +1,11 @@
 package com.rikucherry.artworkespresso.feature_daily_brief.data.remote
 
+import com.rikucherry.artworkespresso.common.data.remote.DeviationDto
 import com.rikucherry.artworkespresso.common.data.remote.DeviationListDto
 import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface DailyBriefApiService {
@@ -30,4 +32,12 @@ interface DailyBriefApiService {
     )
     suspend fun getDailyArtworks(@Header("Authorization") token: String
                                  , @Query("date") date: String?): ApiResponse<DeviationListDto>
+
+
+    @GET(
+        "deviation/{deviationid}"
+    )
+    suspend fun getArtworkById(@Header("Authorization") token: String
+                               , @Path("deviationid") deviationId: String): ApiResponse<DeviationDto>
+
 }

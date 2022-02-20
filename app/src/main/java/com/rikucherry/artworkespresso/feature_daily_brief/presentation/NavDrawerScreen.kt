@@ -124,8 +124,7 @@ fun NavDrawerScreen(
                             selectedIdx.value = i
                             val weekday = weeklyDates[i]
                             viewModel?.selectedWeekday = weekday
-                            viewModel?.getDailyTopArtwork(weekday = weekday)
-                            viewModel?.getArtworkListByTopic(offset = 0, weekday = weekday)
+                            viewModel?.getArtworks()
                             closeNavDrawer(drawerState, scope)
                         }
                     ) {

@@ -54,7 +54,6 @@ class GetArtworkListUseCase @Inject constructor(
                 // .filterNot { it.isFavourited == true } // the ones that haven't got a Like
                 .filter {
                     // if the weekday is equal to the given weekday
-                    // TODO: use passed weekday instead of today
                     DataFormatHelper.getWeekDayOfTimeStamp(it.publishedTime) == weekday
                 }
                 .forEach { item ->
