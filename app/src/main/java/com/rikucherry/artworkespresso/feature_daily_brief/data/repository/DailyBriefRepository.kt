@@ -6,14 +6,17 @@ import com.rikucherry.artworkespresso.feature_daily_brief.data.local.data_source
 import com.skydoves.sandwich.ApiResponse
 
 interface DailyBriefRepository {
-
+    // API
     suspend fun getArtworksByTopic(token: String, topic: String, limit: Int?, offset: Int?): ApiResponse<DeviationListDto>
 
     suspend fun getDailyArtworks(token: String, date: String?): ApiResponse<DeviationListDto>
 
-    suspend fun getArtworksByWeekday(weekday: String, isFreeTrail: Boolean): List<SavedArtworkItem>?
-
     suspend fun getArtworkById(token: String, deviationId: String): ApiResponse<DeviationDto>
 
+    // DB transactions
     suspend fun saveArtworks(artworks: List<SavedArtworkItem>)
+
+    suspend fun getArtworksByWeekday(weekday: String, isFreeTrail: Boolean): List<SavedArtworkItem>?
+
+    suspend fun deleteSavedArtworksByWeekday(weekday: String)
 }

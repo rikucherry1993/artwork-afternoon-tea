@@ -17,4 +17,6 @@ data class SavedArtworkItem(
     val isFreeTrail: Boolean,
     @ColumnInfo(name = "is_top_art")
     val isTopArt: Boolean,
+    @ColumnInfo(name = "saved_time")
+    val savedTime: Long
 )

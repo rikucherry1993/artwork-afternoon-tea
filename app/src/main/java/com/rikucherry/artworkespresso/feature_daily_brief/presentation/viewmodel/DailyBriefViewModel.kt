@@ -180,7 +180,8 @@ class DailyBriefViewModel @Inject constructor(
                 deviationId = it.deviationId,
                 weekDay = selectedWeekday,
                 isFreeTrail = prefs.isClientLogin(),
-                isTopArt = isTopArt
+                isTopArt = isTopArt,
+                savedTime = System.currentTimeMillis()
             )
         }
         saveArtworksUseCase(saveItems).onEach { result ->

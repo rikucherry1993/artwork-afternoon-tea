@@ -31,6 +31,8 @@ class DailyBriefRepositoryImpl @Inject constructor(
         return savedArtworksDao.getArtworksByWeekday(weekday, isFreeTrail)
     }
 
+    override suspend fun deleteSavedArtworksByWeekday(weekday: String) = savedArtworksDao.deleteSavedArtworksByWeekday(weekday)
+
     override suspend fun getArtworkById(token: String, deviationId: String): ApiResponse<DeviationDto> {
         return dailyBriefApi.getArtworkById(token, deviationId)
     }
