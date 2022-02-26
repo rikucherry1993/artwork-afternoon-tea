@@ -19,8 +19,8 @@ class GetSavedArtworksUseCase @Inject constructor(
             val savedArtworkItems
             = dailyBriefRepository.getArtworksByWeekday(weekday, isFreeTrail)?.toMutableList()
 
-            if (savedArtworkItems.isNullOrEmpty()) {
-                val oldItems = savedArtworkItems!!.filter {
+            if (!savedArtworkItems.isNullOrEmpty()) {
+                val oldItems = savedArtworkItems.filter {
                     item ->
                     isOneWeekAgo(item.savedTime)
                 }
