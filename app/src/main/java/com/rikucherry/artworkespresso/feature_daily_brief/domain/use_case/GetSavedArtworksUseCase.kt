@@ -26,7 +26,7 @@ class GetSavedArtworksUseCase @Inject constructor(
                 }
 
                 if (oldItems.isNotEmpty()) {
-                    dailyBriefRepository.deleteSavedArtworksByWeekday(weekday)
+                    dailyBriefRepository.deleteSavedArtworksByWeekday(weekday, isFreeTrail)
                     savedArtworkItems.clear()
                 }
             }

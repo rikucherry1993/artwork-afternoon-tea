@@ -69,7 +69,7 @@ object DataFormatHelper {
     }
 
     fun isOneWeekAgo(time: Long) : Boolean {
-        val weekDayOfToday = DataFormatHelper.getWeekdayOfToday()
+        val weekDayOfToday = getWeekdayOfToday()
         val indexInWeek = weeklyDates.indexOf(weekDayOfToday)
 
         val currentDate = Date()
@@ -77,9 +77,13 @@ object DataFormatHelper {
 
         val c = Calendar.getInstance()
         c.time = currentDate
+        c.set(Calendar.HOUR_OF_DAY, 0)
+        c.clear(Calendar.MINUTE)
+        c.clear(Calendar.SECOND)
+        c.clear(Calendar.MILLISECOND)
         c.add(Calendar.DATE, -indexInWeek)
-
         val firstDayOfTheWeek = c.time
+
         return date.before(firstDayOfTheWeek)
     }
 
