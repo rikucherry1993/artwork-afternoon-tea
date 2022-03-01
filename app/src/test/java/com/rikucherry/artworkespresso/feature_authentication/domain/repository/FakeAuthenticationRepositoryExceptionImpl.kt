@@ -57,4 +57,13 @@ class FakeAuthenticationRepositoryExceptionImpl : AuthenticationRepository {
         val exception = IOException("Throw new IO exception")
         return ApiResponse.Failure.Exception(exception)
     }
+
+    override suspend fun refreshUserAccessToken(
+        clientId: Int,
+        clientSecret: String,
+        refreshToken: String
+    ): ApiResponse<UserTokenResponseDto> {
+        val exception = IOException("Throw new IO exception")
+        return ApiResponse.Failure.Exception(exception)
+    }
 }

@@ -81,4 +81,21 @@ class FakeAuthenticationRepositoryImpl : AuthenticationRepository {
 
         return ApiResponse.Success(retrofit2.Response.success(clientTokenResponseDto))
     }
+
+    override suspend fun refreshUserAccessToken(
+        clientId: Int,
+        clientSecret: String,
+        refreshToken: String
+    ): ApiResponse<UserTokenResponseDto> {
+        val userTokenResponseDto = UserTokenResponseDto(
+            accessToken = "fake access token",
+            expiresIn = 3600,
+            refreshToken = "fake refresh token",
+            scope = Constants.FULL_SCOPE,
+            status = "success",
+            tokenType = "Bearer"
+        )
+
+        return ApiResponse.Success(retrofit2.Response.success(userTokenResponseDto))
+    }
 }

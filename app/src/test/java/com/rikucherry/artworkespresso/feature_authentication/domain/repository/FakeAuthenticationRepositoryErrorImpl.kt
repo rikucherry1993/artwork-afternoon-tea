@@ -72,6 +72,20 @@ class FakeAuthenticationRepositoryErrorImpl : AuthenticationRepository {
         return ApiResponse.Failure.Error(retrofit2.Response
             .error(400, errorResponse.toString().toResponseBody()))
     }
+
+    override suspend fun refreshUserAccessToken(
+        clientId: Int,
+        clientSecret: String,
+        refreshToken: String
+    ): ApiResponse<UserTokenResponseDto> {
+        val errorResponse = ErrorResponse(
+            error = "invalid_request",
+            errorDescription = "fake message."
+        )
+
+        return ApiResponse.Failure.Error(retrofit2.Response
+            .error(400, errorResponse.toString().toResponseBody()))
+    }
 }
 
 data class ErrorResponse(
