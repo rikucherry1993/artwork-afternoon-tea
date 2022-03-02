@@ -15,7 +15,7 @@ interface SavedArtworksDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveArtworks(vararg artworks: SavedArtworkItem)
 
-    @Query("DELETE FROM saved_artworks WHERE week_day = :weekday")
-    suspend fun deleteSavedArtworksByWeekday(weekday: String)
+    @Query("DELETE FROM saved_artworks WHERE week_day = :weekday AND is_free_trail = :isFreeTrail")
+    suspend fun deleteSavedArtworksByWeekday(weekday: String, isFreeTrail: Boolean)
 
 }

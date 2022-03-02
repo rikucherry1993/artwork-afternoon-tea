@@ -18,5 +18,5 @@ interface DailyBriefRepository {
 
     suspend fun getArtworksByWeekday(weekday: String, isFreeTrail: Boolean): List<SavedArtworkItem>?
 
-    suspend fun deleteSavedArtworksByWeekday(weekday: String)
+    suspend fun deleteSavedArtworksByWeekday(weekday: String, isFreeTrail: Boolean)
 }

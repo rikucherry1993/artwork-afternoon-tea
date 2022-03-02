@@ -1,5 +1,6 @@
 package com.rikucherry.artworkespresso.feature_authentication.domain.repository
 
+import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.feature_authentication.data.local.LoginInfoDao
 import com.rikucherry.artworkespresso.feature_authentication.data.local.data_source.LoginInfoItem
 import com.rikucherry.artworkespresso.feature_authentication.data.remote.AuthenticationApiService
@@ -45,5 +46,13 @@ class AuthenticationRepositoryImpl @Inject constructor(
         grantType: String
     ): ApiResponse<ClientTokenResponseDto> {
         return authApi.getClientAccessToken(clientId, clientSecret, grantType)
+    }
+
+    override suspend fun refreshUserAccessToken(clientId: Int, clientSecret: String,
+                                                refreshToken: String): ApiResponse<UserTokenResponseDto> {
+        return authApi.refreshUserAccessToken(clientId = clientId
+            , clientSecret = clientSecret
+            , grantType = Constants.GRANT_TYPE_REFRESH
+            , refreshToken = refreshToken)
     }
 }

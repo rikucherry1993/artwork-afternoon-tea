@@ -8,6 +8,7 @@ import com.rikucherry.artworkespresso.common.data.remote.DeviationDto
 import com.rikucherry.artworkespresso.common.tool.*
 import com.rikucherry.artworkespresso.feature_daily_brief.data.local.data_source.SavedArtworkItem
 import com.rikucherry.artworkespresso.feature_daily_brief.domain.use_case.*
+import com.skydoves.sandwich.StatusCode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -35,19 +36,12 @@ class DailyBriefViewModel @Inject constructor(
     private val _dbTransactionState = mutableStateOf(ViewModelState<List<SavedArtworkItem>>(isLoading = false))
     val dbTransactionState: State<ViewModelState<List<SavedArtworkItem>>> = _dbTransactionState
 
-    private var token: String
-    private var topic: String
+    private lateinit var token: String
+    private lateinit var topic: String
     var selectedWeekday: String
 
     init {
-        if (prefs.isClientLogin()) {
-            token = prefs.getClientAccessToken() ?: ""
-            topic = prefs.getClientFavoriteTopics()?.elementAt(0) ?: ""
-        } else {
-            token = prefs.getUserAccessToken() ?: ""
-            topic = prefs.getUserFavoriteTopics()?.elementAt(0) ?: ""
-        }
-
+        setTokenAndTopic()
         // Show data of current date by default
         selectedWeekday = DataFormatHelper.getWeekdayOfToday()
         getArtworks()
@@ -71,7 +65,8 @@ class DailyBriefViewModel @Inject constructor(
                     // If has saved data, display the same artworks based on saved IDs.
                     // Otherwise, get artworks by topic.
                     if (result.data?.size ?: 0 > 0) {
-                        getArtworksById(result.data!!)
+                        getTopArtworkById(result.data!!)
+                        getArtworkListById(result.data!!)
                     } else {
                         getDailyTopArtwork(weekday = selectedWeekday)
                         getArtworkListByTopic(offset = 0, weekday = selectedWeekday)
@@ -93,81 +88,52 @@ class DailyBriefViewModel @Inject constructor(
     private fun getDailyTopArtwork(weekday: String) {
         getDailyTopUseCase(token,weekday).onEach { result ->
             when(result) {
-                is Resource.Loading -> {
-                    _topState.value = ViewModelState(
-                        isLoading = true
-                    )
-                }
-
                 is Resource.Success -> {
-                    _topState.value = ViewModelState(
-                        isLoading = false,
-                        data = result.data,
-                        statusCode = result.statusCode.code,
-                        status = result.statusCode
-                    )
+                    updateState(result, state = _topState, successData = result.data)
                     saveArtworks(listOf(result.data), isTopArt = true)
                 }
 
                 is Resource.Error -> {
-                    _topState.value = ViewModelState(
-                        isLoading = false,
-                        statusCode = result.statusCode.code,
-                        status = result.statusCode,
-                        error = result.message
-                    )
+                    if (result.statusCode == StatusCode.Unauthorized) {
+                        setTokenAndTopic()
+                        getDailyTopArtwork(weekday)
+                    } else {
+                        updateState(result, state = _topState, successData = null)
+                    }
                 }
 
-                is Resource.Exception -> {
-                    _topState.value = ViewModelState(
-                        isLoading = false,
-                        error = result.message
-                    )
+                else -> {
+                    updateState(result, state = _topState, successData = null)
                 }
             }
-
         }.launchIn(viewModelScope)
     }
 
     private fun getArtworkListByTopic(offset: Int, weekday: String) {
         getArtworkListUseCase(token, topic, offset, weekday).onEach { result ->
             when(result) {
-                is Resource.Loading -> {
-                    _listState.value = ViewModelState(
-                        isLoading = true
-                    )
-                }
-
                 is Resource.Success -> {
                     val data = result.data
                     // expand max searching targets to 500
                     if (data.results.size < 5 && data.hasMore && data.nextOffset < 500) {
                         this.getArtworkListByTopic(data.nextOffset, weekday)
                     } else {
-                        _listState.value = ViewModelState(
-                            isLoading = false,
-                            data = result.data.results,
-                            statusCode = result.statusCode.code,
-                            status = result.statusCode
-                        )
+                        updateState(result, state = _listState, successData = result.data.results)
                         saveArtworks(result.data.results, isTopArt = false)
                     }
                 }
 
                 is Resource.Error -> {
-                    _listState.value = ViewModelState(
-                        isLoading = false,
-                        statusCode = result.statusCode.code,
-                        status = result.statusCode,
-                        error = result.message
-                    )
+                    if (result.statusCode == StatusCode.Unauthorized) {
+                        setTokenAndTopic()
+                        getArtworkListByTopic(offset, weekday)
+                    } else {
+                        updateState(result, state = _listState, successData = null)
+                    }
                 }
 
-                is Resource.Exception -> {
-                    _listState.value = ViewModelState(
-                        isLoading = false,
-                        error = result.message
-                    )
+                else -> {
+                    updateState(result, state = _listState, successData = null)
                 }
             }
 
@@ -211,82 +177,63 @@ class DailyBriefViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getArtworksById(artworks: List<SavedArtworkItem>) {
+    private fun getTopArtworkById(artworks: List<SavedArtworkItem>) {
         // get top art
         val topArtId = artworks.filter { artwork -> artwork.isTopArt }[0].deviationId
         getArtworksByIdUseCase(topArtId, token = token).onEach { result ->
-            when(result) {
-                is Resource.Loading -> {
-                    _topState.value = ViewModelState(
-                        isLoading = true
-                    )
-                }
-
+            when (result) {
                 is Resource.Success -> {
-                    _topState.value = ViewModelState(
-                        isLoading = false,
-                        data = result.data[0],
-                        statusCode = result.statusCode.code,
-                        status = result.statusCode
-                    )
+                    updateState(result, state = _topState, successData = result.data[0])
                 }
 
                 is Resource.Error -> {
-                    _topState.value = ViewModelState(
-                        isLoading = false,
-                        statusCode = result.statusCode.code,
-                        status = result.statusCode,
-                        error = result.message
-                    )
+                    if (result.statusCode == StatusCode.Unauthorized) {
+                        setTokenAndTopic()
+                        getTopArtworkById(artworks)
+                    } else {
+                        updateState(result, state = _topState, successData = null)
+                    }
                 }
 
-                is Resource.Exception -> {
-                    _topState.value = ViewModelState(
-                        isLoading = false,
-                        error = result.message
-                    )
+                else -> {
+                    updateState(result, state = _topState, successData = null)
                 }
-
             }
-
         }.launchIn(viewModelScope)
+    }
 
+    private fun getArtworkListById(artworks: List<SavedArtworkItem>) {
         // get artwork list
         val listIds = artworks.filterNot { artwork -> artwork.isTopArt }.map { it.deviationId }
         getArtworksByIdUseCase(*listIds.toTypedArray(), token = token).onEach { result ->
-            when(result) {
-                is Resource.Loading -> {
-                    _listState.value = ViewModelState(
-                        isLoading = true
-                    )
-                }
-
+            when (result) {
                 is Resource.Success -> {
-                    _listState.value = ViewModelState(
-                        isLoading = false,
-                        data = result.data,
-                        statusCode = result.statusCode.code,
-                        status = result.statusCode
-                    )
+                    updateState(result, state = _listState, successData = result.data)
                 }
 
                 is Resource.Error -> {
-                    _listState.value = ViewModelState(
-                        isLoading = false,
-                        statusCode = result.statusCode.code,
-                        status = result.statusCode,
-                        error = result.message
-                    )
+                    if (result.statusCode == StatusCode.Unauthorized) {
+                        setTokenAndTopic()
+                        getArtworkListById(artworks)
+                    } else {
+                        updateState(result, state = _listState, successData = null)
+                    }
                 }
 
-                is Resource.Exception -> {
-                    _listState.value = ViewModelState(
-                        isLoading = false,
-                        error = result.message
-                    )
+                else -> {
+                    updateState(result, state = _listState, successData = null)
                 }
             }
         }.launchIn(viewModelScope)
+    }
 
+    private fun setTokenAndTopic() {
+        if (prefs.isClientLogin()) {
+            token = prefs.getClientAccessToken() ?: ""
+            topic = prefs.getClientFavoriteTopics()?.elementAt(0) ?: ""
+        } else {
+            token = prefs.getUserAccessToken() ?: ""
+            topic = prefs.getUserFavoriteTopics()?.elementAt(0) ?: ""
+        }
     }
 }
