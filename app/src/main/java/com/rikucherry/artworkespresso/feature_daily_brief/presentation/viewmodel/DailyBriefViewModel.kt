@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rikucherry.artworkespresso.common.data.remote.DeviationDto
 import com.rikucherry.artworkespresso.common.tool.*
+import com.rikucherry.artworkespresso.feature_authentication.data.local.data_source.LoginInfoItem
+import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.GetLoginInfoUseCase
 import com.rikucherry.artworkespresso.feature_daily_brief.data.local.data_source.SavedArtworkItem
 import com.rikucherry.artworkespresso.feature_daily_brief.domain.use_case.*
 import com.skydoves.sandwich.StatusCode
@@ -22,6 +24,7 @@ class DailyBriefViewModel @Inject constructor(
     private val getArtworksByIdUseCase: GetArtworksByIdUseCase,
     private val getSavedArtworksUseCase: GetSavedArtworksUseCase,
     private val saveArtworksUseCase: SaveArtworksUseCase,
+    private val getLoginInfoUseCase: GetLoginInfoUseCase,
     private val prefs: SharedPreferenceHelper
 ) : ViewModel() {
 
@@ -33,8 +36,11 @@ class DailyBriefViewModel @Inject constructor(
     val topState: State<ViewModelState<DeviationDto>> = _topState
 
     // States of local db transitions
-    private val _dbTransactionState = mutableStateOf(ViewModelState<List<SavedArtworkItem>>(isLoading = false))
-    val dbTransactionState: State<ViewModelState<List<SavedArtworkItem>>> = _dbTransactionState
+    private val _savedItemState = mutableStateOf(ViewModelState<List<SavedArtworkItem>>(isLoading = false))
+    val savedItemState: State<ViewModelState<List<SavedArtworkItem>>> = _savedItemState
+
+    private val _loginInfoState = mutableStateOf(ViewModelState<LoginInfoItem>(isLoading = false))
+    val loginInfoState: State<ViewModelState<LoginInfoItem>> = _loginInfoState
 
     private lateinit var token: String
     private lateinit var topic: String
@@ -45,19 +51,20 @@ class DailyBriefViewModel @Inject constructor(
         // Show data of current date by default
         selectedWeekday = DataFormatHelper.getWeekdayOfToday()
         getArtworks()
+        getLoginInfo()
     }
 
     fun getArtworks() {
         getSavedArtworksUseCase(selectedWeekday, prefs.isClientLogin()).onEach { result ->
             when(result) {
                 is LocalResource.Loading -> {
-                    _dbTransactionState.value = ViewModelState(
+                    _savedItemState.value = ViewModelState(
                         isLoading = true
                     )
                 }
 
                 is LocalResource.Success -> {
-                    _dbTransactionState.value = ViewModelState(
+                    _savedItemState.value = ViewModelState(
                         isLoading = false
                     )
                     Timber.d("Loading artworks from db succeeded. \nData: ${result.data}")
@@ -74,7 +81,7 @@ class DailyBriefViewModel @Inject constructor(
                 }
 
                 is LocalResource.Exception -> {
-                    _dbTransactionState.value = ViewModelState(
+                    _savedItemState.value = ViewModelState(
                         isLoading = false,
                         error = result.message
                     )
@@ -153,20 +160,20 @@ class DailyBriefViewModel @Inject constructor(
         saveArtworksUseCase(saveItems).onEach { result ->
             when(result) {
                 is LocalResource.Loading -> {
-                    _dbTransactionState.value = ViewModelState(
+                    _savedItemState.value = ViewModelState(
                         isLoading = true
                     )
                 }
 
                 is LocalResource.Success -> {
-                    _dbTransactionState.value = ViewModelState(
+                    _savedItemState.value = ViewModelState(
                         isLoading = false
                     )
                     Timber.d("Saving artworks to db succeeded. \nData: ${result.data}")
                 }
 
                 is LocalResource.Exception -> {
-                    _dbTransactionState.value = ViewModelState(
+                    _savedItemState.value = ViewModelState(
                         isLoading = false,
                         error = result.message
                     )
@@ -222,6 +229,42 @@ class DailyBriefViewModel @Inject constructor(
 
                 else -> {
                     updateState(result, state = _listState, successData = null)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getLoginInfo() {
+        getLoginInfoUseCase().onEach { result ->
+            when(result) {
+                is LocalResource.Loading -> {
+                    _loginInfoState.value = ViewModelState(
+                        isLoading = true
+                    )
+                }
+                is LocalResource.Success -> {
+                    _loginInfoState.value = ViewModelState(
+                        isLoading = false,
+                        data = result.data
+                    )
+                    Timber.d("Getting login info from db succeeded. \nData: ${result.data}")
+                }
+
+                is LocalResource.Exception -> {
+                    _loginInfoState.value = ViewModelState(
+                        isLoading = false,
+                        error = result.message
+                    )
+                    Timber.d("Exception occurred. \nMessage: ${result.message}")
+                }
+
+                is LocalResource.Fail -> {
+                    _loginInfoState.value = ViewModelState(
+                        isLoading = false,
+                        error = result.message,
+                        data = result.data
+                    )
+                    Timber.d("Loading login info failed. \nMessage: ${result.message}")
                 }
             }
         }.launchIn(viewModelScope)

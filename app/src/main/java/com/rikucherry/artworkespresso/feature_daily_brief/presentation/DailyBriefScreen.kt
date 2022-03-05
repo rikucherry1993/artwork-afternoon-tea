@@ -52,7 +52,8 @@ fun DailyBriefScreen(
     // ViewModel State of the top artwork
     val topState = viewModel.topState.value
     // ViewModel State of db transition
-    val dbTransactionState = viewModel.dbTransactionState.value
+    val savedItemState = viewModel.savedItemState.value
+    val loginInfoState = viewModel.loginInfoState.value
 
     val scrollState = rememberLazyListState()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -90,7 +91,7 @@ fun DailyBriefScreen(
                 }
 
                 // Show loading spinner while loading
-                if (listState.isLoading || topState.isLoading || dbTransactionState.isLoading) {
+                if (listState.isLoading || topState.isLoading || savedItemState.isLoading || loginInfoState.isLoading) {
                     Box(modifier = Modifier
                         .fillMaxSize()
                         .background(BackgroundPrimary.copy(alpha = 0.7f)),
@@ -101,6 +102,8 @@ fun DailyBriefScreen(
                         )
                     }
                 }
+
+                // TODO: Error handling
 
             }
         }
