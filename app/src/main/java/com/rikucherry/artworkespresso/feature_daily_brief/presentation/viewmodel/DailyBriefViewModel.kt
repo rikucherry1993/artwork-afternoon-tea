@@ -9,6 +9,7 @@ import com.rikucherry.artworkespresso.common.tool.*
 import com.rikucherry.artworkespresso.feature_authentication.data.local.data_source.LoginInfoItem
 import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.GetLoginInfoUseCase
 import com.rikucherry.artworkespresso.feature_daily_brief.data.local.data_source.SavedArtworkItem
+import com.rikucherry.artworkespresso.feature_daily_brief.data.remote.data_source.DownloadDto
 import com.rikucherry.artworkespresso.feature_daily_brief.domain.use_case.*
 import com.skydoves.sandwich.StatusCode
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +26,7 @@ class DailyBriefViewModel @Inject constructor(
     private val getSavedArtworksUseCase: GetSavedArtworksUseCase,
     private val saveArtworksUseCase: SaveArtworksUseCase,
     private val getLoginInfoUseCase: GetLoginInfoUseCase,
+    private val downloadUseCase: DownloadUseCase,
     private val prefs: SharedPreferenceHelper
 ) : ViewModel() {
 
@@ -38,6 +40,9 @@ class DailyBriefViewModel @Inject constructor(
     // States of local db transitions
     private val _savedItemState = mutableStateOf(ViewModelState<List<SavedArtworkItem>>(isLoading = false))
     val savedItemState: State<ViewModelState<List<SavedArtworkItem>>> = _savedItemState
+
+    private val _downloadItemState = mutableStateOf(ViewModelState<DownloadDto>(isLoading = false))
+    val downloadItemState: State<ViewModelState<DownloadDto>> = _downloadItemState
 
     private val _loginInfoState = mutableStateOf(ViewModelState<LoginInfoItem>(isLoading = false))
     val loginInfoState: State<ViewModelState<LoginInfoItem>> = _loginInfoState
@@ -265,6 +270,29 @@ class DailyBriefViewModel @Inject constructor(
                         data = result.data
                     )
                     Timber.d("Loading login info failed. \nMessage: ${result.message}")
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun requestDownload(imageId: String) {
+        downloadUseCase(token, imageId).onEach {  result ->
+            when(result) {
+                is Resource.Success -> {
+                    updateState(result, state = _downloadItemState, successData = result.data)
+                }
+
+                is Resource.Error -> {
+                    if (result.statusCode == StatusCode.Unauthorized) {
+                        setTokenAndTopic()
+                        requestDownload(imageId)
+                    } else {
+                        updateState(result, state = _downloadItemState, successData = null)
+                    }
+                }
+
+                else -> {
+                    updateState(result, state = _downloadItemState, successData = null)
                 }
             }
         }.launchIn(viewModelScope)

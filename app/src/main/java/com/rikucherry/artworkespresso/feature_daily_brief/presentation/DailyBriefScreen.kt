@@ -54,6 +54,8 @@ fun DailyBriefScreen(
     // ViewModel State of db transition
     val savedItemState = viewModel.savedItemState.value
     val loginInfoState = viewModel.loginInfoState.value
+    // ViewModel State of download request
+    val downloadState = viewModel.downloadItemState.value
 
     val scrollState = rememberLazyListState()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -71,7 +73,7 @@ fun DailyBriefScreen(
         content = {
             Box(modifier = Modifier.fillMaxSize()) {
                 // list of artwork items displayed under the collapsable toolbar view
-                DailyArtWorkList(scrollState, isFreeTrail, artworks)
+                DailyArtWorkList(scrollState, isFreeTrail, artworks, viewModel)
                 // Collapsable toolbar contains roughly a header image and a tool bar, both can
                 // adjust the position of their elements or themselves dynamically during scrolling.
                 CollapsableToolBar(scrollState, topArt, viewModel)
@@ -91,7 +93,8 @@ fun DailyBriefScreen(
                 }
 
                 // Show loading spinner while loading
-                if (listState.isLoading || topState.isLoading || savedItemState.isLoading || loginInfoState.isLoading) {
+                if (listState.isLoading || topState.isLoading || savedItemState.isLoading
+                    || loginInfoState.isLoading || downloadState.isLoading) {
                     Box(modifier = Modifier
                         .fillMaxSize()
                         .background(BackgroundPrimary.copy(alpha = 0.7f)),
@@ -194,7 +197,7 @@ fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?, viewMo
 
 @Composable
 fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean
-                     , artworks: List<DeviationDto>?) {
+                     , artworks: List<DeviationDto>?, viewModel: DailyBriefViewModel) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -211,6 +214,7 @@ fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean
                 artworks?.forEach { artwork ->
                     Spacer(modifier = Modifier.height(12.dp))
                     ListItemCard(
+                        imageId = artwork.deviationId,
                         imageUrl = artwork.content!!.src,
                         authorIconUrl = artwork.author?.userIconUrl ?: Constants.DEFAULT_AVATAR_URL,
                         authorName = artwork.author?.username ?: "Unknown",
@@ -223,7 +227,8 @@ fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean
                         itemWidth = itemWidth,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(itemWidth * 0.9f)
+                            .height(itemWidth * 0.9f),
+                        viewModel
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
@@ -234,6 +239,7 @@ fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean
 
 @Composable
 fun ListItemCard(
+    imageId: String,
     imageUrl: String,
     authorIconUrl: String,
     authorName: String,
@@ -243,7 +249,8 @@ fun ListItemCard(
     isFavourite: Boolean, //invisible if it's a free trail.
     isDownloadable: Boolean, //invisible if it's a free trail.
     itemWidth: Dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: DailyBriefViewModel
 ) {
     Card(
         modifier = modifier
@@ -349,7 +356,9 @@ fun ListItemCard(
                             Spacer(modifier = Modifier.width(8.dp))
                             //Download button
                             IconButton(
-                                onClick = { /*TODO*/ },
+                                onClick = {
+                                          viewModel.requestDownload(imageId)
+                                          },
                                 modifier = Modifier
                                     .size(itemWidth * 0.1f)
                                     .padding(4.dp),

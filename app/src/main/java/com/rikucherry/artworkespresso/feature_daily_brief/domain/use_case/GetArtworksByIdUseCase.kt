@@ -7,7 +7,6 @@ import com.rikucherry.artworkespresso.common.tool.Resource
 import com.rikucherry.artworkespresso.common.tool.SharedPreferenceHelper
 import com.rikucherry.artworkespresso.feature_authentication.data.repository.AuthenticationRepository
 import com.rikucherry.artworkespresso.feature_daily_brief.data.repository.DailyBriefRepository
-import com.skydoves.sandwich.StatusCode
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnException
 import com.skydoves.sandwich.suspendOnSuccess
@@ -30,7 +29,7 @@ class GetArtworksByIdUseCase @Inject constructor(
                 .suspendOnSuccess {
                     artworks.add(data)
                     if (artworks.size == ids.size) {
-                        emit(Resource.Success(artworks, StatusCode.OK))
+                        emit(Resource.Success(artworks, statusCode))
                     }
                 }
                 .suspendOnError {

@@ -1,5 +1,6 @@
 package com.rikucherry.artworkespresso.di
 
+import android.content.Context
 import com.rikucherry.artworkespresso.common.Constants
 import com.rikucherry.artworkespresso.common.data.local.ArtworkEspressoDatabase
 import com.rikucherry.artworkespresso.feature_daily_brief.data.remote.DailyBriefApiService
@@ -33,9 +34,10 @@ object DailyBriefModule {
     @Singleton
     fun provideDailyBriefRepository(
         database: ArtworkEspressoDatabase,
-        dailyBriefApi: DailyBriefApiService
+        dailyBriefApi: DailyBriefApiService,
+        context: Context
     ) : DailyBriefRepository {
-        return DailyBriefRepositoryImpl(database.savedArtworks(),dailyBriefApi)
+        return DailyBriefRepositoryImpl(database.savedArtworks(),dailyBriefApi, context)
     }
 
 }
