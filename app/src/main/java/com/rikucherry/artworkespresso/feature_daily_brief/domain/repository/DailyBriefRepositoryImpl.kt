@@ -73,10 +73,9 @@ class DailyBriefRepositoryImpl @Inject constructor(
         val request = DownloadManager.Request(uri)
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             .setTitle("Downloading ${data.filename}, Size: $fileSize KB")
-            .setMimeType("image/jpeg")
             .setDestinationInExternalPublicDir(
                 Environment.DIRECTORY_PICTURES,
-                "${File.separator}${data.filename}_${System.currentTimeMillis()}.jpg")
+                "${File.separator}ArtworkEspresso${File.separator}${System.currentTimeMillis()}_${data.filename}")
         manager.enqueue(request)
     }
 }
