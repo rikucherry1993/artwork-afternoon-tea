@@ -4,4 +4,5 @@
 
     <string name="button_primary_text">Login in with Deviant Art</string>
     <string name="button_secondary_text">Start Trail Now</string>
+    <string name="copyright_text">Copyright (c) 2021 rikucherry1993</string>
 </resources>
