@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -132,6 +133,11 @@ fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?, viewMo
     val offset = scrollState.firstVisibleItemScrollOffset.coerceAtMost(maxOffset)
     val offsetProgress = max(0f, offset * 2f - maxOffset * 1f) / maxOffset
 
+    val screenConfig = LocalConfiguration.current
+    val screenWidthPx = with(LocalDensity.current) {
+        screenConfig.screenWidthDp.dp.roundToPx()
+    }
+
     TopAppBar(
         modifier = Modifier
             .height(ExpandedAppBarHeight)
@@ -188,7 +194,15 @@ fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?, viewMo
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(CollapsedAppBarHeight)
-                    .background(MaterialTheme.colors.primary),
+                    .background(
+                        Brush.horizontalGradient(
+                            listOf(
+                                MaterialTheme.colors.primary,
+                                Color.Black
+                            ),
+                            startX = screenWidthPx * 0.6f
+                        )
+                    ),
                 verticalArrangement = Arrangement.Center,
             ) {
                 HeadingText(
