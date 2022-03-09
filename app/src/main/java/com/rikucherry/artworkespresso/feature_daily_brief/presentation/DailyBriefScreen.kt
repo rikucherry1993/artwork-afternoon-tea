@@ -1,7 +1,11 @@
 package com.rikucherry.artworkespresso.feature_daily_brief.presentation
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -10,16 +14,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -55,7 +57,7 @@ fun DailyBriefScreen(
     val savedItemState = viewModel.savedItemState.value
     val loginInfoState = viewModel.loginInfoState.value
     // ViewModel State of download request
-    val downloadState = viewModel.downloadItemState.value
+    val downloadInfoState = viewModel.downloadItemState.value
 
     val scrollState = rememberLazyListState()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -94,7 +96,7 @@ fun DailyBriefScreen(
 
                 // Show loading spinner while loading
                 if (listState.isLoading || topState.isLoading || savedItemState.isLoading
-                    || loginInfoState.isLoading || downloadState.isLoading) {
+                    || loginInfoState.isLoading || downloadInfoState.isLoading) {
                     Box(modifier = Modifier
                         .fillMaxSize()
                         .background(BackgroundPrimary.copy(alpha = 0.7f)),
@@ -104,6 +106,12 @@ fun DailyBriefScreen(
                             backgroundColor = Purple100
                         )
                     }
+                }
+
+                // Show a toast if download task is ready to start
+                if (downloadInfoState.isLoading) {
+                    // Started downloading at background
+                    Toast.makeText(LocalContext.current, "Downloading at background...", Toast.LENGTH_SHORT).show()
                 }
 
                 // TODO: Error handling
@@ -154,7 +162,7 @@ fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?, viewMo
                 Column(
                     modifier = Modifier
                         .fillMaxHeight(0.3f)
-                        .fillMaxWidth(0.5f)
+                        .fillMaxWidth(0.8f)
                         .align(Alignment.BottomEnd),
                     horizontalAlignment = Alignment.End
                 ) {
@@ -268,6 +276,10 @@ fun ListItemCard(
 
         //states
         val favouriteState = remember { mutableStateOf(isFavourite) }
+        // interaction resources of the download button
+        val dlInteractionSource = remember { MutableInteractionSource() }
+        val isPressed by dlInteractionSource.collectIsPressedAsState()
+        val isHovered by dlInteractionSource.collectIsHoveredAsState()
 
         Column {
             Box {
@@ -363,12 +375,19 @@ fun ListItemCard(
                                     .size(itemWidth * 0.1f)
                                     .padding(4.dp),
                                 enabled = isDownloadable,
+                                interactionSource = dlInteractionSource
                             ) {
                                 Icon(
                                     modifier = Modifier.fillMaxSize(),
                                     painter = painterResource(R.drawable.ic_baseline_download_24),
                                     contentDescription = "Download button",
-                                    tint = if (isDownloadable) Teal200 else GrayParagraph
+                                    tint = if (!isDownloadable) {
+                                        GrayParagraph
+                                    } else if (isPressed || isHovered) {
+                                        Yellow
+                                    } else {
+                                        Teal200
+                                    }
                                 )
                             }
                         }
