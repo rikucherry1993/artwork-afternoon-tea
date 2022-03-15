@@ -54,6 +54,8 @@ fun DailyBriefScreen(
     val listState = viewModel.listState.value
     // ViewModel State of the top artwork
     val topState = viewModel.topState.value
+    // ViewModel State of the fave/unfave changing
+    val changeFaveState = viewModel.faveState.value
     // ViewModel State of db transition
     val savedItemState = viewModel.savedItemState.value
     val loginInfoState = viewModel.loginInfoState.value
@@ -66,6 +68,8 @@ fun DailyBriefScreen(
 
     val topArt = topState.data
     val artworks = listState.data
+
+    val context = LocalContext.current
 
     ModalDrawer(
         drawerState = drawerState,
@@ -97,7 +101,7 @@ fun DailyBriefScreen(
 
                 // Show loading spinner while loading
                 if (listState.isLoading || topState.isLoading || savedItemState.isLoading
-                    || loginInfoState.isLoading || downloadInfoState.isLoading) {
+                    || loginInfoState.isLoading || downloadInfoState.isLoading || changeFaveState.isLoading) {
                     Box(modifier = Modifier
                         .fillMaxSize()
                         .background(BackgroundPrimary.copy(alpha = 0.7f)),
@@ -109,14 +113,21 @@ fun DailyBriefScreen(
                     }
                 }
 
-                // Show a toast if download task is ready to start
-                if (downloadInfoState.isLoading) {
-                    // Started downloading at background
-                    Toast.makeText(LocalContext.current, "Downloading at background...", Toast.LENGTH_SHORT).show()
+                LaunchedEffect(changeFaveState) {
+                    if (changeFaveState.statusCode == 200) {
+                        Toast.makeText(context, "Successfully changed favourite", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                LaunchedEffect(downloadInfoState) {
+                    // Show a toast if download task is ready to start
+                    if (downloadInfoState.isLoading) {
+                        // Started downloading at background
+                        Toast.makeText(context, "Downloading at background...", Toast.LENGTH_SHORT).show()
+                    }
                 }
 
                 // TODO: Error handling
-
             }
         }
     )
@@ -290,6 +301,7 @@ fun ListItemCard(
 
         //states
         val favouriteState = remember { mutableStateOf(isFavourite) }
+        val changeFaveState = viewModel.faveState.value
         // interaction resources of the download button
         val dlInteractionSource = remember { MutableInteractionSource() }
         val isPressed by dlInteractionSource.collectIsPressedAsState()
@@ -365,6 +377,10 @@ fun ListItemCard(
                             //Favourite button
                             IconButton(
                                 onClick = {
+                                    viewModel.faveOrUnFaveArtworkById(
+                                        doFave = !favouriteState.value,
+                                        artworkId = imageId
+                                    )
                                     favouriteState.value = !favouriteState.value
                                 },
                                 modifier = Modifier
@@ -406,6 +422,10 @@ fun ListItemCard(
                             }
                         }
                     }
+                }
+                if (changeFaveState.error.isNotEmpty()) {
+                    // If changing fave failed, set the sate back to the original value
+                    favouriteState.value = isFavourite
                 }
             }
         }

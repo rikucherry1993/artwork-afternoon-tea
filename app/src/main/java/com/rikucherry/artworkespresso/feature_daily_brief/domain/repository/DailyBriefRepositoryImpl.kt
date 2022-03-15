@@ -10,6 +10,7 @@ import com.rikucherry.artworkespresso.feature_daily_brief.data.local.SavedArtwor
 import com.rikucherry.artworkespresso.feature_daily_brief.data.local.data_source.SavedArtworkItem
 import com.rikucherry.artworkespresso.feature_daily_brief.data.remote.DailyBriefApiService
 import com.rikucherry.artworkespresso.feature_daily_brief.data.remote.data_source.DownloadDto
+import com.rikucherry.artworkespresso.feature_daily_brief.data.remote.data_source.FaveDto
 import com.rikucherry.artworkespresso.feature_daily_brief.data.repository.DailyBriefRepository
 import com.skydoves.sandwich.ApiResponse
 import java.io.File
@@ -59,6 +60,22 @@ class DailyBriefRepositoryImpl @Inject constructor(
         deviationId: String
     ): ApiResponse<DownloadDto> {
         return dailyBriefApi.getDownloadInfo(token, deviationId)
+    }
+
+    override suspend fun faveArtById(
+        token: String,
+        deviationId: String,
+        folderIds: List<String>?
+    ): ApiResponse<FaveDto> {
+        return dailyBriefApi.faveArtById(token, deviationId, folderIds)
+    }
+
+    override suspend fun unfaveArtById(
+        token: String,
+        deviationId: String,
+        folderIds: List<String>?
+    ): ApiResponse<FaveDto> {
+        return dailyBriefApi.unfaveArtById(token, deviationId, folderIds)
     }
 
     override suspend fun saveArtworks(artworks: List<SavedArtworkItem>) {

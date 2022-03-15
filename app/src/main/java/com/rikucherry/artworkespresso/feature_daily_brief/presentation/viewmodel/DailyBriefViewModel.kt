@@ -10,6 +10,7 @@ import com.rikucherry.artworkespresso.feature_authentication.data.local.data_sou
 import com.rikucherry.artworkespresso.feature_authentication.domain.use_case.GetLoginInfoUseCase
 import com.rikucherry.artworkespresso.feature_daily_brief.data.local.data_source.SavedArtworkItem
 import com.rikucherry.artworkespresso.feature_daily_brief.data.remote.data_source.DownloadDto
+import com.rikucherry.artworkespresso.feature_daily_brief.data.remote.data_source.FaveDto
 import com.rikucherry.artworkespresso.feature_daily_brief.domain.use_case.*
 import com.skydoves.sandwich.StatusCode
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +25,7 @@ class DailyBriefViewModel @Inject constructor(
     private val getDailyTopUseCase: GetDailyTopUseCase,
     private val getArtworksByIdUseCase: GetArtworksByIdUseCase,
     private val getSavedArtworksUseCase: GetSavedArtworksUseCase,
+    private val faveOrUnfaveArtworkUseCase: FaveOrUnfaveArtworkUseCase,
     private val saveArtworksUseCase: SaveArtworksUseCase,
     private val getLoginInfoUseCase: GetLoginInfoUseCase,
     private val downloadUseCase: DownloadUseCase,
@@ -36,6 +38,9 @@ class DailyBriefViewModel @Inject constructor(
 
     private val _topState = mutableStateOf(ViewModelState<DeviationDto>(isLoading = false))
     val topState: State<ViewModelState<DeviationDto>> = _topState
+
+    private val _faveState = mutableStateOf(ViewModelState<FaveDto>(isLoading = false))
+    val faveState: State<ViewModelState<FaveDto>> = _faveState
 
     // States of local db transitions
     private val _savedItemState = mutableStateOf(ViewModelState<List<SavedArtworkItem>>(isLoading = false))
@@ -234,6 +239,31 @@ class DailyBriefViewModel @Inject constructor(
 
                 else -> {
                     updateState(result, state = _listState, successData = null)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun faveOrUnFaveArtworkById(doFave: Boolean, artworkId: String) {
+        faveOrUnfaveArtworkUseCase(token, doFave, artworkId).onEach { result ->
+            when(result) {
+
+
+                is Resource.Success -> {
+                    updateState(result, state = _faveState, successData = result.data)
+                }
+
+                is Resource.Error -> {
+                    if (result.statusCode == StatusCode.Unauthorized) {
+                        setTokenAndTopic()
+                        faveOrUnFaveArtworkById(doFave, artworkId)
+                    } else {
+                        updateState(result, state = _faveState, successData = null)
+                    }
+                }
+
+                else -> {
+                    updateState(result, state = _faveState, successData = null)
                 }
             }
         }.launchIn(viewModelScope)
