@@ -67,6 +67,7 @@ class EntranceActivity : ComponentActivity() {
                             }
                             else -> {
                                 // TODO: Add background animation
+                                BkImageScaler(imageData = R.drawable.menu_bk)
 
                                 // Title
                                 Column(
