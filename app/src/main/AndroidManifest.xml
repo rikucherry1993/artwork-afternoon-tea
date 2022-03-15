@@ -19,6 +19,7 @@
             android:name=".feature_authentication.presentation.EntranceActivity"
             android:exported="true"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.ArtworkEspresso.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,6 +30,7 @@
         <activity
             android:name=".feature_topic_selection.presentation.TopicSelectionActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"
             >
             <intent-filter>
@@ -43,6 +45,7 @@
         <activity
             android:name=".feature_daily_brief.presentation.DailyBriefActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"
             >
             <intent-filter>
