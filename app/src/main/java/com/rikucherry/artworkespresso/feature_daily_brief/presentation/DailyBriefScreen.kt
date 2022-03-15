@@ -61,6 +61,9 @@ fun DailyBriefScreen(
     val loginInfoState = viewModel.loginInfoState.value
     // ViewModel State of download request
     val downloadInfoState = viewModel.downloadItemState.value
+    val isLoading = listState.isLoading || topState.isLoading || savedItemState.isLoading
+            || loginInfoState.isLoading || downloadInfoState.isLoading || changeFaveState.isLoading
+
 
     val scrollState = rememberLazyListState()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -100,8 +103,7 @@ fun DailyBriefScreen(
                 }
 
                 // Show loading spinner while loading
-                if (listState.isLoading || topState.isLoading || savedItemState.isLoading
-                    || loginInfoState.isLoading || downloadInfoState.isLoading || changeFaveState.isLoading) {
+                if (isLoading) {
                     Box(modifier = Modifier
                         .fillMaxSize()
                         .background(BackgroundPrimary.copy(alpha = 0.7f)),
@@ -112,25 +114,25 @@ fun DailyBriefScreen(
                         )
                     }
                 }
-
-                LaunchedEffect(changeFaveState) {
-                    if (changeFaveState.statusCode == 200) {
-                        Toast.makeText(context, "Successfully changed favourite", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                LaunchedEffect(downloadInfoState) {
-                    // Show a toast if download task is ready to start
-                    if (downloadInfoState.isLoading) {
-                        // Started downloading at background
-                        Toast.makeText(context, "Downloading at background...", Toast.LENGTH_SHORT).show()
-                    }
-                }
-
                 // TODO: Error handling
             }
         }
     )
+
+    LaunchedEffect(changeFaveState) {
+        if (changeFaveState.statusCode == 200) {
+            Toast.makeText(context, "Favourites changed", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    LaunchedEffect(downloadInfoState) {
+        // Show a toast if download task is ready to start
+        if (downloadInfoState.isLoading) {
+            // Started downloading at background
+            Toast.makeText(context, "Downloading at background...", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 }
 
 
