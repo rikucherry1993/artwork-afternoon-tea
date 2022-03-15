@@ -73,7 +73,7 @@ fun TopTopicsScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(580.dp)
+                .weight(1f)
                 .verticalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
@@ -151,7 +151,7 @@ fun TopicsColumn(topics: List<TopTopicsDto>, selectedTopicState: MutableState<St
                 ),
                 contentDescription = result.exampleDeviations?.get(0)?.title ?: "",
                 modifier = Modifier
-                    .size(116.dp)
+                    .size(108.dp)
                     .border(
                         width = 5.dp,
                         color = if (isSelected) Teal200 else Color.Transparent,
