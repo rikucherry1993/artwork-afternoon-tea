@@ -1,7 +1,11 @@
 package com.rikucherry.artworkespresso.feature_daily_brief.presentation
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -10,16 +14,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -51,8 +54,16 @@ fun DailyBriefScreen(
     val listState = viewModel.listState.value
     // ViewModel State of the top artwork
     val topState = viewModel.topState.value
+    // ViewModel State of the fave/unfave changing
+    val changeFaveState = viewModel.faveState.value
     // ViewModel State of db transition
-    val dbTransactionState = viewModel.dbTransactionState.value
+    val savedItemState = viewModel.savedItemState.value
+    val loginInfoState = viewModel.loginInfoState.value
+    // ViewModel State of download request
+    val downloadInfoState = viewModel.downloadItemState.value
+    val isLoading = listState.isLoading || topState.isLoading || savedItemState.isLoading
+            || loginInfoState.isLoading || downloadInfoState.isLoading || changeFaveState.isLoading
+
 
     val scrollState = rememberLazyListState()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -60,6 +71,8 @@ fun DailyBriefScreen(
 
     val topArt = topState.data
     val artworks = listState.data
+
+    val context = LocalContext.current
 
     ModalDrawer(
         drawerState = drawerState,
@@ -70,7 +83,7 @@ fun DailyBriefScreen(
         content = {
             Box(modifier = Modifier.fillMaxSize()) {
                 // list of artwork items displayed under the collapsable toolbar view
-                DailyArtWorkList(scrollState, isFreeTrail, artworks)
+                DailyArtWorkList(scrollState, isFreeTrail, artworks, viewModel)
                 // Collapsable toolbar contains roughly a header image and a tool bar, both can
                 // adjust the position of their elements or themselves dynamically during scrolling.
                 CollapsableToolBar(scrollState, topArt, viewModel)
@@ -90,7 +103,7 @@ fun DailyBriefScreen(
                 }
 
                 // Show loading spinner while loading
-                if (listState.isLoading || topState.isLoading || dbTransactionState.isLoading) {
+                if (isLoading) {
                     Box(modifier = Modifier
                         .fillMaxSize()
                         .background(BackgroundPrimary.copy(alpha = 0.7f)),
@@ -101,10 +114,25 @@ fun DailyBriefScreen(
                         )
                     }
                 }
-
+                // TODO: Error handling
             }
         }
     )
+
+    LaunchedEffect(changeFaveState) {
+        if (changeFaveState.statusCode == 200) {
+            Toast.makeText(context, "Favourites changed", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    LaunchedEffect(downloadInfoState) {
+        // Show a toast if download task is ready to start
+        if (downloadInfoState.isLoading) {
+            // Started downloading at background
+            Toast.makeText(context, "Downloading at background...", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 }
 
 
@@ -117,6 +145,11 @@ fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?, viewMo
 
     val offset = scrollState.firstVisibleItemScrollOffset.coerceAtMost(maxOffset)
     val offsetProgress = max(0f, offset * 2f - maxOffset * 1f) / maxOffset
+
+    val screenConfig = LocalConfiguration.current
+    val screenWidthPx = with(LocalDensity.current) {
+        screenConfig.screenWidthDp.dp.roundToPx()
+    }
 
     TopAppBar(
         modifier = Modifier
@@ -148,7 +181,7 @@ fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?, viewMo
                 Column(
                     modifier = Modifier
                         .fillMaxHeight(0.3f)
-                        .fillMaxWidth(0.5f)
+                        .fillMaxWidth(0.8f)
                         .align(Alignment.BottomEnd),
                     horizontalAlignment = Alignment.End
                 ) {
@@ -174,7 +207,15 @@ fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?, viewMo
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(CollapsedAppBarHeight)
-                    .background(MaterialTheme.colors.primary),
+                    .background(
+                        Brush.horizontalGradient(
+                            listOf(
+                                MaterialTheme.colors.primary,
+                                Color.Black
+                            ),
+                            startX = screenWidthPx * 0.6f
+                        )
+                    ),
                 verticalArrangement = Arrangement.Center,
             ) {
                 HeadingText(
@@ -191,7 +232,7 @@ fun CollapsableToolBar(scrollState: LazyListState, topArt: DeviationDto?, viewMo
 
 @Composable
 fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean
-                     , artworks: List<DeviationDto>?) {
+                     , artworks: List<DeviationDto>?, viewModel: DailyBriefViewModel) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -208,6 +249,7 @@ fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean
                 artworks?.forEach { artwork ->
                     Spacer(modifier = Modifier.height(12.dp))
                     ListItemCard(
+                        imageId = artwork.deviationId,
                         imageUrl = artwork.content!!.src,
                         authorIconUrl = artwork.author?.userIconUrl ?: Constants.DEFAULT_AVATAR_URL,
                         authorName = artwork.author?.username ?: "Unknown",
@@ -220,7 +262,8 @@ fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean
                         itemWidth = itemWidth,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(itemWidth * 0.9f)
+                            .height(itemWidth * 0.9f),
+                        viewModel
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
@@ -231,6 +274,7 @@ fun DailyArtWorkList(scrollState: LazyListState, isFreeTrail: Boolean
 
 @Composable
 fun ListItemCard(
+    imageId: String,
     imageUrl: String,
     authorIconUrl: String,
     authorName: String,
@@ -240,7 +284,8 @@ fun ListItemCard(
     isFavourite: Boolean, //invisible if it's a free trail.
     isDownloadable: Boolean, //invisible if it's a free trail.
     itemWidth: Dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: DailyBriefViewModel
 ) {
     Card(
         modifier = modifier
@@ -258,6 +303,11 @@ fun ListItemCard(
 
         //states
         val favouriteState = remember { mutableStateOf(isFavourite) }
+        val changeFaveState = viewModel.faveState.value
+        // interaction resources of the download button
+        val dlInteractionSource = remember { MutableInteractionSource() }
+        val isPressed by dlInteractionSource.collectIsPressedAsState()
+        val isHovered by dlInteractionSource.collectIsHoveredAsState()
 
         Column {
             Box {
@@ -329,6 +379,10 @@ fun ListItemCard(
                             //Favourite button
                             IconButton(
                                 onClick = {
+                                    viewModel.faveOrUnFaveArtworkById(
+                                        doFave = !favouriteState.value,
+                                        artworkId = imageId
+                                    )
                                     favouriteState.value = !favouriteState.value
                                 },
                                 modifier = Modifier
@@ -346,21 +400,34 @@ fun ListItemCard(
                             Spacer(modifier = Modifier.width(8.dp))
                             //Download button
                             IconButton(
-                                onClick = { /*TODO*/ },
+                                onClick = {
+                                          viewModel.requestDownload(imageId)
+                                          },
                                 modifier = Modifier
                                     .size(itemWidth * 0.1f)
                                     .padding(4.dp),
                                 enabled = isDownloadable,
+                                interactionSource = dlInteractionSource
                             ) {
                                 Icon(
                                     modifier = Modifier.fillMaxSize(),
                                     painter = painterResource(R.drawable.ic_baseline_download_24),
                                     contentDescription = "Download button",
-                                    tint = if (isDownloadable) Teal200 else GrayParagraph
+                                    tint = if (!isDownloadable) {
+                                        GrayParagraph
+                                    } else if (isPressed || isHovered) {
+                                        Yellow
+                                    } else {
+                                        Teal200
+                                    }
                                 )
                             }
                         }
                     }
+                }
+                if (changeFaveState.error.isNotEmpty()) {
+                    // If changing fave failed, set the sate back to the original value
+                    favouriteState.value = isFavourite
                 }
             }
         }

@@ -1,6 +1,7 @@
 package com.rikucherry.artworkespresso.common.component
 
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -8,11 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberImagePainter
 
 @Composable
 fun LineLoader(
@@ -68,5 +72,59 @@ fun LineLoader(
         Spacer(Modifier.width(space))
         Line(scaleY4)
     }
+
+}
+
+@Composable
+fun BkImageScaler(
+    imageData: Any,
+    imageDescription: String = "Background image",
+    timeUnit: Int = 8_000,
+    offset: Float = 50f,
+    modifier: Modifier = Modifier
+        .fillMaxSize()
+        .alpha(0.3f),
+) {
+
+    @Composable
+    fun animateOffsetX() = rememberInfiniteTransition()
+        .animateFloat(
+            initialValue = 0f,
+            targetValue = 0f,
+            animationSpec = infiniteRepeatable(
+                animation = keyframes {
+                    durationMillis = timeUnit * 6
+                    -offset at timeUnit with LinearEasing
+                    -offset at timeUnit * 3 with LinearEasing
+                    0f at timeUnit * 4 with LinearEasing
+                }
+            )
+        )
+
+    @Composable
+    fun animateOffsetY() = rememberInfiniteTransition()
+        .animateFloat(
+            initialValue = 0f,
+            targetValue = 0f,
+            animationSpec = infiniteRepeatable(
+                animation = keyframes {
+                    durationMillis = timeUnit * 6
+                    0f at timeUnit with LinearEasing
+                    -offset * 2 at timeUnit * 3 with LinearEasing
+                    -offset * 2 at timeUnit * 4 with LinearEasing
+                }
+            )
+        )
+
+    val offsetX by animateOffsetX()
+    val offsetY by animateOffsetY()
+
+    Image(painter = rememberImagePainter(data = imageData),
+        contentDescription = imageDescription,
+        modifier = modifier
+            .scale(1.5f)
+            .offset(offsetX.dp, offsetY.dp),
+        contentScale = ContentScale.Crop
+    )
 
 }

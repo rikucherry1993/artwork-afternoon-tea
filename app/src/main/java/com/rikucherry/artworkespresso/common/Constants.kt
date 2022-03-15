@@ -19,6 +19,7 @@ object Constants {
     //Grant type
     const val GRANT_TYPE_CLIENT = "client_credentials"
     const val GRANT_TYPE_AUTH_CODE = "authorization_code"
+    const val GRANT_TYPE_REFRESH = "refresh_token"
     //SharedPreference Key
     const val USER_ACCESS_TOKEN = "user_access_token"
     const val USER_REFRESH_TOKEN = "user_refresh_token"

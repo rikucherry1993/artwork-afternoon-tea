@@ -52,9 +52,8 @@ fun NavDrawerScreen(
         userName = "Client"
         iconUrl = Constants.DEFAULT_AVATAR_URL
     } else {
-        userName = "User Name"
-        iconUrl = Constants.DEFAULT_AVATAR_URL
-        //TODO:get from login info table
+        userName = viewModel?.loginInfoState?.value?.data?.userName ?: "Not Available"
+        iconUrl = viewModel?.loginInfoState?.value?.data?.userIconUrl ?: Constants.DEFAULT_AVATAR_URL
     }
 
     Column (

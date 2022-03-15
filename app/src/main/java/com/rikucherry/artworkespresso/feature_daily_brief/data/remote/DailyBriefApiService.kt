@@ -2,11 +2,10 @@ package com.rikucherry.artworkespresso.feature_daily_brief.data.remote
 
 import com.rikucherry.artworkespresso.common.data.remote.DeviationDto
 import com.rikucherry.artworkespresso.common.data.remote.DeviationListDto
+import com.rikucherry.artworkespresso.feature_daily_brief.data.remote.data_source.DownloadDto
+import com.rikucherry.artworkespresso.feature_daily_brief.data.remote.data_source.FaveDto
 import com.skydoves.sandwich.ApiResponse
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface DailyBriefApiService {
 
@@ -39,5 +38,28 @@ interface DailyBriefApiService {
     )
     suspend fun getArtworkById(@Header("Authorization") token: String
                                , @Path("deviationid") deviationId: String): ApiResponse<DeviationDto>
+
+
+    @GET(
+        "deviation/download/{deviationid}"
+    )
+    suspend fun getDownloadInfo(@Header("Authorization") token: String
+                                , @Path("deviationid") deviationId: String): ApiResponse<DownloadDto>
+
+    @FormUrlEncoded
+    @POST(
+        "collections/fave"
+    )
+    suspend fun faveArtById(@Header("Authorization") token: String
+                            , @Field("deviationid") deviationId: String
+                            , @Field("folderid") folderIds: List<String>?): ApiResponse<FaveDto>
+
+    @FormUrlEncoded
+    @POST(
+        "collections/unfave"
+    )
+    suspend fun unfaveArtById(@Header("Authorization") token: String
+                            , @Field("deviationid") deviationId: String
+                            , @Field("folderid") folderIds: List<String>?): ApiResponse<FaveDto>
 
 }

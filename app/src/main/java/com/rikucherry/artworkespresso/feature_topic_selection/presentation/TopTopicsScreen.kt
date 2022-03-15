@@ -5,7 +5,6 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -70,15 +69,27 @@ fun TopTopicsScreen(
             color = GrayParagraph
         )
 
-        Row(
+        Box (
             modifier = Modifier
                 .fillMaxWidth()
-                .height(580.dp)
-                .verticalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            TopicsColumn(topics = leftColData, selectedTopicState)
-            TopicsColumn(topics = rightColData, selectedTopicState)
+                .weight(1f),
+            contentAlignment = Alignment.Center
+                ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                TopicsColumn(topics = leftColData, selectedTopicState)
+                TopicsColumn(topics = rightColData, selectedTopicState)
+            }
+
+            if (topicState.isLoading || userState.isLoading || loginInfoState.isLoading) {
+                LineLoader(
+                    backgroundColor = Purple100
+                )
+            }
         }
 
         Box(
@@ -96,27 +107,7 @@ fun TopTopicsScreen(
             )
         }
 
-        if (topicState.error.isNotBlank()) {
-            //TODO: Temporary workaround
-            Text(text = topicState.error)
-        }
-
-        if (userState.error.isNotBlank()) {
-            //TODO: Temporary workaround
-            Text(text = userState.error)
-        }
-
-        if (loginInfoState.error.isNotBlank()) {
-            //TODO: Temporary workaround
-            Text(text = loginInfoState.error)
-        }
-
-        if (topicState.isLoading || userState.isLoading || loginInfoState.isLoading) {
-            LineLoader(
-                backgroundColor = Purple100
-            )
-        }
-
+        //TODO: error handling
         if (loginInfoState.status == StatusCode.OK) {
             viewModel.saveFavouriteTopic(selectedTopicState.value)
             val context = LocalContext.current
@@ -151,7 +142,7 @@ fun TopicsColumn(topics: List<TopTopicsDto>, selectedTopicState: MutableState<St
                 ),
                 contentDescription = result.exampleDeviations?.get(0)?.title ?: "",
                 modifier = Modifier
-                    .size(116.dp)
+                    .size(108.dp)
                     .border(
                         width = 5.dp,
                         color = if (isSelected) Teal200 else Color.Transparent,

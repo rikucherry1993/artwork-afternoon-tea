@@ -1,12 +1,11 @@
 package com.rikucherry.artworkespresso.feature_daily_brief.domain.use_case
 
 import com.rikucherry.artworkespresso.ISecrets
-import com.rikucherry.artworkespresso.common.data.remote.DeviationDto
 import com.rikucherry.artworkespresso.common.tool.BaseUseCase
-import com.rikucherry.artworkespresso.common.tool.DataFormatHelper
 import com.rikucherry.artworkespresso.common.tool.Resource
 import com.rikucherry.artworkespresso.common.tool.SharedPreferenceHelper
 import com.rikucherry.artworkespresso.feature_authentication.data.repository.AuthenticationRepository
+import com.rikucherry.artworkespresso.feature_daily_brief.data.remote.data_source.FaveDto
 import com.rikucherry.artworkespresso.feature_daily_brief.data.repository.DailyBriefRepository
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnException
@@ -15,33 +14,29 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GetDailyTopUseCase @Inject constructor(
+class FaveOrUnfaveArtworkUseCase @Inject constructor(
     private val dailyBriefRepository: DailyBriefRepository,
     authRepository: AuthenticationRepository,
     secrets: ISecrets,
     prefs: SharedPreferenceHelper
-): BaseUseCase(authRepository,secrets, prefs) {
+): BaseUseCase(authRepository, secrets, prefs) {
 
-    operator fun invoke(token: String, weekday: String): Flow<Resource<DeviationDto>> = flow {
-        emit(Resource.Loading<DeviationDto>("Requesting daily top artwork..."))
-
-        val date = if (weekday == DataFormatHelper.getWeekdayOfToday()) {
-            null
+    operator fun invoke(token: String, doFave: Boolean, deviationId: String): Flow<Resource<FaveDto>> = flow {
+        val response = if (doFave) {
+            emit(Resource.Loading<FaveDto>("Performing setting $deviationId to favourite..."))
+            dailyBriefRepository.faveArtById(token, deviationId, null)
         } else {
-            DataFormatHelper.getDateFromWeekday(weekday)
+            emit(Resource.Loading<FaveDto>("Performing setting $deviationId to unfavourite..."))
+            dailyBriefRepository.unfaveArtById(token, deviationId, null)
         }
-
-        val artworkListResult = dailyBriefRepository.getDailyArtworks(token, date)
-        artworkListResult.suspendOnSuccess {
-            // Only the first element is required
-            val dataRequired = data.results[0]
-            emit(Resource.Success<DeviationDto>(dataRequired, statusCode))
+        response.suspendOnSuccess {
+            emit(Resource.Success<FaveDto>(data, statusCode))
         }.suspendOnError {
             refreshTokenAsNeeded(statusCode)
-            emit(Resource.Error<DeviationDto>(statusCode, toString()))
+            emit(Resource.Error<FaveDto>(statusCode, toString()))
         }.suspendOnException {
-            emit(Resource.Exception<DeviationDto>(message ?: "Undefined exception."))
+            emit(Resource.Exception<FaveDto>(message ?: "Undefined exception."))
         }
-
     }
+
 }

@@ -133,7 +133,7 @@ class TopicSelectViewModelTest {
     fun `setLoginInfoByUser_clientLogin_userStateChangedToSuccess`() {
         //Given
         // let isClientLogin() returns true
-        every {prefHelper.getUserAccessToken()} returns null
+        every {prefHelper.isClientLogin()} returns true
 
         topicSelectRepository = FakeTopicSelectRepositoryImpl()
         userRepository = FakeUserRepositoryImpl()
@@ -166,7 +166,7 @@ class TopicSelectViewModelTest {
     fun `setLoginInfoByUser_userLogin_APISucceeded_userStateChangedToSuccess`() {
         //Given
         // let isClientLogin() returns false
-        every {prefHelper.getUserAccessToken()} returns "valid user token"
+        every {prefHelper.isClientLogin()} returns false
 
         topicSelectRepository = FakeTopicSelectRepositoryImpl()
         userRepository = FakeUserRepositoryImpl()
@@ -205,7 +205,7 @@ class TopicSelectViewModelTest {
     fun `setLoginInfoByUser_userLogin_APIFailed_userStateChangedToError`() {
         //Given
         // let isClientLogin() returns false
-        every {prefHelper.getUserAccessToken()} returns "valid user token"
+        every {prefHelper.isClientLogin()} returns false
 
         topicSelectRepository = FakeTopicSelectRepositoryImpl()
         userRepository = FakeUserRepositoryErrorImpl()
@@ -273,7 +273,7 @@ class TopicSelectViewModelTest {
     fun `saveFavouriteTopic_clientLogin_saveClientFavoriteTopicsIsCalled`() {
         //Given
         // let isClientLogin() returns true
-        every {prefHelper.getUserAccessToken()} returns null
+        every {prefHelper.isClientLogin()} returns true
 
         topicSelectRepository = FakeTopicSelectRepositoryImpl()
         userRepository = FakeUserRepositoryImpl()
@@ -289,7 +289,7 @@ class TopicSelectViewModelTest {
             insertLoginInfoUseCase,
             prefHelper
         )
-        val topicName = "topicName"
+        val topicName = "topicname"
         SUT.saveFavouriteTopic(topicName)
 
         //Then
@@ -301,7 +301,7 @@ class TopicSelectViewModelTest {
     fun `saveFavouriteTopic_userLogin_saveUserFavoriteTopicsIsCalled`() {
         //Given
         // let isClientLogin() returns false
-        every {prefHelper.getUserAccessToken()} returns "valid user token"
+        every {prefHelper.isClientLogin()} returns false
 
         topicSelectRepository = FakeTopicSelectRepositoryImpl()
         userRepository = FakeUserRepositoryImpl()
@@ -317,7 +317,7 @@ class TopicSelectViewModelTest {
             insertLoginInfoUseCase,
             prefHelper
         )
-        val topicName = "topicName"
+        val topicName = "topicname"
         SUT.saveFavouriteTopic(topicName)
 
         //Then
@@ -329,7 +329,7 @@ class TopicSelectViewModelTest {
     fun `InsertLoginInfo_InsertSucceeded_clientLogin_loginInfoStateChangedToSuccess`() {
         //Given
         // let isClientLogin() returns true
-        every {prefHelper.getUserAccessToken()} returns null
+        every {prefHelper.isClientLogin()} returns true
 
         topicSelectRepository = FakeTopicSelectRepositoryImpl()
         userRepository = FakeUserRepositoryImpl()
@@ -369,7 +369,7 @@ class TopicSelectViewModelTest {
     fun `InsertLoginInfo_InsertSucceeded_userLogin_loginInfoStateChangedToSuccess`() {
         //Given
         // let isClientLogin() returns false
-        every {prefHelper.getUserAccessToken()} returns "valid user token"
+        every {prefHelper.isClientLogin()} returns false
 
         topicSelectRepository = FakeTopicSelectRepositoryImpl()
         userRepository = FakeUserRepositoryImpl()

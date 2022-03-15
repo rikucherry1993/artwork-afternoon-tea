@@ -19,4 +19,7 @@ interface AuthenticationRepository {
     suspend fun getClientAccessToken(clientId: Int, clientSecret: String,
                                      grantType: String) : ApiResponse<ClientTokenResponseDto>
 
+    suspend fun refreshUserAccessToken(clientId: Int, clientSecret: String,
+                                       refreshToken: String): ApiResponse<UserTokenResponseDto>
+
 }

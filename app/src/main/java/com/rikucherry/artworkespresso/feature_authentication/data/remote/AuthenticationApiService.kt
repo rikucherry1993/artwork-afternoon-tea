@@ -35,4 +35,12 @@ interface AuthenticationApiService {
     ): ApiResponse<ClientTokenResponseDto>
 
 
+    @FormUrlEncoded
+    @POST("/oauth2/token")
+    suspend fun refreshUserAccessToken(
+        @Field("client_id") clientId: Int,
+        @Field("client_secret") clientSecret: String,
+        @Field("grant_type") grantType: String,
+        @Field("refresh_token") refreshToken: String
+    ): ApiResponse<UserTokenResponseDto>
 }

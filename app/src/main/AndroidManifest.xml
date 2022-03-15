@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.rikucherry.artworkespresso">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
 
     <application
         android:name=".ArtworkEspressoApplication"
@@ -16,6 +19,7 @@
             android:name=".feature_authentication.presentation.EntranceActivity"
             android:exported="true"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.ArtworkEspresso.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,6 +30,7 @@
         <activity
             android:name=".feature_topic_selection.presentation.TopicSelectionActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"
             >
             <intent-filter>
@@ -40,6 +45,7 @@
         <activity
             android:name=".feature_daily_brief.presentation.DailyBriefActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"
             >
             <intent-filter>

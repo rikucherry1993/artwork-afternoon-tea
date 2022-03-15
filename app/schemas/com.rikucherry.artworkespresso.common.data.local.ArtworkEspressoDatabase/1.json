@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "5d402c89273434af1f2b936214de93f8",
+    "identityHash": "35a47deb290f3e7bb3c50cd911a5c76c",
     "entities": [
       {
         "tableName": "login_info",
@@ -50,7 +50,7 @@
       },
       {
         "tableName": "saved_artworks",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `deviation_id` TEXT NOT NULL, `week_day` TEXT NOT NULL, `is_free_trail` INTEGER NOT NULL, `is_top_art` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `deviation_id` TEXT NOT NULL, `week_day` TEXT NOT NULL, `is_free_trail` INTEGER NOT NULL, `is_top_art` INTEGER NOT NULL, `saved_time` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -81,6 +81,12 @@
             "columnName": "is_top_art",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "savedTime",
+            "columnName": "saved_time",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -96,7 +102,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5d402c89273434af1f2b936214de93f8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '35a47deb290f3e7bb3c50cd911a5c76c')"
     ]
   }
 }
