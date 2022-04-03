@@ -12,7 +12,6 @@ import com.rikucherry.artworkespresso.feature_daily_brief.data.local.data_source
 import com.rikucherry.artworkespresso.feature_daily_brief.data.remote.data_source.DownloadDto
 import com.rikucherry.artworkespresso.feature_daily_brief.data.remote.data_source.FaveDto
 import com.rikucherry.artworkespresso.feature_daily_brief.domain.use_case.*
-import com.skydoves.sandwich.StatusCode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -102,33 +101,37 @@ class DailyBriefViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getDailyTopArtwork(weekday: String) {
+    private fun getDailyTopArtwork(weekday: String, retry: Boolean = true) {
         getDailyTopUseCase(token,weekday).onEach { result ->
             when(result) {
+                is Resource.Loading -> {
+                    updateState(result, state = _topState, successData = null)
+                }
+
                 is Resource.Success -> {
                     updateState(result, state = _topState, successData = result.data)
                     saveArtworks(listOf(result.data), isTopArt = true)
                 }
 
-                is Resource.Error -> {
-                    if (result.statusCode == StatusCode.Unauthorized) {
+                else -> {
+                    if (retry) {
                         setTokenAndTopic()
-                        getDailyTopArtwork(weekday)
+                        getDailyTopArtwork(weekday, false)
                     } else {
                         updateState(result, state = _topState, successData = null)
                     }
-                }
-
-                else -> {
-                    updateState(result, state = _topState, successData = null)
                 }
             }
         }.launchIn(viewModelScope)
     }
 
-    private fun getArtworkListByTopic(offset: Int, weekday: String) {
+    private fun getArtworkListByTopic(offset: Int, weekday: String, retry: Boolean = true) {
         getArtworkListUseCase(token, topic, offset, weekday).onEach { result ->
             when(result) {
+                is Resource.Loading -> {
+                    updateState(result, state = _listState, successData = null)
+                }
+
                 is Resource.Success -> {
                     val data = result.data
                     // expand max searching targets to 500
@@ -140,17 +143,13 @@ class DailyBriefViewModel @Inject constructor(
                     }
                 }
 
-                is Resource.Error -> {
-                    if (result.statusCode == StatusCode.Unauthorized) {
+                else -> {
+                    if (retry) {
                         setTokenAndTopic()
-                        getArtworkListByTopic(offset, weekday)
+                        getArtworkListByTopic(offset, weekday, false)
                     } else {
                         updateState(result, state = _listState, successData = null)
                     }
-                }
-
-                else -> {
-                    updateState(result, state = _listState, successData = null)
                 }
             }
 
@@ -194,76 +193,74 @@ class DailyBriefViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getTopArtworkById(artworks: List<SavedArtworkItem>) {
+    private fun getTopArtworkById(artworks: List<SavedArtworkItem>, retry: Boolean = true) {
         // get top art
         val topArtId = artworks.filter { artwork -> artwork.isTopArt }[0].deviationId
         getArtworksByIdUseCase(topArtId, token = token).onEach { result ->
             when (result) {
+                is Resource.Loading -> {
+                    updateState(result, state = _topState, successData = null)
+                }
+
                 is Resource.Success -> {
                     updateState(result, state = _topState, successData = result.data[0])
                 }
 
-                is Resource.Error -> {
-                    if (result.statusCode == StatusCode.Unauthorized) {
+                else -> {
+                    if (retry) {
                         setTokenAndTopic()
-                        getTopArtworkById(artworks)
+                        getTopArtworkById(artworks, false)
                     } else {
                         updateState(result, state = _topState, successData = null)
                     }
                 }
-
-                else -> {
-                    updateState(result, state = _topState, successData = null)
-                }
             }
         }.launchIn(viewModelScope)
     }
 
-    private fun getArtworkListById(artworks: List<SavedArtworkItem>) {
+    private fun getArtworkListById(artworks: List<SavedArtworkItem>, retry: Boolean = true) {
         // get artwork list
         val listIds = artworks.filterNot { artwork -> artwork.isTopArt }.map { it.deviationId }
         getArtworksByIdUseCase(*listIds.toTypedArray(), token = token).onEach { result ->
             when (result) {
+                is Resource.Loading -> {
+                    updateState(result, state = _listState, successData = null)
+                }
+
                 is Resource.Success -> {
                     updateState(result, state = _listState, successData = result.data)
                 }
 
-                is Resource.Error -> {
-                    if (result.statusCode == StatusCode.Unauthorized) {
+                else -> {
+                    if (retry) {
                         setTokenAndTopic()
-                        getArtworkListById(artworks)
+                        getArtworkListById(artworks, false)
                     } else {
                         updateState(result, state = _listState, successData = null)
                     }
-                }
-
-                else -> {
-                    updateState(result, state = _listState, successData = null)
                 }
             }
         }.launchIn(viewModelScope)
     }
 
-    fun faveOrUnFaveArtworkById(doFave: Boolean, artworkId: String) {
+    fun faveOrUnFaveArtworkById(doFave: Boolean, artworkId: String, retry: Boolean = true) {
         faveOrUnfaveArtworkUseCase(token, doFave, artworkId).onEach { result ->
             when(result) {
-
+                is Resource.Loading -> {
+                    updateState(result, state = _faveState, successData = null)
+                }
 
                 is Resource.Success -> {
                     updateState(result, state = _faveState, successData = result.data)
                 }
 
-                is Resource.Error -> {
-                    if (result.statusCode == StatusCode.Unauthorized) {
+                else -> {
+                    if (retry) {
                         setTokenAndTopic()
-                        faveOrUnFaveArtworkById(doFave, artworkId)
+                        faveOrUnFaveArtworkById(doFave, artworkId, false)
                     } else {
                         updateState(result, state = _faveState, successData = null)
                     }
-                }
-
-                else -> {
-                    updateState(result, state = _faveState, successData = null)
                 }
             }
         }.launchIn(viewModelScope)
@@ -277,6 +274,7 @@ class DailyBriefViewModel @Inject constructor(
                         isLoading = true
                     )
                 }
+
                 is LocalResource.Success -> {
                     _loginInfoState.value = ViewModelState(
                         isLoading = false,
@@ -305,24 +303,24 @@ class DailyBriefViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun requestDownload(imageId: String) {
+    fun requestDownload(imageId: String, retry: Boolean = true) {
         downloadUseCase(token, imageId).onEach {  result ->
             when(result) {
+                is Resource.Loading -> {
+                    updateState(result, state = _downloadItemState, successData = null)
+                }
+
                 is Resource.Success -> {
                     updateState(result, state = _downloadItemState, successData = result.data)
                 }
 
-                is Resource.Error -> {
-                    if (result.statusCode == StatusCode.Unauthorized) {
+                else -> {
+                    if (retry) {
                         setTokenAndTopic()
-                        requestDownload(imageId)
+                        requestDownload(imageId, false)
                     } else {
                         updateState(result, state = _downloadItemState, successData = null)
                     }
-                }
-
-                else -> {
-                    updateState(result, state = _downloadItemState, successData = null)
                 }
             }
         }.launchIn(viewModelScope)
