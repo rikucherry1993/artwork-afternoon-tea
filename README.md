@@ -26,12 +26,12 @@ Password:
 
 ### 2. Hide API secrets in a C/C++ native file
 Using [hidden-secrets-gradle-plugin](https://github.com/klaxit/hidden-secrets-gradle-plugin).  
-- Execute gradlew commands at the top level of this package as below:  
+- Execute gradlew commands at the top level of this package (Java Runtime is required):  
 ```
 ./gradlew hideSecret -Pkey={yourClientIdToObfuscate} -PkeyName=ClientId -Ppackage=com.rikucherry.artworkespresso
 ./gradlew hideSecret -Pkey={yourClientSecretToObfuscate} -PkeyName=ClientSecret -Ppackage=com.rikucherry.artworkespresso
 ```
-- Let the generated `Secrets` class implement `ISecrets` for test purpose
+- Let the generated [Secrets] class implement `ISecrets` for test purpose
 ```kotlin
 class Secrets : ISecrets {
     //......
