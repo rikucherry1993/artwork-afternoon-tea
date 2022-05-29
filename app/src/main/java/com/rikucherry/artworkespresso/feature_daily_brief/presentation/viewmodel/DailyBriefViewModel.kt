@@ -80,9 +80,9 @@ class DailyBriefViewModel @Inject constructor(
 
                     // If has saved data, display the same artworks based on saved IDs.
                     // Otherwise, get artworks by topic.
-                    if (result.data?.size ?: 0 > 0) {
+                    if ((result.data?.size ?: 0) > 0) {
                         getTopArtworkById(result.data!!)
-                        getArtworkListById(result.data!!)
+                        getArtworkListById(result.data)
                     } else {
                         getDailyTopArtwork(weekday = selectedWeekday)
                         getArtworkListByTopic(offset = 0, weekday = selectedWeekday)
