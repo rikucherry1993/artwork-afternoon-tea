@@ -25,7 +25,7 @@ class GetArtworksByIdUseCase @Inject constructor(
         val artworks = mutableListOf<DeviationDto>()
 
         ids.forEach { id ->
-            val item = dailyBriefRepository.getArtworkById(token, id)
+            dailyBriefRepository.getArtworkById(token, id)
                 .suspendOnSuccess {
                     artworks.add(data)
                     if (artworks.size == ids.size) {

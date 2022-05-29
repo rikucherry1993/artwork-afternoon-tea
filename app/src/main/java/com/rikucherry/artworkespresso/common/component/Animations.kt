@@ -80,10 +80,7 @@ fun BkImageScaler(
     imageData: Any,
     imageDescription: String = "Background image",
     timeUnit: Int = 8_000,
-    offset: Float = 50f,
-    modifier: Modifier = Modifier
-        .fillMaxSize()
-        .alpha(0.3f),
+    offset: Float = 50f
 ) {
 
     @Composable
@@ -121,7 +118,8 @@ fun BkImageScaler(
 
     Image(painter = rememberImagePainter(data = imageData),
         contentDescription = imageDescription,
-        modifier = modifier
+        modifier = Modifier.fillMaxSize()
+            .alpha(0.3f)
             .scale(1.5f)
             .offset(offsetX.dp, offsetY.dp),
         contentScale = ContentScale.Crop

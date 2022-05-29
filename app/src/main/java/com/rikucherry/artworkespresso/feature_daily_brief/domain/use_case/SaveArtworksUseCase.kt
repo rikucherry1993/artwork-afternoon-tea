@@ -20,7 +20,7 @@ class SaveArtworksUseCase @Inject constructor(
                 emit(LocalResource.Success(artworks))
             } catch (e: Exception) {
                 e.printStackTrace()
-                emit(LocalResource.Exception(e.localizedMessage))
+                emit(LocalResource.Exception(e.localizedMessage ?: ""))
             }
 
         }

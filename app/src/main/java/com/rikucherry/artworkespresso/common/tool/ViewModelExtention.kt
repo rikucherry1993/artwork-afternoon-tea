@@ -12,10 +12,10 @@ data class ViewModelState<T>(
     val status: StatusCode? = null,
 )
 
-fun <T,R> ViewModel.updateState(
-    result: Resource<T>,
-    state: MutableState<ViewModelState<R>>,
-    successData:R?
+fun <RESOURCE,RESULT> ViewModel.updateState(
+    result: Resource<RESOURCE>,
+    state: MutableState<ViewModelState<RESULT>>,
+    successData:RESULT?
 ) {
     when (result) {
         is Resource.Loading -> {
