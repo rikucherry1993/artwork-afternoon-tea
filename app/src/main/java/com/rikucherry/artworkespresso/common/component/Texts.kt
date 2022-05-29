@@ -28,14 +28,14 @@ enum class HeadingLevel {
     PRIMARY, SECONDARY, THIRD, PARAGRAPH
 }
 
-val headTextSizeMap = mutableMapOf(
+val headTextSizeMap = mapOf(
     HeadingLevel.PRIMARY to 32.sp,
     HeadingLevel.SECONDARY to 24.sp,
     HeadingLevel.THIRD to 18.sp,
     HeadingLevel.PARAGRAPH to 14.sp
 )
 
-val headTextWeightMap = mutableMapOf(
+val headTextWeightMap = mapOf(
     HeadingLevel.PRIMARY to FontWeight.Bold,
     HeadingLevel.SECONDARY to FontWeight.Medium,
     HeadingLevel.THIRD to FontWeight.Normal,
